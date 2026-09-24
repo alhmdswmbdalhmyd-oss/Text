@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXO STORE</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Tahoma,Arial,sans-serif;
+    background:#f7f7f7;
+    color:#151515;
+}
+
+button,input,textarea,select{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+:root{
+    --white:#fff;
+    --black:#111;
+    --gray:#777;
+    --light:#f2f2f2;
+    --border:#dedede;
+    --purple:#7357ff;
+    --blue:#357cff;
+    --green:#19a56f;
+    --red:#e34d5b;
+}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(15px);
+    border-bottom:1px solid var(--border);
+}
+
+.nav{
+    width:92%;
+    max-width:1200px;
+    height:70px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+}
+
+.logo span{
+    color:var(--purple);
+}
+
+.nav-actions{
+    display:flex;
+    gap:8px;
+}
+
+.nav-btn{
+    width:43px;
+    height:43px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:#fff;
+    font-size:18px;
+}
+
+/* HERO */
+
+.hero{
+    min-height:650px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    background:#fff;
+    padding:50px 20px;
+}
+
+.hero:before{
+    content:"";
+    position:absolute;
+    width:500px;
+    height:500px;
+    border-radius:50%;
+    background:rgba(115,87,255,.12);
+    filter:blur(90px);
+    right:-180px;
+    top:-200px;
+}
+
+.hero:after{
+    content:"";
+    position:absolute;
+    width:450px;
+    height:450px;
+    border-radius:50%;
+    background:rgba(53,124,255,.10);
+    filter:blur(90px);
+    left:-180px;
+    bottom:-200px;
+}
+
+.hero-content{
+    position:relative;
+    z-index:2;
+    max-width:800px;
+}
+
+.hero-label{
+    display:inline-block;
+    padding:9px 16px;
+    background:#f3f1ff;
+    color:var(--purple);
+    border-radius:30px;
+    font-size:13px;
+    margin-bottom:25px;
+}
+
+.hero h1{
+    font-size:clamp(48px,9vw,90px);
+    font-weight:900;
+    line-height:1;
+    margin-bottom:25px;
+}
+
+.hero h1 span{
+    color:var(--purple);
+}
+
+.hero p{
+    color:var(--gray);
+    font-size:18px;
+    line-height:2;
+}
+
+.hero-buttons{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:30px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:0;
+    border-radius:13px;
+    padding:14px 22px;
+    font-weight:bold;
+}
+
+.btn-dark{
+    background:#111;
+    color:#fff;
+}
+
+.btn-light{
+    background:#fff;
+    color:#111;
+    border:1px solid var(--border);
+}
+
+/* GENERAL */
+
+.container{
+    width:92%;
+    max-width:1200px;
+    margin:auto;
+}
+
+.section{
+    padding:70px 0;
+}
+
+.title{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.title h2{
+    font-size:32px;
+}
+
+.title p{
+    color:var(--gray);
+    margin-top:8px;
+}
+
+/* CATEGORIES */
+
+.categories{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+}
+
+.category{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:30px;
+    transition:.25s;
+}
+
+.category:hover{
+    transform:translateY(-4px);
+    box-shadow:0 20px 50px rgba(0,0,0,.07);
+}
+
+.category-icon{
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+.category h3{
+    margin-bottom:10px;
+}
+
+.category p{
+    color:var(--gray);
+    line-height:1.8;
+}
+
+/* FILTER */
+
+.filters{
+    display:flex;
+    gap:10px;
+    margin-bottom:25px;
+}
+
+.search{
+    flex:1;
+}
+
+.search input,
+.filters select{
+    width:100%;
+    height:48px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:0 15px;
+    background:#fff;
+    outline:none;
+}
+
+.filters select{
+    width:170px;
+}
+
+/* PRODUCTS */
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+}
+
+.product{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+    transition:.25s;
+}
+
+.product:hover{
+    transform:translateY(-5px);
+    box-shadow:0 20px 50px rgba(0,0,0,.08);
+}
+
+.product-img{
+    height:210px;
+    background:#f0f0f0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.product-img img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.no-image{
+    font-size:50px;
+}
+
+.product-body{
+    padding:18px;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    background:#f2f0ff;
+    color:var(--purple);
+    border-radius:20px;
+    font-size:11px;
+    margin-bottom:10px;
+}
+
+.product h3{
+    font-size:17px;
+    margin-bottom:8px;
+}
+
+.product-description{
+    color:var(--gray);
+    font-size:13px;
+    line-height:1.7;
+    min-height:44px;
+}
+
+.product-footer{
+    margin-top:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+}
+
+.price{
+    font-weight:900;
+    font-size:18px;
+}
+
+.buy{
+    border:0;
+    border-radius:10px;
+    padding:10px 13px;
+    background:#111;
+    color:#fff;
+}
+
+.buy:disabled{
+    background:#ddd;
+    color:#888;
+}
+
+.stock{
+    margin-top:8px;
+    font-size:11px;
+}
+
+.green{color:var(--green)}
+.orange{color:#c58200}
+.red{color:var(--red)}
+
+.empty{
+    grid-column:1/-1;
+    text-align:center;
+    padding:70px 20px;
+    color:var(--gray);
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    backdrop-filter:blur(5px);
+    z-index:5000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(650px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:24px;
+    padding:25px;
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.close{
+    width:38px;
+    height:38px;
+    border:0;
+    background:#f1f1f1;
+    border-radius:10px;
+    font-size:20px;
+}
+
+/* CART */
+
+.cart-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.cart-img{
+    width:60px;
+    height:60px;
+    object-fit:cover;
+    background:#eee;
+    border-radius:10px;
+}
+
+.cart-info{
+    flex:1;
+}
+
+.cart-info h4{
+    font-size:14px;
+}
+
+.cart-info small{
+    color:var(--gray);
+}
+
+.qty{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.qty button{
+    width:30px;
+    height:30px;
+    border:0;
+    border-radius:8px;
+    background:#eee;
+}
+
+.total{
+    display:flex;
+    justify-content:space-between;
+    font-size:21px;
+    font-weight:bold;
+    margin-top:20px;
+}
+
+/* FORMS */
+
+.form{
+    display:grid;
+    gap:12px;
+}
+
+.form label{
+    font-size:13px;
+}
+
+.form input,
+.form textarea,
+.form select{
+    width:100%;
+    padding:13px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    outline:none;
+}
+
+.form textarea{
+    min-height:90px;
+}
+
+/* ORDER SUCCESS */
+
+.order-success{
+    text-align:center;
+}
+
+.order-number{
+    margin:20px 0;
+    padding:20px;
+    background:#f5f3ff;
+    border:1px dashed var(--purple);
+    border-radius:15px;
+}
+
+.order-number strong{
+    display:block;
+    color:var(--purple);
+    font-size:25px;
+    margin-top:8px;
+}
+
+.transfer-box{
+    margin-top:15px;
+    padding:18px;
+    background:#f7f7f7;
+    border-radius:15px;
+    text-align:right;
+}
+
+footer{
+    background:#fff;
+    border-top:1px solid var(--border);
+    padding:35px 0;
+    text-align:center;
+    color:var(--gray);
+}
+
+@media(max-width:1000px){
+    .products{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@media(max-width:700px){
+    .categories{
+        grid-template-columns:1fr;
+    }
+
+    .products{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+
+    .product-img{
+        height:160px;
+    }
+}
+
+@media(max-width:450px){
+    .hero{
+        min-height:560px;
+    }
+
+    .hero h1{
+        font-size:48px;
+    }
+
+    .hero p{
+        font-size:15px;
+    }
+
+    .filters{
+        flex-direction:column;
+    }
+
+    .filters select{
+        width:100%;
+    }
+
+    .product-img{
+        height:135px;
+    }
+
+    .product-body{
+        padding:12px;
+    }
+
+    .product h3{
+        font-size:14px;
+    }
+
+    .product-description{
+        font-size:11px;
+    }
+
+    .buy{
+        padding:8px;
+        font-size:11px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="nav">
+
+<div class="logo">
+NEXO <span>STORE</span>
+</div>
+
+<div class="nav-actions">
+<button class="nav-btn" onclick="openCart()">🛒</button>
+</div>
+
+</div>
+</header>
+
+
+<section class="hero">
+
+<div class="hero-content">
+
+<div class="hero-label">
+مرحباً بك في متجرنا
+</div>
+
+<h1>
+NEXO <span>STORE</span>
+</h1>
+
+<p>
+منتجات رقمية ومنتجات متنوعة في مكان واحد،
+بتجربة شراء بسيطة وسريعة.
+</p>
+
+<div class="hero-buttons">
+
+<button
+class="btn btn-dark"
+onclick="scrollToProducts()">
+استكشف المتجر
+</button>
+
+<button
+class="btn btn-light"
+onclick="filterCategory('digital')">
+المنتجات الرقمية
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<main class="container">
+
+<section class="section">
+
+<div class="title">
+<h2>الأقسام</h2>
+<p>اختر نوع المنتجات الذي تبحث عنه</p>
+</div>
+
+<div class="categories">
+
+<div class="category"
+onclick="filterCategory('digital')">
+
+<div class="category-icon">🔗</div>
+
+<h3>المنتجات الرقمية</h3>
+
+<p>
+منتجات إلكترونية يتم تسليمها عن طريق رابط.
+</p>
+
+</div>
+
+<div class="category"
+onclick="filterCategory('physical')">
+
+<div class="category-icon">📦</div>
+
+<h3>المنتجات المتنوعة</h3>
+
+<p>
+سماعات وأسلاك وشواحن وأي منتجات أخرى تضيفها أنت.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section id="productsSection">
+
+<div class="title">
+<h2>منتجاتنا</h2>
+<p>المنتجات التي تضيفها من لوحة التحكم</p>
+</div>
+
+<div class="filters">
+
+<div class="search">
+<input
+id="search"
+placeholder="ابحث عن منتج..."
+oninput="renderProducts()">
+</div>
+
+<select id="categoryFilter"
+onchange="renderProducts()">
+
+<option value="all">كل المنتجات</option>
+<option value="digital">رقمية</option>
+<option value="physical">متنوعة</option>
+
+</select>
+
+</div>
+
+<div
+class="products"
+id="products">
+</div>
+
+</section>
+
+</main>
+
+
+<footer>
+NEXO STORE
+</footer>
+
+
+<!-- CART -->
+
+<div class="modal" id="cartModal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>🛒 سلة المشتريات</h2>
+
+<button
+class="close"
+onclick="closeModal('cartModal')">
+×
+</button>
+
+</div>
+
+<div id="cartItems"></div>
+
+<div class="total">
+
+<span>الإجمالي</span>
+
+<span id="cartTotal">
+0 ر.س
+</span>
+
+</div>
+
+<button
+class="btn btn-dark"
+style="width:100%;margin-top:20px"
+onclick="openCheckout()">
+
+إتمام الطلب
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- CHECKOUT -->
+
+<div class="modal" id="checkoutModal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2>إتمام الطلب</h2>
+
+<button
+class="close"
+onclick="closeModal('checkoutModal')">
+×
+</button>
+
+</div>
+
+<form
+class="form"
+onsubmit="submitOrder(event)">
+
+<label>الاسم</label>
+<input id="customerName" required>
+
+<label>رقم الجوال</label>
+<input id="customerPhone" required>
+
+<label>العنوان داخل مكة</label>
+<textarea id="customerAddress" required></textarea>
+
+<label>طريقة الدفع</label>
+
+<select id="paymentMethod">
+
+<option value="cash">
+الدفع عند الاستلام
+</option>
+
+<option value="network">
+الشبكة / التحويل
+</option>
+
+</select>
+
+<button class="btn btn-dark">
+تأكيد الطلب
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+
+<!-- ORDER RESULT -->
+
+<div class="modal" id="orderModal">
+
+<div class="modal-box order-success">
+
+<div class="modal-head">
+
+<h2>تم إنشاء الطلب</h2>
+
+<button
+class="close"
+onclick="closeModal('orderModal')">
+×
+</button>
+
+</div>
+
+<p>
+احتفظ برقم الطلب عند الاستلام.
+</p>
+
+<div class="order-number">
+
+رقم طلبك
+
+<strong id="orderNumber">
+NEXO-000000
+</strong>
+
+</div>
+
+<div
+id="transferInfo"
+class="transfer-box"
+style="display:none">
+
+<strong>بيانات التحويل</strong>
+
+<p id="transferNumber">
+سيتم وضع رقم التحويل هنا.
+</p>
+
+<br>
+
+<button
+class="btn btn-dark"
+onclick="copyOrderNumber()">
+نسخ رقم الطلب
+</button>
+
+</div>
+
+<br>
+
+<button
+class="btn btn-dark"
+onclick="closeModal('orderModal')">
+تم
+</button>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DATA
+========================= */
+
+let products =
+JSON.parse(localStorage.getItem("nexo_products")) || [];
+
+let cart =
+JSON.parse(localStorage.getItem("nexo_cart")) || [];
+
+let orders =
+JSON.parse(localStorage.getItem("nexo_orders")) || [];
+
+let settings =
+JSON.parse(localStorage.getItem("nexo_settings")) || {
+    storeName:"NEXO STORE",
+    transferNumber:"",
+    email:"alhmdswmbdalhmyd@gmail.com"
+};
+
+
+/* =========================
+   VISIT
+========================= */
+
+let visits =
+Number(localStorage.getItem("nexo_visits") || 0);
+
+visits++;
+
+localStorage.setItem(
+    "nexo_visits",
+    visits
+);
+
+
+/* =========================
+   PRODUCTS
+========================= */
+
+function renderProducts(){
+
+    const box =
+        document.getElementById("products");
+
+    const search =
+        document.getElementById("search")
+        .value
+        .toLowerCase();
+
+    const category =
+        document.getElementById("categoryFilter")
+        .value;
+
+    const list =
+        products.filter(p=>{
+
+            if(p.hidden)
+                return false;
+
+            const name =
+                String(p.name || "")
+                .toLowerCase();
+
+            const matchSearch =
+                name.includes(search);
+
+            const matchCategory =
+                category==="all" ||
+                p.type===category;
+
+            return matchSearch && matchCategory;
+
+        });
+
+
+    if(!list.length){
+
+        box.innerHTML=`
+        <div class="empty">
+            لا توجد منتجات حالياً.
+        </div>`;
+
+        return;
+    }
+
+
+    box.innerHTML =
+    list.map(p=>`
+
+        <div class="product">
+
+            <div class="product-img">
+
+                ${
+                    p.image
+                    ?
+                    `<img src="${p.image}">`
+                    :
+                    `<div class="no-image">📦</div>`
+                }
+
+            </div>
+
+            <div class="product-body">
+
+                <span class="badge">
+                    ${
+                        p.type==="digital"
+                        ?
+                        "منتج رقمي"
+                        :
+                        "منتج متنوع"
+                    }
+                </span>
+
+                <h3>
+                    ${escapeHTML(p.name)}
+                </h3>
+
+                <div class="product-description">
+                    ${escapeHTML(p.description || "")}
+                </div>
+
+                ${
+                    p.type==="physical"
+                    ?
+                    `
+                    <div class="stock ${
+                        p.quantity<=0
+                        ?"red"
+                        :
+                        p.quantity<=5
+                        ?"orange"
+                        :"green"
+                    }">
+
+                    ${
+                        p.quantity<=0
+                        ?
+                        "نفد المخزون"
+                        :
+                        p.quantity<=5
+                        ?
+                        "متبقي قليل: "+p.quantity
+                        :
+                        "متوفر: "+p.quantity
+                    }
+
+                    </div>
+                    `
+                    :
+                    `
+                    <div class="stock green">
+                    متوفر إلكترونياً
+                    </div>
+                    `
+                }
+
+
+                <div class="product-footer">
+
+                    <div class="price">
+                        ${Number(p.price).toFixed(2)}
+                        ر.س
+                    </div>
+
+                    <button
+                    class="buy"
+                    ${
+                        p.type==="physical" &&
+                        Number(p.quantity)<=0
+                        ?
+                        "disabled"
+                        :
+                        ""
+                    }
+                    onclick="addToCart('${p.id}')">
+
+                    ${
+                        p.type==="physical" &&
+                        Number(p.quantity)<=0
+                        ?
+                        "نفد"
+                        :
+                        "شراء"
+                    }
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `).join("");
+}
+
+
+/* =========================
+   CATEGORY
+========================= */
+
+function filterCategory(type){
+
+    document.getElementById(
+        "categoryFilter"
+    ).value=type;
+
+    renderProducts();
+
+    scrollToProducts();
+}
+
+
+function scrollToProducts(){
+
+    document
+    .getElementById("productsSection")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+
+/* =========================
+   CART
+========================= */
+
+function addToCart(id){
+
+    const product =
+        products.find(p=>p.id===id);
+
+    if(!product)
+        return;
+
+
+    if(
+        product.type==="physical" &&
+        product.quantity<=0
+    ){
+
+        alert("المنتج نفد من المخزون.");
+
+        return;
+    }
+
+
+    const existing =
+        cart.find(x=>x.id===id);
+
+
+    if(existing){
+
+        if(
+            product.type==="physical" &&
+            existing.qty>=product.quantity
+        ){
+
+            alert("لا توجد كمية إضافية.");
+
+            return;
+        }
+
+        existing.qty++;
+
+    }else{
+
+        cart.push({
+            id:id,
+            qty:1
+        });
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+
+    alert("تمت إضافة المنتج للسلة.");
+}
+
+
+function saveCart(){
+
+    localStorage.setItem(
+        "nexo_cart",
+        JSON.stringify(cart)
+    );
+}
+
+
+function openCart(){
+
+    renderCart();
+
+    document
+    .getElementById("cartModal")
+    .classList.add("show");
+}
+
+
+function renderCart(){
+
+    const box =
+        document.getElementById("cartItems");
+
+    if(!cart.length){
+
+        box.innerHTML=`
+        <div class="empty">
+            السلة فارغة.
+        </div>`;
+
+        document.getElementById(
+            "cartTotal"
+        ).textContent="0 ر.س";
+
+        return;
+    }
+
+
+    let total=0;
+
+
+    box.innerHTML =
+    cart.map(item=>{
+
+        const p =
+            products.find(x=>x.id===item.id);
+
+        if(!p)
+            return "";
+
+
+        total +=
+            Number(p.price)*item.qty;
+
+
+        return `
+
+        <div class="cart-item">
+
+            ${
+                p.image
+                ?
+                `<img
+                class="cart-img"
+                src="${p.image}">
+                `
+                :
+                `<div class="cart-img"></div>`
+            }
+
+            <div class="cart-info">
+
+                <h4>
+                    ${escapeHTML(p.name)}
+                </h4>
+
+                <small>
+                    ${p.price} ر.س
+                </small>
+
+            </div>
+
+            <div class="qty">
+
+                <button
+                onclick="changeQty('${p.id}',-1)">
+                −
+                </button>
+
+                <span>
+                ${item.qty}
+                </span>
+
+                <button
+                onclick="changeQty('${p.id}',1)">
+                +
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+
+
+    document.getElementById(
+        "cartTotal"
+    ).textContent=
+    total.toFixed(2)+" ر.س";
+}
+
+
+function changeQty(id,change){
+
+    const item =
+        cart.find(x=>x.id===id);
+
+    const product =
+        products.find(x=>x.id===id);
+
+    if(!item || !product)
+        return;
+
+
+    if(change>0){
+
+        if(
+            product.type==="physical" &&
+            item.qty>=product.quantity
+        ){
+
+            alert("لا توجد كمية إضافية.");
+
+            return;
+        }
+
+        item.qty++;
+
+    }else{
+
+        item.qty--;
+
+        if(item.qty<=0){
+
+            cart =
+                cart.filter(
+                    x=>x.id!==id
+                );
+
+        }
+
+    }
+
+
+    saveCart();
+
+    renderCart();
+}
+
+
+/* =========================
+   CHECKOUT
+========================= */
+
+function openCheckout(){
+
+    if(!cart.length){
+
+        alert("السلة فارغة.");
+
+        return;
+    }
+
+    closeModal("cartModal");
+
+    document
+    .getElementById("checkoutModal")
+    .classList.add("show");
+}
+
+
+/* =========================
+   CREATE ORDER
+========================= */
+
+function submitOrder(e){
+
+    e.preventDefault();
+
+
+    const orderNumber =
+        "NEXO-"+Date.now();
+
+
+    let subtotal=0;
+
+
+    const orderItems =
+        cart.map(item=>{
+
+            const p =
+                products.find(
+                    x=>x.id===item.id
+                );
+
+            if(!p)
+                return null;
+
+
+            subtotal +=
+                Number(p.price)*item.qty;
+
+
+            return {
+                id:p.id,
+                name:p.name,
+                price:p.price,
+                quantity:item.qty,
+                type:p.type
+            };
+
+        }).filter(Boolean);
+
+
+    const order={
+
+        id:orderNumber,
+
+        customer:
+            document.getElementById(
+                "customerName"
+            ).value,
+
+        phone:
+            document.getElementById(
+                "customerPhone"
+            ).value,
+
+        address:
+            document.getElementById(
+                "customerAddress"
+            ).value,
+
+        payment:
+            document.getElementById(
+                "paymentMethod"
+            ).value,
+
+        items:orderItems,
+
+        subtotal:subtotal,
+
+        delivery:0,
+
+        total:subtotal,
+
+        date:new Date().toISOString(),
+
+        status:"new"
+
+    };
+
+
+    orders.unshift(order);
+
+
+    /*
+      خصم المخزون
+    */
+
+    orderItems.forEach(item=>{
+
+        if(item.type==="physical"){
+
+            const p =
+                products.find(
+                    x=>x.id===item.id
+                );
+
+            if(p){
+
+                p.quantity =
+                    Math.max(
+                        0,
+                        Number(p.quantity) -
+                        Number(item.quantity)
+                    );
+
+                p.ordered =
+                    Number(p.ordered || 0) +
+                    Number(item.quantity);
+
+            }
+
+        }
+
+    });
+
+
+    saveData();
+
+
+    cart=[];
+
+    saveCart();
+
+
+    /*
+      عرض رقم الطلب
+    */
+
+    document.getElementById(
+        "orderNumber"
+    ).textContent=orderNumber;
+
+
+    /*
+      الدفع بالشبكة
+    */
+
+    const payment =
+        document.getElementById(
+            "paymentMethod"
+        ).value;
+
+
+    if(payment==="network"){
+
+        document.getElementById(
+            "transferInfo"
+        ).style.display="block";
+
+        document.getElementById(
+            "transferNumber"
+        ).textContent =
+            settings.transferNumber ||
+            "لم تتم إضافة رقم التحويل بعد.";
+
+    }else{
+
+        document.getElementById(
+            "transferInfo"
+        ).style.display="none";
+
+    }
+
+
+    closeModal("checkoutModal");
+
+
+    document
+    .getElementById("orderModal")
+    .classList.add("show");
+
+
+    renderProducts();
+}
+
+
+/* =========================
+   COPY ORDER
+========================= */
+
+function copyOrderNumber(){
+
+    const number =
+        document.getElementById(
+            "orderNumber"
+        ).textContent;
+
+    navigator.clipboard
+    .writeText(number)
+    .then(()=>{
+        alert("تم نسخ رقم الطلب.");
+    });
+
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+function closeModal(id){
+
+    document
+    .getElementById(id)
+    .classList.remove("show");
+}
+
+
+/* =========================
+   SAVE
+========================= */
+
+function saveData(){
+
+    localStorage.setItem(
+        "nexo_products",
+        JSON.stringify(products)
+    );
+
+    localStorage.setItem(
+        "nexo_orders",
+        JSON.stringify(orders)
+    );
+
+    localStorage.setItem(
+        "nexo_settings",
+        JSON.stringify(settings)
+    );
+}
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function escapeHTML(text){
+
+    return String(text)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+/* START */
+
+renderProducts();
+
+</script>
+
+</body>
+</html>
