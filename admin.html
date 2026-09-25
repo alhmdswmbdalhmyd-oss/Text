@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -677,7 +676,7 @@ th{background:#fafafa}
 <script>
 
 /* =========================================================
-   NEXO STORE — جافاسكريبت المحسن مع زر التعديل
+   NEXO STORE — جافاسكريبت المحسن لمعالجة الصور وتعديل المنتجات
    ========================================================= */
 
 const DEFAULT_SETTINGS={
@@ -798,7 +797,7 @@ async function dbGetImage(productId){
 
 
 /* =========================================================
-   ضغط الصور لتجنب أي مشاكل بالذاكرة
+   ضغط الصور وعرضها بشكل دقيق
    ========================================================= */
 
 function compressImage(file, maxWidth=1200, quality=0.8){
@@ -845,7 +844,6 @@ function compressImage(file, maxWidth=1200, quality=0.8){
   });
 }
 
-
 async function previewProductImage(event){
   const file = event.target.files[0];
   if(!file) return;
@@ -863,9 +861,30 @@ async function previewProductImage(event){
   }
 }
 
+async function getProductImageUrl(product){
+  if(!product) return "";
+  if(product.image && product.image.startsWith("data:image")) return product.image;
+  if(product.image && product.image.startsWith("http")) return product.image;
+  if(product.image && product.image.startsWith("indexeddb:")){
+    try{
+      const blob = await dbGetImage(product.id);
+      if(blob) return URL.createObjectURL(blob);
+    }catch(e){
+      console.error("Error reading image from IndexedDB:", e);
+    }
+  }
+  // فحص احتياطي مباشر من قاعدة البيانات المحلية لو كان الرابط غير مكتوب صراحة
+  try{
+    const blob = await dbGetImage(product.id);
+    if(blob) return URL.createObjectURL(blob);
+  }catch(e){}
+  
+  return "";
+}
+
 
 /* =========================================================
-   حفظ البيانات الأساسية مع حماية الـ LocalStorage
+   حفظ البيانات الأساسية
    ========================================================= */
 
 function saveAll(){
@@ -882,7 +901,7 @@ function saveAll(){
       digitalLink: p.digitalLink,
       description: p.description,
       createdAt: p.createdAt,
-      image: ""
+      image: p.image || ""
     }))));
     localStorage.setItem("nexo_orders", JSON.stringify(orders));
     localStorage.setItem("nexo_expenses", JSON.stringify(expenses));
@@ -892,7 +911,6 @@ function saveAll(){
     return false;
   }
 }
-
 
 function ensureBank(){
   if(!settings.bank){
@@ -1066,12 +1084,11 @@ async function editProduct(id){
     preview.classList.add("hidden");
   }
 
-  selectedProductImage = null; // سيتم تحديثها فقط إذا اختار صورة جديدة
+  selectedProductImage = null; 
   document.getElementById("productFormTitle").textContent = "تعديل المنتج: " + product.name;
   document.getElementById("productSubmitBtn").textContent = "حفظ التعديلات";
   document.getElementById("productCancelBtn").classList.remove("hidden");
 
-  // التمرير إلى أعلى النموذج لسهولة التعديل
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1159,17 +1176,6 @@ function clearProductForm(){
   preview.src = "";
   preview.classList.add("hidden");
   selectedProductImage = null;
-}
-
-async function getProductImageUrl(product){
-  if(!product) return "";
-  if(product.image && product.image.startsWith("data:image")) return product.image;
-  if(product.image && product.image.startsWith("http")) return product.image;
-  if(product.image && product.image.startsWith("indexeddb:")){
-    const blob = await dbGetImage(product.id);
-    if(blob) return URL.createObjectURL(blob);
-  }
-  return "";
 }
 
 async function renderProducts(){
@@ -1642,7 +1648,7 @@ function printInvoice(orderId){
 async function exportBackup(){
   const backupProducts = [];
   for(const product of products){
-    const copy = { ...product, image: "" };
+    const copy = { ...product };
     const blob = await dbGetImage(product.id);
     if(blob){
       copy.imageData = await blobToDataURL(blob);
@@ -1782,6 +1788,7 @@ async function refreshAll(){
 
 </body>
 </html>
+
 
 
 
