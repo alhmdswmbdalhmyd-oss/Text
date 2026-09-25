@@ -9,10 +9,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- Moyasar -->
-<link rel="stylesheet"
-href="https://cdn.moyasar.com/mpf/1.14.0/moyasar.css">
-
 <style>
 :root{
     --ink:#111827;
@@ -154,6 +150,25 @@ header{
     display:grid;
     place-items:center;
     padding:0 5px;
+}
+
+/* WHATSAPP */
+
+.whatsapp-btn{
+    border:0;
+    background:#16a34a;
+    color:#fff;
+    border-radius:13px;
+    padding:10px 15px;
+    font-weight:700;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+}
+
+.whatsapp-btn:hover{
+    background:#128c3e;
 }
 
 /* HERO */
@@ -308,6 +323,7 @@ header{
     overflow:hidden;
     background:#fff;
     transition:.2s;
+    cursor:pointer;
 }
 
 .card:hover{
@@ -316,18 +332,28 @@ header{
         0 12px 30px rgba(17,24,39,.08);
 }
 
+/*
+   مهم:
+   contain = يعرض الصورة كاملة
+   بدون قص أي جزء منها
+*/
+
 .pic{
-    height:230px;
+    height:260px;
     background:#f5f6f8;
-    display:grid;
-    place-items:center;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     overflow:hidden;
+    padding:10px;
 }
 
 .pic img{
     width:100%;
     height:100%;
-    object-fit:cover;
+    object-fit:contain;
+    object-position:center;
+    display:block;
 }
 
 .card-body{
@@ -353,8 +379,78 @@ header{
 
 .stock{
     font-size:12px;
-    color:#b45309;
+    color:#16a34a;
     margin-bottom:8px;
+    font-weight:700;
+}
+
+/* PRODUCT DETAILS */
+
+.product-details{
+    width:min(850px,100%);
+    max-height:94vh;
+    overflow:auto;
+    background:#fff;
+    border-radius:28px;
+    padding:22px;
+}
+
+.product-details-image{
+    width:100%;
+    height:min(55vh,480px);
+    background:#f6f7f9;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    padding:12px;
+    margin-bottom:20px;
+}
+
+.product-details-image img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    object-position:center;
+    display:block;
+}
+
+.product-details h2{
+    margin:0 0 10px;
+    font-size:28px;
+}
+
+.product-details-description{
+    color:#4b5563;
+    line-height:2;
+    white-space:pre-wrap;
+    margin:15px 0;
+}
+
+.product-details-price{
+    font-size:28px;
+    font-weight:800;
+    margin:15px 0;
+}
+
+.product-info-box{
+    background:var(--soft);
+    border-radius:16px;
+    padding:15px;
+    margin:15px 0;
+}
+
+.product-info-row{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:8px 0;
+    border-bottom:1px solid var(--line);
+}
+
+.product-info-row:last-child{
+    border-bottom:0;
 }
 
 /* TRACK */
@@ -416,6 +512,11 @@ footer{
     color:var(--muted);
 }
 
+.footer-whatsapp{
+    display:inline-flex;
+    margin-top:15px;
+}
+
 /* MODAL */
 
 .modal{
@@ -426,6 +527,7 @@ footer{
     display:none;
     align-items:flex-end;
     justify-content:center;
+    padding:0;
 }
 
 .modal.open{
@@ -445,6 +547,7 @@ footer{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    gap:15px;
 }
 
 .close{
@@ -600,10 +703,24 @@ footer{
 
     .nav{
         padding:12px 14px;
+        gap:7px;
     }
 
     .brand{
         font-size:19px;
+    }
+
+    .nav-actions{
+        gap:5px;
+    }
+
+    .nav-btn{
+        padding:9px 10px;
+    }
+
+    .whatsapp-btn{
+        padding:9px 10px;
+        font-size:13px;
     }
 
     .hero{
@@ -619,6 +736,29 @@ footer{
         padding:0 14px;
     }
 
+    .grid{
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+        gap:10px;
+    }
+
+    .pic{
+        height:190px;
+        padding:8px;
+    }
+
+    .card-body{
+        padding:12px;
+    }
+
+    .card h3{
+        font-size:15px;
+    }
+
+    .price{
+        font-size:17px;
+    }
+
     .form-grid{
         grid-template-columns:1fr;
     }
@@ -631,12 +771,17 @@ footer{
         grid-template-columns:1fr;
     }
 
-    .nav-btn span{
-        display:none;
-    }
-
     .order-number{
         font-size:23px;
+    }
+
+    .product-details{
+        border-radius:25px 25px 0 0;
+        padding:16px;
+    }
+
+    .product-details-image{
+        height:360px;
     }
 }
 </style>
@@ -644,8 +789,11 @@ footer{
 
 <body>
 
+<!-- LOADER -->
+
 <div id="loader">
     <div class="loader-box">
+
         <div class="loader-logo">
             NEXO STORE
         </div>
@@ -653,8 +801,11 @@ footer{
         <div class="loader-line">
             <span></span>
         </div>
+
     </div>
 </div>
+
+<!-- HEADER -->
 
 <header>
 
@@ -665,6 +816,15 @@ footer{
         </div>
 
         <div class="nav-actions">
+
+            <a
+                class="whatsapp-btn"
+                href="https://wa.me/966501203710"
+                target="_blank"
+                rel="noopener"
+            >
+                واتساب
+            </a>
 
             <button
                 class="nav-btn"
@@ -685,6 +845,7 @@ footer{
                 >
                     0
                 </b>
+
             </button>
 
         </div>
@@ -692,6 +853,8 @@ footer{
     </div>
 
 </header>
+
+<!-- HERO -->
 
 <section class="hero">
 
@@ -729,6 +892,8 @@ footer{
 
 </section>
 
+<!-- PRODUCTS -->
+
 <main
     class="container"
     id="products"
@@ -743,7 +908,7 @@ footer{
             </h2>
 
             <small style="color:#6b7280">
-                اختَر ما يناسبك
+                اضغط على أي منتج لمعرفة التفاصيل
             </small>
 
         </div>
@@ -787,6 +952,8 @@ footer{
         id="productsGrid"
     ></div>
 
+    <!-- TRACK -->
+
     <section
         class="track-section"
         id="track"
@@ -829,6 +996,8 @@ footer{
 
 </main>
 
+<!-- FOOTER -->
+
 <footer id="footer"></footer>
 
 <!-- CART -->
@@ -858,6 +1027,40 @@ footer{
         <div id="cartItems"></div>
 
         <div id="cartCheckout"></div>
+
+    </div>
+
+</div>
+
+<!-- PRODUCT DETAILS -->
+
+<div
+    class="modal"
+    id="productModal"
+    onclick="closeProductIfBackground(event)"
+>
+
+    <div class="product-details">
+
+        <div class="sheet-head">
+
+            <h2>
+                تفاصيل المنتج
+            </h2>
+
+            <button
+                class="close"
+                onclick="closeProduct()"
+            >
+                إغلاق
+            </button>
+
+        </div>
+
+        <div
+            id="productDetailsContent"
+            style="margin-top:18px"
+        ></div>
 
     </div>
 
@@ -897,7 +1100,6 @@ footer{
 
 <script src="https://cdn.moyasar.com/mpf/1.14.0/moyasar.js"></script>
 
-<!-- PAYPAL -->
 <div id="paypalScriptContainer"></div>
 
 <script>
@@ -929,6 +1131,9 @@ JSON.parse(
 let category = "all";
 
 let currentOrderData = null;
+
+const WHATSAPP_NUMBER =
+    "966501203710";
 
 const statusMap = {
 
@@ -964,6 +1169,8 @@ const statusMap = {
 
 };
 
+/* SAVE */
+
 function saveCart(){
 
     localStorage.setItem(
@@ -984,6 +1191,8 @@ function saveProducts(){
 
 }
 
+/* MONEY */
+
 function money(number){
 
     return Number(number || 0)
@@ -993,14 +1202,61 @@ function money(number){
 
 }
 
+/* ESCAPE */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(
+            /[&<>"']/g,
+            character =>
+            ({
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#39;"
+            })[character]
+        );
+
+}
+
+/* UNLIMITED STOCK */
+
+function isUnlimited(product){
+
+    return (
+        product.type === "physical" &&
+        (
+            product.unlimited === true ||
+            product.quantity === null ||
+            product.quantity === undefined ||
+            product.quantity === "" ||
+            Number(product.quantity) >= 999999
+        )
+    );
+
+}
+
+/* WHOLESALE */
+
 function discountFor(subtotal){
 
     const tiers =
         settings.wholesaleTiers ||
         [
-            {min:5,percent:5},
-            {min:10,percent:10},
-            {min:20,percent:15}
+            {
+                min:5,
+                percent:5
+            },
+            {
+                min:10,
+                percent:10
+            },
+            {
+                min:20,
+                percent:15
+            }
         ];
 
     const quantity =
@@ -1039,6 +1295,8 @@ function discountFor(subtotal){
 
 }
 
+/* CART COUNT */
+
 function updateCartCount(){
 
     document.getElementById(
@@ -1051,6 +1309,8 @@ function updateCartCount(){
         );
 
 }
+
+/* CATEGORY */
 
 function setCat(cat,button){
 
@@ -1069,22 +1329,7 @@ function setCat(cat,button){
 
 }
 
-function escapeHtml(value){
-
-    return String(value)
-        .replace(
-            /[&<>"']/g,
-            character =>
-            ({
-                "&":"&amp;",
-                "<":"&lt;",
-                ">":"&gt;",
-                '"':"&quot;",
-                "'":"&#39;"
-            })[character]
-        );
-
-}
+/* PRODUCTS */
 
 function renderProducts(){
 
@@ -1146,18 +1391,20 @@ function renderProducts(){
     grid.innerHTML =
         list.map(product => {
 
+            const unlimited =
+                isUnlimited(product);
+
             const out =
                 product.type === "physical" &&
+                !unlimited &&
                 Number(product.quantity) <= 0;
-
-            const low =
-                product.type === "physical" &&
-                Number(product.quantity) > 0 &&
-                Number(product.quantity) <= 3;
 
             return `
 
-            <article class="card">
+            <article
+                class="card"
+                onclick="openProduct('${product.id}')"
+            >
 
                 <div class="pic">
 
@@ -1167,7 +1414,7 @@ function renderProducts(){
                         `
                         <img
                             src="${escapeHtml(product.image)}"
-                            alt=""
+                            alt="${escapeHtml(product.name || "")}"
                         >
                         `
                         :
@@ -1183,39 +1430,26 @@ function renderProducts(){
                 <div class="card-body">
 
                     <h3>
-                        ${escapeHtml(product.name || "منتج")}
+                        ${escapeHtml(
+                            product.name || "منتج"
+                        )}
                     </h3>
 
                     <div class="desc">
-                        ${escapeHtml(product.description || "")}
+                        ${escapeHtml(
+                            product.description || ""
+                        )}
                     </div>
 
-                    ${
-                        low
-                        ?
-                        `
-                        <div class="stock">
-                            متبقي قليل
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        out
-                        ?
-                        `
-                        <div
-                            class="stock"
-                            style="color:#b91c1c"
-                        >
-                            نفد من المخزون
-                        </div>
-                        `
-                        :
-                        ""
-                    }
+                    <div class="stock">
+                        ${
+                            out
+                            ?
+                            "نفد من المخزون"
+                            :
+                            "متوفر"
+                        }
+                    </div>
 
                     <div class="price">
                         ${money(product.price)}
@@ -1225,7 +1459,10 @@ function renderProducts(){
                         class="primary"
                         style="width:100%"
                         ${out ? "disabled" : ""}
-                        onclick="addToCart('${product.id}')"
+                        onclick="
+                            event.stopPropagation();
+                            addToCart('${product.id}')
+                        "
                     >
                         ${
                             out
@@ -1246,12 +1483,216 @@ function renderProducts(){
 
 }
 
+/* PRODUCT DETAILS */
+
+function openProduct(id){
+
+    const product =
+        products.find(
+            item =>
+                String(item.id)
+                === String(id)
+        );
+
+    if(!product){
+        return;
+    }
+
+    const unlimited =
+        isUnlimited(product);
+
+    const out =
+        product.type === "physical" &&
+        !unlimited &&
+        Number(product.quantity) <= 0;
+
+    const content =
+        document.getElementById(
+            "productDetailsContent"
+        );
+
+    content.innerHTML = `
+
+        <div class="product-details-image">
+
+            ${
+                product.image
+                ?
+                `
+                <img
+                    src="${escapeHtml(product.image)}"
+                    alt="${escapeHtml(product.name || "")}"
+                >
+                `
+                :
+                `
+                <span style="color:#9ca3af">
+                    لا توجد صورة
+                </span>
+                `
+            }
+
+        </div>
+
+        <h2>
+            ${escapeHtml(
+                product.name || "منتج"
+            )}
+        </h2>
+
+        <div class="product-details-price">
+            ${money(product.price)}
+        </div>
+
+        <div class="product-info-box">
+
+            <div class="product-info-row">
+
+                <span>
+                    نوع المنتج
+                </span>
+
+                <strong>
+                    ${
+                        product.type === "digital"
+                        ?
+                        "منتج رقمي"
+                        :
+                        "منتج عادي"
+                    }
+                </strong>
+
+            </div>
+
+            <div class="product-info-row">
+
+                <span>
+                    التوفر
+                </span>
+
+                <strong
+                    style="
+                        color:
+                        ${out ? "#dc2626" : "#16a34a"}
+                    "
+                >
+                    ${
+                        out
+                        ?
+                        "غير متوفر"
+                        :
+                        "متوفر"
+                    }
+                </strong>
+
+            </div>
+
+        </div>
+
+        <div>
+
+            <h3>
+                وصف المنتج
+            </h3>
+
+            <div class="product-details-description">
+                ${
+                    escapeHtml(
+                        product.description ||
+                        "لا يوجد وصف للمنتج حاليًا."
+                    )
+                }
+            </div>
+
+        </div>
+
+        <div
+            style="
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+                margin-top:20px
+            "
+        >
+
+            <button
+                class="primary"
+                style="flex:1;min-width:180px"
+                ${out ? "disabled" : ""}
+                onclick="addToCartFromDetails('${product.id}')"
+            >
+                ${
+                    out
+                    ?
+                    "نفد المخزون"
+                    :
+                    "أضف للسلة 🛒"
+                }
+            </button>
+
+            <a
+                class="whatsapp-btn"
+                style="
+                    justify-content:center;
+                    flex:1;
+                    min-width:180px
+                "
+                href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                    "السلام عليكم، أريد الاستفسار عن المنتج: " +
+                    (product.name || "")
+                )}"
+                target="_blank"
+                rel="noopener"
+            >
+                تواصل معنا واتساب
+            </a>
+
+        </div>
+
+    `;
+
+    document
+        .getElementById("productModal")
+        .classList.add("open");
+
+}
+
+function addToCartFromDetails(id){
+
+    addToCart(id);
+
+    closeProduct();
+
+}
+
+function closeProduct(){
+
+    document
+        .getElementById("productModal")
+        .classList.remove("open");
+
+}
+
+function closeProductIfBackground(event){
+
+    if(
+        event.target.id ===
+        "productModal"
+    ){
+        closeProduct();
+    }
+
+}
+
+/* ADD CART */
+
 function addToCart(id){
 
     const product =
         products.find(
             item =>
-                String(item.id) === String(id)
+                String(item.id)
+                === String(id)
         );
 
     if(!product){
@@ -1261,11 +1702,18 @@ function addToCart(id){
     const item =
         cart.find(
             item =>
-                String(item.id) === String(id)
+                String(item.id)
+                === String(id)
         );
+
+    /*
+       المنتجات الآن غير محدودة الكمية
+       إذا كان المنتج محددًا كـ unlimited.
+    */
 
     if(
         product.type === "physical" &&
+        !isUnlimited(product) &&
         Number(product.quantity)
         <= Number(item?.qty || 0)
     ){
@@ -1293,6 +1741,8 @@ function addToCart(id){
     openCart();
 
 }
+
+/* CHANGE QUANTITY */
 
 function removeItem(id){
 
@@ -1341,8 +1791,14 @@ function changeQty(id,difference){
 
     }
 
+    /*
+       إذا كان المنتج غير محدود،
+       لا يوجد حد أعلى للكمية.
+    */
+
     if(
         product.type === "physical" &&
+        !isUnlimited(product) &&
         quantity >
         Number(product.quantity)
     ){
@@ -1358,6 +1814,8 @@ function changeQty(id,difference){
     renderCart();
 
 }
+
+/* SUMMARY */
 
 function cartSummary(){
 
@@ -1430,6 +1888,8 @@ function cartSummary(){
 
 }
 
+/* CART */
+
 function renderCart(){
 
     const box =
@@ -1477,13 +1937,20 @@ function renderCart(){
 
             <div class="cart-item">
 
-                <div>
+                <div style="flex:1">
 
                     <b>
-                        ${escapeHtml(product.name)}
+                        ${escapeHtml(
+                            product.name
+                        )}
                     </b>
 
-                    <div style="color:#777">
+                    <div
+                        style="
+                            color:#777;
+                            margin-top:4px
+                        "
+                    >
                         ${money(product.price)}
                         ×
                         ${item.qty}
@@ -1649,6 +2116,8 @@ function closeCart(){
         .classList.remove("open");
 
 }
+
+/* CHECKOUT */
 
 function openCheckout(){
 
@@ -1858,10 +2327,17 @@ function toggleAddress(){
 
 function changePaymentMethod(){
 
-    const payment =
+    const selected =
         document.querySelector(
             'input[name="pay"]:checked'
-        ).value;
+        );
+
+    if(!selected){
+        return;
+    }
+
+    const payment =
+        selected.value;
 
     const area =
         document.getElementById(
@@ -1986,6 +2462,8 @@ function changePaymentMethod(){
 
 }
 
+/* CUSTOMER */
+
 function getCustomerData(){
 
     const name =
@@ -2048,6 +2526,8 @@ function getCustomerData(){
 
 }
 
+/* ORDER NUMBER */
+
 function generateOrderNo(){
 
     return (
@@ -2059,6 +2539,8 @@ function generateOrderNo(){
     );
 
 }
+
+/* BUILD ORDER */
 
 function buildOrder(customer,payment){
 
@@ -2156,6 +2638,8 @@ function buildOrder(customer,payment){
 
 }
 
+/* SAVE ORDER */
+
 function saveCompletedOrder(order){
 
     const orders =
@@ -2172,6 +2656,14 @@ function saveCompletedOrder(order){
         JSON.stringify(orders)
     );
 
+    /*
+       خصم المخزون فقط للمنتجات
+       التي لها كمية محددة.
+
+       المنتجات غير المحدودة
+       لن يتم خصمها.
+    */
+
     cart.forEach(item=>{
 
         const product =
@@ -2183,7 +2675,8 @@ function saveCompletedOrder(order){
 
         if(
             product &&
-            product.type === "physical"
+            product.type === "physical" &&
+            !isUnlimited(product)
         ){
 
             product.quantity =
@@ -2269,7 +2762,24 @@ function startMoyasarPayment(){
             "moyasar-form"
         );
 
+    if(!form){
+        return;
+    }
+
     form.innerHTML = "";
+
+    if(
+        typeof Moyasar ===
+        "undefined"
+    ){
+
+        alert(
+            "تعذر تحميل نظام الدفع."
+        );
+
+        return;
+
+    }
 
     Moyasar.init({
 
@@ -2329,14 +2839,6 @@ function handleMoyasarSuccess(payment){
         return;
     }
 
-    /*
-       مهم:
-       في النسخة الإنتاجية يجب إرسال
-       payment.id إلى السيرفر والتحقق من:
-       amount + currency + status
-       قبل إنشاء الطلب.
-    */
-
     const order =
         buildOrder(
             currentOrderData.customer,
@@ -2382,9 +2884,7 @@ function loadPayPal(){
 
     }
 
-    if(
-        window.paypal
-    ){
+    if(window.paypal){
 
         renderPayPalButtons();
 
@@ -2475,15 +2975,6 @@ function renderPayPalButtons(){
                     summary
                 };
 
-                /*
-                  هذا المسار يحتاج Backend حقيقي:
-                  /api/paypal/create-order
-
-                  السيرفر هو الذي ينشئ
-                  PayPal Order ويحافظ على
-                  Client Secret.
-                */
-
                 const response =
                     await fetch(
                         "/api/paypal/create-order",
@@ -2526,11 +3017,6 @@ function renderPayPalButtons(){
 
         onApprove:
             async function(data){
-
-                /*
-                  السيرفر يقوم بعملية capture
-                  والتحقق من نجاح الدفع.
-                */
 
                 const response =
                     await fetch(
@@ -2665,7 +3151,9 @@ function showOrderSuccess(order){
             </p>
 
             <div class="order-number">
-                ${escapeHtml(order.orderNumber)}
+                ${escapeHtml(
+                    order.orderNumber
+                )}
             </div>
 
             <div class="notice">
@@ -2766,6 +3254,23 @@ function showOrderSuccess(order){
                 متابعة الطلب
             </button>
 
+            <a
+                class="whatsapp-btn"
+                style="
+                    width:100%;
+                    justify-content:center;
+                    margin-top:10px
+                "
+                href="https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+                    "السلام عليكم، هذا رقم طلبي في NEXO STORE: " +
+                    order.orderNumber
+                )}"
+                target="_blank"
+                rel="noopener"
+            >
+                تواصل معنا عن الطلب عبر واتساب
+            </a>
+
         </div>
 
     `;
@@ -2861,7 +3366,9 @@ function trackOrder(){
         <div class="status-card">
 
             <h3>
-                طلب #${escapeHtml(order.orderNumber)}
+                طلب #${escapeHtml(
+                    order.orderNumber
+                )}
             </h3>
 
             <div class="status-pill">
@@ -2893,6 +3400,8 @@ function trackOrder(){
 
 }
 
+/* CLOSE CHECKOUT */
+
 function closeCheckout(){
 
     document
@@ -2906,6 +3415,8 @@ function closeCheckout(){
     currentOrderData = null;
 
 }
+
+/* INIT */
 
 function init(){
 
@@ -2923,6 +3434,13 @@ function init(){
             ) || "[]"
         );
 
+    cart =
+        JSON.parse(
+            localStorage.getItem(
+                K.cart
+            ) || "[]"
+        );
+
     document.getElementById(
         "heroText"
     ).textContent =
@@ -2931,18 +3449,23 @@ function init(){
 
     document.getElementById(
         "footer"
-    ).innerHTML =
+    ).innerHTML = `
 
-        `© ${new Date().getFullYear()}
-        NEXO STORE
-        ${
-            settings.contact
-            ?
-            " — " +
-            escapeHtml(settings.contact)
-            :
-            ""
-        }`;
+        <div>
+            © ${new Date().getFullYear()}
+            NEXO STORE
+        </div>
+
+        <a
+            class="whatsapp-btn footer-whatsapp"
+            href="https://wa.me/${WHATSAPP_NUMBER}"
+            target="_blank"
+            rel="noopener"
+        >
+            💬 تواصل معنا على واتساب
+        </a>
+
+    `;
 
     renderProducts();
 
