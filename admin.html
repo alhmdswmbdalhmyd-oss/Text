@@ -31,10 +31,7 @@ body{
   color:var(--text);
 }
 
-button,
-input,
-select,
-textarea{
+button,input,select,textarea{
   font:inherit;
 }
 
@@ -46,8 +43,6 @@ button{
 .hidden{
   display:none!important;
 }
-
-/* LOGIN */
 
 .login-page{
   min-height:100vh;
@@ -155,8 +150,6 @@ textarea{
   background:#eee;
   color:#222;
 }
-
-/* APP */
 
 .topbar{
   height:70px;
@@ -294,8 +287,6 @@ textarea{
   margin-top:15px;
 }
 
-/* TABLE */
-
 .table-wrap{
   overflow:auto;
 }
@@ -306,8 +297,7 @@ table{
   border-collapse:collapse;
 }
 
-th,
-td{
+th,td{
   padding:12px 10px;
   border-bottom:1px solid #eee;
   text-align:right;
@@ -345,8 +335,6 @@ th{
   color:#333;
 }
 
-/* IMAGE */
-
 .preview{
   width:90px;
   height:90px;
@@ -355,8 +343,6 @@ th{
   margin-top:10px;
   background:#eee;
 }
-
-/* SWITCH */
 
 .switch-row{
   display:flex;
@@ -406,8 +392,6 @@ th{
   transform:translateX(24px);
 }
 
-/* BANK */
-
 .bank-preview{
   background:var(--secondary);
   color:#fff;
@@ -437,8 +421,6 @@ th{
   margin-bottom:18px;
 }
 
-/* MODAL */
-
 .modal{
   position:fixed;
   inset:0;
@@ -467,8 +449,6 @@ th{
   margin:15px auto;
   border-radius:15px;
 }
-
-/* RESPONSIVE */
 
 @media(max-width:900px){
 
@@ -521,7 +501,6 @@ th{
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginPage" class="login-page">
 
   <div class="login-box">
@@ -562,8 +541,6 @@ th{
 
 </div>
 
-
-<!-- APP -->
 <div id="app" class="hidden">
 
 <header class="topbar">
@@ -584,10 +561,8 @@ th{
 
 </header>
 
-
 <div class="layout">
 
-<!-- SIDEBAR -->
 <aside id="sidebar" class="sidebar">
 
   <button class="nav-btn active"
@@ -632,11 +607,8 @@ th{
 
 </aside>
 
-
 <main class="content">
 
-
-<!-- DASHBOARD -->
 <section id="dashboard" class="page active">
 
 <h1 class="page-title">
@@ -646,55 +618,32 @@ th{
 <div class="stats">
 
   <div class="stat">
-    <div class="stat-title">
-      إجمالي المبيعات
-    </div>
-    <div id="statSales"
-         class="stat-value">
-      0
-    </div>
+    <div class="stat-title">إجمالي المبيعات</div>
+    <div id="statSales" class="stat-value">0</div>
   </div>
 
   <div class="stat">
-    <div class="stat-title">
-      صافي الأرباح
-    </div>
-    <div id="statProfit"
-         class="stat-value">
-      0
-    </div>
+    <div class="stat-title">صافي الأرباح</div>
+    <div id="statProfit" class="stat-value">0</div>
   </div>
 
   <div class="stat">
-    <div class="stat-title">
-      الطلبات
-    </div>
-    <div id="statOrders"
-         class="stat-value">
-      0
-    </div>
+    <div class="stat-title">الطلبات</div>
+    <div id="statOrders" class="stat-value">0</div>
   </div>
 
   <div class="stat">
-    <div class="stat-title">
-      مخزون منخفض
-    </div>
-    <div id="statLow"
-         class="stat-value">
-      0
-    </div>
+    <div class="stat-title">مخزون منخفض</div>
+    <div id="statLow" class="stat-value">0</div>
   </div>
 
 </div>
-
 
 <div class="grid">
 
 <div class="card">
 
-<h3>
-  حالة التحويل البنكي
-</h3>
+<h3>حالة التحويل البنكي</h3>
 
 <p id="bankStatusDashboard">
   غير مفعل
@@ -702,12 +651,9 @@ th{
 
 </div>
 
-
 <div class="card">
 
-<h3>
-  معلومات سريعة
-</h3>
+<h3>معلومات سريعة</h3>
 
 <p>
   يمكنك إدارة المنتجات والطلبات والحسابات
@@ -720,14 +666,11 @@ th{
 
 </section>
 
-
-<!-- PRODUCTS -->
 <section id="products" class="page">
 
 <h1 class="page-title">
   المنتجات
 </h1>
-
 
 <div class="card">
 
@@ -736,7 +679,6 @@ th{
 </h3>
 
 <div class="form-grid">
-
 
 <div class="field">
 
@@ -748,7 +690,6 @@ th{
        placeholder="اسم المنتج">
 
 </div>
-
 
 <div class="field">
 
@@ -771,7 +712,6 @@ th{
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -784,7 +724,6 @@ th{
        placeholder="0">
 
 </div>
-
 
 <div id="costField"
      class="field">
@@ -800,7 +739,6 @@ th{
 
 </div>
 
-
 <div id="quantityField"
      class="field">
 
@@ -814,7 +752,6 @@ th{
        placeholder="0">
 
 </div>
-
 
 <div id="lowField"
      class="field">
@@ -830,7 +767,6 @@ th{
 
 </div>
 
-
 <div id="digitalLinkField"
      class="field hidden">
 
@@ -842,7 +778,6 @@ th{
        placeholder="رابط التحميل أو المنتج">
 
 </div>
-
 
 <div class="field">
 
@@ -860,7 +795,6 @@ th{
 
 </div>
 
-
 <div class="field full">
 
 <label>
@@ -873,13 +807,12 @@ th{
 
 </div>
 
-
 </div>
-
 
 <div class="actions">
 
 <button class="btn btn-primary"
+        type="button"
         onclick="addProduct()">
   إضافة المنتج
 </button>
@@ -887,7 +820,6 @@ th{
 </div>
 
 </div>
-
 
 <div class="card">
 
@@ -923,8 +855,6 @@ th{
 
 </section>
 
-
-<!-- ORDERS -->
 <section id="orders" class="page">
 
 <h1 class="page-title">
@@ -961,8 +891,6 @@ th{
 
 </section>
 
-
-<!-- ACCOUNTING -->
 <section id="accounting" class="page">
 
 <h1 class="page-title">
@@ -972,43 +900,23 @@ th{
 <div class="stats">
 
 <div class="stat">
-<div class="stat-title">
-المبيعات
-</div>
-<div id="accSales"
-     class="stat-value">
-0
-</div>
+<div class="stat-title">المبيعات</div>
+<div id="accSales" class="stat-value">0</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">
-تكلفة المنتجات
-</div>
-<div id="accCosts"
-     class="stat-value">
-0
-</div>
+<div class="stat-title">تكلفة المنتجات</div>
+<div id="accCosts" class="stat-value">0</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">
-المصروفات
-</div>
-<div id="accExpenses"
-     class="stat-value">
-0
-</div>
+<div class="stat-title">المصروفات</div>
+<div id="accExpenses" class="stat-value">0</div>
 </div>
 
 <div class="stat">
-<div class="stat-title">
-صافي الربح
-</div>
-<div id="accProfit"
-     class="stat-value">
-0
-</div>
+<div class="stat-title">صافي الربح</div>
+<div id="accProfit" class="stat-value">0</div>
 </div>
 
 </div>
@@ -1027,14 +935,11 @@ th{
 
 </section>
 
-
-<!-- EXPENSES -->
 <section id="expenses" class="page">
 
 <h1 class="page-title">
   المصروفات
 </h1>
-
 
 <div class="card">
 
@@ -1077,7 +982,6 @@ th{
 
 </div>
 
-
 <div class="card">
 
 <h3>
@@ -1109,19 +1013,15 @@ th{
 
 </section>
 
-
-<!-- BANK -->
 <section id="bank" class="page">
 
 <h1 class="page-title">
   التحويل البنكي
 </h1>
 
-
 <div class="notice">
   عدّل بيانات البنك من هنا، وهذه البيانات هي التي سيستخدمها المتجر عند اختيار العميل التحويل البنكي.
 </div>
-
 
 <div class="card">
 
@@ -1139,7 +1039,6 @@ th{
 
 </div>
 
-
 <label class="switch">
 
 <input id="bankEnabled"
@@ -1151,9 +1050,7 @@ th{
 
 </div>
 
-
 <div class="form-grid">
-
 
 <div class="field">
 
@@ -1166,7 +1063,6 @@ th{
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1177,7 +1073,6 @@ th{
        placeholder="اسم صاحب الحساب">
 
 </div>
-
 
 <div class="field">
 
@@ -1191,7 +1086,6 @@ th{
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1202,7 +1096,6 @@ IBAN
        placeholder="SA...">
 
 </div>
-
 
 <div class="field full">
 
@@ -1218,7 +1111,6 @@ IBAN
 
 </div>
 
-
 <div class="actions">
 
 <button class="btn btn-primary"
@@ -1229,7 +1121,6 @@ IBAN
 </div>
 
 </div>
-
 
 <div class="card">
 
@@ -1245,14 +1136,11 @@ IBAN
 
 </section>
 
-
-<!-- SETTINGS -->
 <section id="settings" class="page">
 
 <h1 class="page-title">
   إعدادات المتجر
 </h1>
-
 
 <div class="card">
 
@@ -1261,7 +1149,6 @@ IBAN
 </h3>
 
 <div class="form-grid">
-
 
 <div class="field">
 
@@ -1273,7 +1160,6 @@ IBAN
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1283,7 +1169,6 @@ IBAN
 <input id="setCurrency">
 
 </div>
-
 
 <div class="field">
 
@@ -1295,7 +1180,6 @@ IBAN
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1305,7 +1189,6 @@ IBAN
 <input id="setPhone">
 
 </div>
-
 
 <div class="field">
 
@@ -1317,7 +1200,6 @@ IBAN
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1327,7 +1209,6 @@ IBAN
 <input id="setAddress">
 
 </div>
-
 
 <div class="field">
 
@@ -1340,7 +1221,6 @@ IBAN
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1352,7 +1232,6 @@ IBAN
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1363,7 +1242,6 @@ IBAN
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -1373,7 +1251,6 @@ IBAN
 <input id="setTaxNumber">
 
 </div>
-
 
 <div class="field full">
 
@@ -1387,14 +1264,12 @@ IBAN
 
 </div>
 
-
 <button class="btn btn-primary"
         onclick="saveSettings()">
 حفظ الإعدادات
 </button>
 
 </div>
-
 
 <div class="card">
 
@@ -1413,7 +1288,6 @@ IBAN
 <input id="setAdminUser">
 
 </div>
-
 
 <div class="field">
 
@@ -1437,14 +1311,11 @@ IBAN
 
 </section>
 
-
-<!-- BACKUP -->
 <section id="backup" class="page">
 
 <h1 class="page-title">
   النسخ الاحتياطي
 </h1>
-
 
 <div class="card">
 
@@ -1456,14 +1327,12 @@ IBAN
 سيتم حفظ المنتجات والطلبات والمصروفات والإعدادات وبيانات التحويل البنكي.
 </p>
 
-
 <div class="actions">
 
 <button class="btn btn-primary"
         onclick="exportBackup()">
 تصدير نسخة احتياطية
 </button>
-
 
 <label class="btn btn-light">
 
@@ -1476,7 +1345,6 @@ IBAN
 
 </label>
 
-
 <button class="btn btn-danger"
         onclick="deleteAllData()">
 حذف كل البيانات
@@ -1488,13 +1356,10 @@ IBAN
 
 </section>
 
-
 </main>
 </div>
 </div>
 
-
-<!-- RECEIPT MODAL -->
 <div id="receiptModal"
      class="modal hidden">
 
@@ -1510,7 +1375,6 @@ IBAN
 
 <img id="receiptImage"
      class="receipt-img hidden">
-
 
 <div class="actions">
 
@@ -1535,12 +1399,7 @@ IBAN
 
 </div>
 
-
 <script>
-
-/* =========================
-   SETTINGS
-========================= */
 
 const DEFAULT_SETTINGS={
 
@@ -1577,35 +1436,25 @@ const DEFAULT_SETTINGS={
 
 };
 
-
 let settings=
 JSON.parse(localStorage.getItem("nexo_settings"))
 ||
 JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
 
-
 let products=
 JSON.parse(localStorage.getItem("nexo_products"))
 ||[];
-
 
 let orders=
 JSON.parse(localStorage.getItem("nexo_orders"))
 ||[];
 
-
 let expenses=
 JSON.parse(localStorage.getItem("nexo_expenses"))
 ||[];
 
-
 let selectedProductImage="";
 let currentReceiptOrderId=null;
-
-
-/* =========================
-   HELPERS
-========================= */
 
 function saveAll(){
 
@@ -1631,7 +1480,6 @@ JSON.stringify(expenses)
 
 }
 
-
 function money(value){
 
 return Number(value||0)
@@ -1640,7 +1488,6 @@ return Number(value||0)
 +(settings.currency||"ر.س");
 
 }
-
 
 function safe(value){
 
@@ -1652,7 +1499,6 @@ return String(value??"")
 .replace(/'/g,"&#039;");
 
 }
-
 
 function ensureBank(){
 
@@ -1671,11 +1517,6 @@ instructions:
 }
 
 }
-
-
-/* =========================
-   LOGIN
-========================= */
 
 function login(){
 
@@ -1715,7 +1556,6 @@ document.getElementById("loginError")
 
 }
 
-
 function logout(){
 
 localStorage.removeItem(
@@ -1726,18 +1566,12 @@ location.reload();
 
 }
 
-
-/* =========================
-   NAVIGATION
-========================= */
-
 function toggleSidebar(){
 
 document.getElementById("sidebar")
 .classList.toggle("open");
 
 }
-
 
 function showPage(id,button){
 
@@ -1762,11 +1596,6 @@ document.getElementById("sidebar")
 
 }
 
-
-/* =========================
-   PRODUCTS
-========================= */
-
 function toggleProductType(){
 
 const type=
@@ -1789,7 +1618,6 @@ document.getElementById("digitalLinkField")
 .classList.toggle("hidden",physical);
 
 }
-
 
 function previewProductImage(event){
 
@@ -1818,96 +1646,146 @@ reader.readAsDataURL(file);
 
 }
 
+/* التغيير الجديد فقط: إصلاح إضافة المنتج */
 
 function addProduct(){
 
-const name=
-document.getElementById("productName")
-.value.trim();
+  try{
 
-const type=
-document.getElementById("productType")
-.value;
+    const name =
+      document.getElementById("productName")
+      .value.trim();
 
-const price=
-Number(
-document.getElementById("productPrice")
-.value||0
-);
+    const type =
+      document.getElementById("productType")
+      .value;
 
-if(!name){
+    const price =
+      Number(
+        document.getElementById("productPrice")
+        .value || 0
+      );
 
-alert("اكتب اسم المنتج.");
+    const cost =
+      Number(
+        document.getElementById("productCost")
+        .value || 0
+      );
 
-return;
+    const quantity =
+      Number(
+        document.getElementById("productQuantity")
+        .value || 0
+      );
+
+    const low =
+      Number(
+        document.getElementById("productLow")
+        .value || 0
+      );
+
+    const digitalLink =
+      document.getElementById("productDigitalLink")
+      .value.trim();
+
+    const description =
+      document.getElementById("productDescription")
+      .value.trim();
+
+    if(!name){
+
+      alert("اكتب اسم المنتج أولاً.");
+
+      document.getElementById("productName")
+      .focus();
+
+      return;
+    }
+
+    if(price < 0){
+
+      alert("سعر المنتج غير صحيح.");
+
+      return;
+    }
+
+    if(!Array.isArray(products)){
+
+      products=[];
+
+    }
+
+    const product={
+
+      id:"NEXO-"+Date.now(),
+
+      name:name,
+
+      type:type,
+
+      price:price,
+
+      cost:
+        type==="physical"
+        ?cost
+        :0,
+
+      quantity:
+        type==="physical"
+        ?quantity
+        :0,
+
+      low:
+        type==="physical"
+        ?low
+        :0,
+
+      digitalLink:
+        type==="digital"
+        ?digitalLink
+        :"",
+
+      image:selectedProductImage || "",
+
+      description:description,
+
+      createdAt:new Date().toISOString()
+
+    };
+
+    products.push(product);
+
+    localStorage.setItem(
+      "nexo_products",
+      JSON.stringify(products)
+    );
+
+    clearProductForm();
+
+    renderProducts();
+
+    updateDashboard();
+
+    calculateAccounting();
+
+    alert("✅ تم إضافة المنتج بنجاح.");
+
+  }catch(error){
+
+    console.error(
+      "NEXO STORE ERROR:",
+      error
+    );
+
+    alert(
+      "حدث خطأ أثناء إضافة المنتج.\n\n"+
+      "الخطأ: "+
+      error.message
+    );
+
+  }
 
 }
-
-
-const product={
-
-id:Date.now().toString(),
-
-name:name,
-
-type:type,
-
-price:price,
-
-cost:
-type==="physical"
-?Number(
-document.getElementById("productCost").value||0
-)
-:0,
-
-quantity:
-type==="physical"
-?Number(
-document.getElementById("productQuantity").value||0
-)
-:0,
-
-low:
-type==="physical"
-?Number(
-document.getElementById("productLow").value||0
-)
-:0,
-
-digitalLink:
-type==="digital"
-?document.getElementById("productDigitalLink")
-.value.trim()
-:"",
-
-image:selectedProductImage,
-
-description:
-document.getElementById("productDescription")
-.value.trim(),
-
-createdAt:new Date().toISOString()
-
-};
-
-
-products.push(product);
-
-saveAll();
-
-clearProductForm();
-
-renderProducts();
-
-updateDashboard();
-
-calculateAccounting();
-
-alert("تمت إضافة المنتج.");
-
-}
-
 
 function clearProductForm(){
 
@@ -1927,7 +1805,6 @@ document.getElementById("productPreview")
 
 }
 
-
 function deleteProduct(id){
 
 if(!confirm("هل تريد حذف المنتج؟"))
@@ -1946,7 +1823,6 @@ calculateAccounting();
 
 }
 
-
 function renderProducts(){
 
 const tbody=
@@ -1962,7 +1838,6 @@ tbody.innerHTML=
 return;
 
 }
-
 
 tbody.innerHTML=
 products.map(p=>{
@@ -2001,7 +1876,6 @@ status=
 </span>`;
 
 }
-
 
 return`
 
@@ -2061,11 +1935,6 @@ onclick="deleteProduct('${p.id}')">
 
 }
 
-
-/* =========================
-   ORDERS
-========================= */
-
 function renderOrders(){
 
 const tbody=
@@ -2081,7 +1950,6 @@ tbody.innerHTML=
 return;
 
 }
-
 
 tbody.innerHTML=
 orders.map(order=>{
@@ -2109,7 +1977,6 @@ paymentClass="badge-warning";
 
 }
 
-
 let receiptButton="";
 
 if(
@@ -2124,7 +1991,6 @@ onclick="viewReceipt('${order.id}')">
 </button>`;
 
 }
-
 
 return`
 
@@ -2222,7 +2088,6 @@ onclick="deleteOrder('${order.id}')">
 
 }
 
-
 function changeOrderStatus(id,status){
 
 const order=
@@ -2237,7 +2102,6 @@ saveAll();
 calculateAccounting();
 
 }
-
 
 function deleteOrder(id){
 
@@ -2256,11 +2120,6 @@ calculateAccounting();
 updateDashboard();
 
 }
-
-
-/* =========================
-   BANK
-========================= */
 
 function loadBankSettings(){
 
@@ -2293,7 +2152,6 @@ settings.bank.instructions||"";
 renderBankPreview();
 
 }
-
 
 function saveBankSettings(){
 
@@ -2335,7 +2193,6 @@ alert("تم حفظ بيانات التحويل البنكي.");
 
 }
 
-
 function renderBankPreview(){
 
 ensureBank();
@@ -2355,7 +2212,6 @@ box.innerHTML=
 return;
 
 }
-
 
 box.innerHTML=`
 
@@ -2386,11 +2242,6 @@ ${safe(b.instructions||"لا توجد تعليمات")}
 `;
 
 }
-
-
-/* =========================
-   RECEIPT
-========================= */
 
 function viewReceipt(orderId){
 
@@ -2449,7 +2300,6 @@ document.getElementById("receiptModal")
 
 }
 
-
 function closeReceipt(){
 
 currentReceiptOrderId=null;
@@ -2458,7 +2308,6 @@ document.getElementById("receiptModal")
 .classList.add("hidden");
 
 }
-
 
 function verifyPayment(){
 
@@ -2484,7 +2333,6 @@ alert("تم اعتماد الدفع.");
 
 }
 
-
 function rejectPayment(){
 
 const order=
@@ -2509,11 +2357,6 @@ alert("تم رفض إثبات التحويل.");
 
 }
 
-
-/* =========================
-   EXPENSES
-========================= */
-
 function addExpense(){
 
 const name=
@@ -2534,7 +2377,6 @@ return;
 
 }
 
-
 expenses.push({
 
 id:Date.now().toString(),
@@ -2547,7 +2389,6 @@ date:new Date().toISOString()
 
 });
 
-
 saveAll();
 
 document.getElementById("expenseName").value="";
@@ -2558,7 +2399,6 @@ renderExpenses();
 calculateAccounting();
 
 }
-
 
 function renderExpenses(){
 
@@ -2575,7 +2415,6 @@ tbody.innerHTML=
 return;
 
 }
-
 
 tbody.innerHTML=
 expenses.map(e=>`
@@ -2610,7 +2449,6 @@ onclick="deleteExpense('${e.id}')">
 
 }
 
-
 function deleteExpense(id){
 
 expenses=
@@ -2623,11 +2461,6 @@ renderExpenses();
 calculateAccounting();
 
 }
-
-
-/* =========================
-   ACCOUNTING
-========================= */
 
 function calculateAccounting(){
 
@@ -2646,7 +2479,6 @@ order.paid!==true
 return;
 
 sales+=Number(order.total||0);
-
 
 if(Array.isArray(order.items)){
 
@@ -2677,7 +2509,6 @@ costs+=cost*qty;
 
 });
 
-
 const expenseTotal=
 expenses.reduce(
 (sum,e)=>
@@ -2685,10 +2516,8 @@ sum+Number(e.amount||0),
 0
 );
 
-
 const profit=
 sales-costs-expenseTotal;
-
 
 document.getElementById("accSales")
 .textContent=money(sales);
@@ -2710,11 +2539,6 @@ document.getElementById("statProfit")
 
 }
 
-
-/* =========================
-   DASHBOARD
-========================= */
-
 function updateDashboard(){
 
 const low=
@@ -2725,13 +2549,11 @@ Number(p.low)>0 &&
 Number(p.quantity)<=Number(p.low)
 ).length;
 
-
 document.getElementById("statLow")
 .textContent=low;
 
 document.getElementById("statOrders")
 .textContent=orders.length;
-
 
 ensureBank();
 
@@ -2746,11 +2568,6 @@ settings.bank.enabled
 </span>`;
 
 }
-
-
-/* =========================
-   SETTINGS
-========================= */
 
 function loadSettings(){
 
@@ -2793,7 +2610,6 @@ document.getElementById("setAdminUser")
 applyTheme();
 
 }
-
 
 function saveSettings(){
 
@@ -2851,7 +2667,6 @@ alert("تم حفظ إعدادات المتجر.");
 
 }
 
-
 function saveAdminLogin(){
 
 const user=
@@ -2882,7 +2697,6 @@ alert("تم تغيير بيانات الدخول.");
 
 }
 
-
 function applyTheme(){
 
 document.documentElement
@@ -2901,11 +2715,6 @@ settings.secondary||"#171326"
 
 }
 
-
-/* =========================
-   INVOICE
-========================= */
-
 function printInvoice(orderId){
 
 const order=
@@ -2914,7 +2723,6 @@ orders.find(o=>o.id===orderId);
 if(!order)return;
 
 let itemsHTML="";
-
 
 if(Array.isArray(order.items)){
 
@@ -2948,14 +2756,12 @@ Number(item.quantity||1)
 
 }
 
-
 const win=
 window.open(
 "",
 "_blank",
 "width=900,height=700"
 );
-
 
 if(!win){
 
@@ -2966,7 +2772,6 @@ alert(
 return;
 
 }
-
 
 win.document.write(`
 
@@ -3071,7 +2876,6 @@ order.date
 
 </div>
 
-
 <div>
 
 <strong>
@@ -3086,28 +2890,16 @@ order.customer||
 
 </div>
 
-
 <table>
 
 <thead>
 
 <tr>
 
-<th>
-المنتج
-</th>
-
-<th>
-الكمية
-</th>
-
-<th>
-السعر
-</th>
-
-<th>
-الإجمالي
-</th>
+<th>المنتج</th>
+<th>الكمية</th>
+<th>السعر</th>
+<th>الإجمالي</th>
 
 </tr>
 
@@ -3121,14 +2913,12 @@ ${itemsHTML}
 
 </table>
 
-
 <div class="total">
 
 الإجمالي:
 ${money(order.total)}
 
 </div>
-
 
 ${
 settings.taxNumber
@@ -3141,13 +2931,11 @@ ${safe(settings.taxNumber)}
 :""
 }
 
-
 <div class="footer">
 
 ${safe(settings.invoiceFooter)}
 
 </div>
-
 
 <script>
 
@@ -3169,27 +2957,17 @@ win.document.close();
 
 }
 
-
-/* =========================
-   BACKUP
-========================= */
-
 function exportBackup(){
 
 const data={
 
 products:products,
-
 orders:orders,
-
 expenses:expenses,
-
 settings:settings,
-
 exportedAt:new Date().toISOString()
 
 };
-
 
 const blob=
 new Blob(
@@ -3200,7 +2978,6 @@ JSON.stringify(data,null,2)
 type:"application/json"
 }
 );
-
 
 const url=
 URL.createObjectURL(blob);
@@ -3218,7 +2995,6 @@ a.click();
 URL.revokeObjectURL(url);
 
 }
-
 
 function importBackup(event){
 
@@ -3271,7 +3047,6 @@ reader.readAsText(file);
 
 }
 
-
 function deleteAllData(){
 
 if(
@@ -3293,11 +3068,6 @@ location.reload();
 
 }
 
-
-/* =========================
-   REFRESH
-========================= */
-
 function refreshAll(){
 
 ensureBank();
@@ -3317,11 +3087,6 @@ calculateAccounting();
 updateDashboard();
 
 }
-
-
-/* =========================
-   START
-========================= */
 
 (function(){
 
