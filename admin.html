@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NEXO STORE — الإدارة</title>
+<title>NEXO STORE — لوحة الإدارة</title>
 
 <style>
 :root{
@@ -244,7 +244,8 @@ th{background:#fafafa}
 
 <div class="card">
 
-<h3>إضافة منتج</h3>
+<h3 id="productFormTitle">إضافة منتج جديد</h3>
+<input type="hidden" id="editingProductId" value="">
 
 <div class="form-grid">
 
@@ -300,7 +301,8 @@ th{background:#fafafa}
 </div>
 
 <div class="actions">
-<button class="btn btn-primary" type="button" onclick="addProduct()">إضافة المنتج</button>
+<button id="productSubmitBtn" class="btn btn-primary" type="button" onclick="saveProductData()">إضافة المنتج</button>
+<button id="productCancelBtn" class="btn btn-light hidden" type="button" onclick="cancelEditProduct()">إلغاء التعديل</button>
 </div>
 
 </div>
@@ -322,7 +324,7 @@ th{background:#fafafa}
 <th>السعر</th>
 <th>المخزون</th>
 <th>الحالة</th>
-<th>إجراء</th>
+<th>إجراءات</th>
 </tr>
 </thead>
 
@@ -675,9 +677,7 @@ th{background:#fafafa}
 <script>
 
 /* =========================================================
-   NEXO STORE
-   تخزين المنتجات والصور في IndexedDB
-   وليس localStorage
+   NEXO STORE — جافاسكريبت المحسن مع زر التعديل
    ========================================================= */
 
 const DEFAULT_SETTINGS={
@@ -707,2293 +707,931 @@ const DEFAULT_SETTINGS={
   }
 };
 
-let settings=
-JSON.parse(localStorage.getItem("nexo_settings"))
-||
-JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+let settings = JSON.parse(localStorage.getItem("nexo_settings")) || JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+let products = JSON.parse(localStorage.getItem("nexo_products")) || [];
+let orders = JSON.parse(localStorage.getItem("nexo_orders")) || [];
+let expenses = JSON.parse(localStorage.getItem("nexo_expenses")) || [];
 
-let products=
-JSON.parse(localStorage.getItem("nexo_products"))
-||[];
+let selectedProductImage = null;
+let currentReceiptOrderId = null;
 
-let orders=
-JSON.parse(localStorage.getItem("nexo_orders"))
-||[];
+const DB_NAME = "NEXO_STORE_DATABASE";
+const DB_VERSION = 1;
+const PRODUCT_STORE = "products";
+const IMAGE_STORE = "product_images";
 
-let expenses=
-JSON.parse(localStorage.getItem("nexo_expenses"))
-||[];
-
-let selectedProductImage=null;
-let currentReceiptOrderId=null;
-
-const DB_NAME="NEXO_STORE_DATABASE";
-const DB_VERSION=1;
-const PRODUCT_STORE="products";
-const IMAGE_STORE="product_images";
-
-let db=null;
+let db = null;
 
 
 /* =========================================================
-   IndexedDB
+   IndexedDB إدارة قاعدة البيانات للصور
    ========================================================= */
 
 function openDatabase(){
-
-  return new Promise((resolve,reject)=>{
-
+  return new Promise((resolve, reject)=>{
     if(db){
       resolve(db);
       return;
     }
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-    const request=
-      indexedDB.open(DB_NAME,DB_VERSION);
-
-    request.onupgradeneeded=function(event){
-
-      const database=event.target.result;
-
+    request.onupgradeneeded = function(event){
+      const database = event.target.result;
       if(!database.objectStoreNames.contains(PRODUCT_STORE)){
-
-        database.createObjectStore(
-          PRODUCT_STORE,
-          {keyPath:"id"}
-        );
-
+        database.createObjectStore(PRODUCT_STORE, {keyPath:"id"});
       }
-
       if(!database.objectStoreNames.contains(IMAGE_STORE)){
-
-        database.createObjectStore(
-          IMAGE_STORE,
-          {keyPath:"productId"}
-        );
-
+        database.createObjectStore(IMAGE_STORE, {keyPath:"productId"});
       }
-
     };
 
-    request.onsuccess=function(event){
-
-      db=event.target.result;
-
+    request.onsuccess = function(event){
+      db = event.target.result;
       resolve(db);
-
     };
 
-    request.onerror=function(){
-
-      reject(
-        request.error ||
-        new Error("تعذر فتح قاعدة الصور.")
-      );
-
+    request.onerror = function(){
+      reject(request.error || new Error("تعذر فتح قاعدة بيانات الصور."));
     };
-
   });
-
 }
-
 
 async function dbPutProduct(product){
-
-  const database=
-    await openDatabase();
-
-  return new Promise((resolve,reject)=>{
-
-    const transaction=
-      database.transaction(
-        PRODUCT_STORE,
-        "readwrite"
-      );
-
-    transaction.objectStore(PRODUCT_STORE)
-      .put(product);
-
-    transaction.oncomplete=
-      ()=>resolve(true);
-
-    transaction.onerror=
-      ()=>reject(transaction.error);
-
+  const database = await openDatabase();
+  return new Promise((resolve, reject)=>{
+    const transaction = database.transaction(PRODUCT_STORE, "readwrite");
+    transaction.objectStore(PRODUCT_STORE).put(product);
+    transaction.oncomplete = ()=>resolve(true);
+    transaction.onerror = ()=>reject(transaction.error);
   });
-
 }
-
-
-async function dbGetProduct(id){
-
-  const database=
-    await openDatabase();
-
-  return new Promise((resolve,reject)=>{
-
-    const request=
-      database
-      .transaction(PRODUCT_STORE,"readonly")
-      .objectStore(PRODUCT_STORE)
-      .get(id);
-
-    request.onsuccess=
-      ()=>resolve(request.result);
-
-    request.onerror=
-      ()=>reject(request.error);
-
-  });
-
-}
-
 
 async function dbDeleteProduct(id){
-
-  const database=
-    await openDatabase();
-
-  return new Promise((resolve,reject)=>{
-
-    const transaction=
-      database.transaction(
-        [PRODUCT_STORE,IMAGE_STORE],
-        "readwrite"
-      );
-
-    transaction
-      .objectStore(PRODUCT_STORE)
-      .delete(id);
-
-    transaction
-      .objectStore(IMAGE_STORE)
-      .delete(id);
-
-    transaction.oncomplete=
-      ()=>resolve(true);
-
-    transaction.onerror=
-      ()=>reject(transaction.error);
-
+  const database = await openDatabase();
+  return new Promise((resolve, reject)=>{
+    const transaction = database.transaction([PRODUCT_STORE, IMAGE_STORE], "readwrite");
+    transaction.objectStore(PRODUCT_STORE).delete(id);
+    transaction.objectStore(IMAGE_STORE).delete(id);
+    transaction.oncomplete = ()=>resolve(true);
+    transaction.onerror = ()=>reject(transaction.error);
   });
-
 }
 
-
-async function dbPutImage(productId,blob){
-
-  const database=
-    await openDatabase();
-
-  return new Promise((resolve,reject)=>{
-
-    const transaction=
-      database.transaction(
-        IMAGE_STORE,
-        "readwrite"
-      );
-
-    transaction
-      .objectStore(IMAGE_STORE)
-      .put({
-        productId:productId,
-        blob:blob
-      });
-
-    transaction.oncomplete=
-      ()=>resolve(true);
-
-    transaction.onerror=
-      ()=>reject(transaction.error);
-
+async function dbPutImage(productId, blob){
+  const database = await openDatabase();
+  return new Promise((resolve, reject)=>{
+    const transaction = database.transaction(IMAGE_STORE, "readwrite");
+    transaction.objectStore(IMAGE_STORE).put({ productId: productId, blob: blob });
+    transaction.oncomplete = ()=>resolve(true);
+    transaction.onerror = ()=>reject(transaction.error);
   });
-
 }
-
 
 async function dbGetImage(productId){
-
-  const database=
-    await openDatabase();
-
-  return new Promise((resolve,reject)=>{
-
-    const request=
-      database
-      .transaction(IMAGE_STORE,"readonly")
-      .objectStore(IMAGE_STORE)
-      .get(productId);
-
-    request.onsuccess=
-      ()=>resolve(
-        request.result
-        ?request.result.blob
-        :null
-      );
-
-    request.onerror=
-      ()=>reject(request.error);
-
+  const database = await openDatabase();
+  return new Promise((resolve, reject)=>{
+    const request = database.transaction(IMAGE_STORE, "readonly").objectStore(IMAGE_STORE).get(productId);
+    request.onsuccess = ()=>resolve(request.result ? request.result.blob : null);
+    request.onerror = ()=>reject(request.error);
   });
-
-}
-
-
-async function dbDeleteImage(productId){
-
-  const database=
-    await openDatabase();
-
-  return new Promise((resolve,reject)=>{
-
-    const transaction=
-      database.transaction(
-        IMAGE_STORE,
-        "readwrite"
-      );
-
-    transaction
-      .objectStore(IMAGE_STORE)
-      .delete(productId);
-
-    transaction.oncomplete=
-      ()=>resolve(true);
-
-    transaction.onerror=
-      ()=>reject(transaction.error);
-
-  });
-
 }
 
 
 /* =========================================================
-   تحويل الصورة إلى WebP مضغوطة
+   ضغط الصور لتجنب أي مشاكل بالذاكرة
    ========================================================= */
 
-function compressImage(file,maxWidth=1600,quality=.82){
-
-  return new Promise((resolve,reject)=>{
-
-    if(!file){
-
-      resolve(null);
-      return;
-
-    }
-
+function compressImage(file, maxWidth=1200, quality=0.8){
+  return new Promise((resolve, reject)=>{
+    if(!file) { resolve(null); return; }
     if(!file.type.startsWith("image/")){
-
-      reject(
-        new Error("الملف ليس صورة.")
-      );
-
+      reject(new Error("الملف المرفق ليس صورة صحيحة."));
       return;
-
     }
 
-    const reader=
-      new FileReader();
+    const reader = new FileReader();
+    reader.onload = function(event){
+      const image = new Image();
+      image.onload = function(){
+        let width = image.width;
+        let height = image.height;
 
-    reader.onload=function(event){
-
-      const image=
-        new Image();
-
-      image.onload=function(){
-
-        let width=image.width;
-        let height=image.height;
-
-        if(width>maxWidth){
-
-          height=
-            Math.round(
-              height*maxWidth/width
-            );
-
-          width=maxWidth;
-
+        if(width > maxWidth){
+          height = Math.round(height * maxWidth / width);
+          width = maxWidth;
         }
 
-        const canvas=
-          document.createElement("canvas");
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(image, 0, 0, width, height);
 
-        canvas.width=width;
-        canvas.height=height;
-
-        const ctx=
-          canvas.getContext("2d");
-
-        ctx.fillStyle="#ffffff";
-
-        ctx.fillRect(
-          0,
-          0,
-          width,
-          height
-        );
-
-        ctx.drawImage(
-          image,
-          0,
-          0,
-          width,
-          height
-        );
-
-        canvas.toBlob(
-          function(blob){
-
-            if(!blob){
-
-              reject(
-                new Error(
-                  "تعذر ضغط الصورة."
-                )
-              );
-
-              return;
-
-            }
-
-            resolve(blob);
-
-          },
-          "image/webp",
-          quality
-        );
-
+        canvas.toBlob(function(blob){
+          if(!blob){
+            reject(new Error("فشل معالجة وضغط الصورة."));
+            return;
+          }
+          resolve(blob);
+        }, "image/webp", quality);
       };
-
-      image.onerror=function(){
-
-        reject(
-          new Error(
-            "تعذر قراءة الصورة."
-          )
-        );
-
-      };
-
-      image.src=event.target.result;
-
+      image.onerror = ()=>reject(new Error("تعذر قراءة بيانات الصورة."));
+      image.src = event.target.result;
     };
-
-    reader.onerror=function(){
-
-      reject(
-        new Error(
-          "تعذر قراءة ملف الصورة."
-        )
-      );
-
-    };
-
+    reader.onerror = ()=>reject(new Error("فشل قراءة ملف الصورة."));
     reader.readAsDataURL(file);
-
   });
-
 }
 
-
-/* =========================================================
-   معاينة الصورة
-   ========================================================= */
 
 async function previewProductImage(event){
-
-  const file=
-    event.target.files[0];
-
-  if(!file)return;
+  const file = event.target.files[0];
+  if(!file) return;
 
   try{
-
-    selectedProductImage=
-      await compressImage(
-        file,
-        1600,
-        .82
-      );
-
-    const url=
-      URL.createObjectURL(
-        selectedProductImage
-      );
-
-    const preview=
-      document.getElementById(
-        "productPreview"
-      );
-
-    preview.src=url;
-
-    preview.classList.remove(
-      "hidden"
-    );
-
+    selectedProductImage = await compressImage(file, 1200, 0.8);
+    const url = URL.createObjectURL(selectedProductImage);
+    const preview = document.getElementById("productPreview");
+    preview.src = url;
+    preview.classList.remove("hidden");
   }catch(error){
-
-    selectedProductImage=null;
-
-    event.target.value="";
-
-    alert(
-      "تعذر قراءة الصورة."
-    );
-
+    selectedProductImage = null;
+    event.target.value = "";
+    alert(error.message || "حدث خطأ أثناء معاينة الصورة.");
   }
-
 }
 
 
 /* =========================================================
-   حفظ البيانات الأساسية (تم تعديلها لتجنب امتلاء الـ LocalStorage)
+   حفظ البيانات الأساسية مع حماية الـ LocalStorage
    ========================================================= */
 
 function saveAll(){
-
   try{
-
-    localStorage.setItem(
-      "nexo_settings",
-      JSON.stringify(settings)
-    );
-
-    // حفظ الحد الأدنى فقط من بيانات المنتجات (بدون الصور أو البيانات الكبيرة) لتجنب تجاوز حد الـ Quota
-    localStorage.setItem(
-      "nexo_products",
-      JSON.stringify(
-        products.map(p=>({
-          id: p.id,
-          name: p.name,
-          type: p.type,
-          price: p.price,
-          cost: p.cost,
-          quantity: p.quantity,
-          low: p.low,
-          digitalLink: p.digitalLink,
-          description: p.description,
-          createdAt: p.createdAt,
-          image: ""
-        }))
-      )
-    );
-
-    localStorage.setItem(
-      "nexo_orders",
-      JSON.stringify(orders)
-    );
-
-    localStorage.setItem(
-      "nexo_expenses",
-      JSON.stringify(expenses)
-    );
-
+    localStorage.setItem("nexo_settings", JSON.stringify(settings));
+    localStorage.setItem("nexo_products", JSON.stringify(products.map(p => ({
+      id: p.id,
+      name: p.name,
+      type: p.type,
+      price: p.price,
+      cost: p.cost,
+      quantity: p.quantity,
+      low: p.low,
+      digitalLink: p.digitalLink,
+      description: p.description,
+      createdAt: p.createdAt,
+      image: ""
+    }))));
+    localStorage.setItem("nexo_orders", JSON.stringify(orders));
+    localStorage.setItem("nexo_expenses", JSON.stringify(expenses));
     return true;
-
   }catch(error){
-
-    console.error(error);
-
+    console.error("Storage error:", error);
     return false;
-
   }
-
 }
 
-
-/* =========================================================
-   الإعدادات
-   ========================================================= */
 
 function ensureBank(){
-
   if(!settings.bank){
-
-    settings.bank={
-      enabled:false,
-      bankName:"",
-      owner:"",
-      account:"",
-      iban:"",
-      instructions:
-        "يرجى تحويل قيمة الطلب كاملة ثم رفع إثبات التحويل."
+    settings.bank = {
+      enabled: false,
+      bankName: "",
+      owner: "",
+      account: "",
+      iban: "",
+      instructions: "يرجى تحويل قيمة الطلب كاملة ثم رفع إثبات التحويل."
     };
-
   }
-
 }
-
 
 function money(value){
-
-  return Number(value||0)
-    .toLocaleString("ar-SA")
-    +" "
-    +(settings.currency||"ر.س");
-
+  return Number(value || 0).toLocaleString("ar-SA") + " " + (settings.currency || "ر.س");
 }
 
-
 function safe(value){
-
-  return String(value??"")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-
+  return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 }
 
 
 /* =========================================================
-   تسجيل الدخول
+   نظام الدخول والتنقل
    ========================================================= */
 
 function login(){
+  const user = document.getElementById("loginUser").value.trim();
+  const pass = document.getElementById("loginPass").value;
 
-  const user=
-    document.getElementById(
-      "loginUser"
-    ).value.trim();
-
-  const pass=
-    document.getElementById(
-      "loginPass"
-    ).value;
-
-  if(
-    user===settings.adminUser &&
-    pass===settings.adminPass
-  ){
-
-    localStorage.setItem(
-      "nexo_admin_logged",
-      "1"
-    );
-
-    document
-      .getElementById("loginPage")
-      .classList.add("hidden");
-
-    document
-      .getElementById("app")
-      .classList.remove("hidden");
-
+  if(user === settings.adminUser && pass === settings.adminPass){
+    localStorage.setItem("nexo_admin_logged", "1");
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
     refreshAll();
-
   }else{
-
-    document
-      .getElementById("loginError")
-      .textContent=
-      "اسم المستخدم أو كلمة المرور غير صحيحة.";
-
+    document.getElementById("loginError").textContent = "اسم المستخدم أو كلمة المرور غير صحيحة.";
   }
-
 }
-
 
 function logout(){
-
-  localStorage.removeItem(
-    "nexo_admin_logged"
-  );
-
+  localStorage.removeItem("nexo_admin_logged");
   location.reload();
-
 }
-
 
 function toggleSidebar(){
-
-  document
-    .getElementById("sidebar")
-    .classList.toggle("open");
-
+  document.getElementById("sidebar").classList.toggle("open");
 }
 
-
-function showPage(id,button){
-
-  document
-    .querySelectorAll(".page")
-    .forEach(p=>
-      p.classList.remove("active")
-    );
-
-  document
-    .getElementById(id)
-    .classList.add("active");
-
-  document
-    .querySelectorAll(".nav-btn")
-    .forEach(b=>
-      b.classList.remove("active")
-    );
-
-  if(button)
-    button.classList.add("active");
-
-  document
-    .getElementById("sidebar")
-    .classList.remove("open");
-
+function showPage(id, button){
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  if(button) button.classList.add("active");
+  document.getElementById("sidebar").classList.remove("open");
 }
-
-
-/* =========================================================
-   نوع المنتج
-   ========================================================= */
 
 function toggleProductType(){
-
-  const type=
-    document
-      .getElementById("productType")
-      .value;
-
-  const physical=
-    type==="physical";
-
-  document
-    .getElementById("costField")
-    .classList
-    .toggle("hidden",!physical);
-
-  document
-    .getElementById("quantityField")
-    .classList
-    .toggle("hidden",!physical);
-
-  document
-    .getElementById("lowField")
-    .classList
-    .toggle("hidden",!physical);
-
-  document
-    .getElementById("digitalLinkField")
-    .classList
-    .toggle("hidden",physical);
-
+  const type = document.getElementById("productType").value;
+  const physical = (type === "physical");
+  document.getElementById("costField").classList.toggle("hidden", !physical);
+  document.getElementById("quantityField").classList.toggle("hidden", !physical);
+  document.getElementById("lowField").classList.toggle("hidden", !physical);
+  document.getElementById("digitalLinkField").classList.toggle("hidden", physical);
 }
 
 
 /* =========================================================
-   إضافة المنتج والصورة
+   إضافة وتعديل المنتجات
    ========================================================= */
 
+async function saveProductData(){
+  const editingId = document.getElementById("editingProductId").value;
+  if(editingId){
+    await updateProduct(editingId);
+  }else{
+    await addProduct();
+  }
+}
+
 async function addProduct(){
-
-  const button=
-    document.querySelector(
-      'button[onclick="addProduct()"]'
-    );
-
+  const button = document.getElementById("productSubmitBtn");
   try{
-
-    const name=
-      document
-        .getElementById("productName")
-        .value
-        .trim();
-
-    const type=
-      document
-        .getElementById("productType")
-        .value;
-
-    const price=
-      Number(
-        document
-          .getElementById("productPrice")
-          .value||0
-      );
-
-    const cost=
-      Number(
-        document
-          .getElementById("productCost")
-          .value||0
-      );
-
-    const quantity=
-      Number(
-        document
-          .getElementById("productQuantity")
-          .value||0
-      );
-
-    const low=
-      Number(
-        document
-          .getElementById("productLow")
-          .value||0
-      );
-
-    const digitalLink=
-      document
-        .getElementById(
-          "productDigitalLink"
-        )
-        .value
-        .trim();
-
-    const description=
-      document
-        .getElementById(
-          "productDescription"
-        )
-        .value
-        .trim();
+    const name = document.getElementById("productName").value.trim();
+    const type = document.getElementById("productType").value;
+    const price = Number(document.getElementById("productPrice").value || 0);
+    const cost = Number(document.getElementById("productCost").value || 0);
+    const quantity = Number(document.getElementById("productQuantity").value || 0);
+    const low = Number(document.getElementById("productLow").value || 0);
+    const digitalLink = document.getElementById("productDigitalLink").value.trim();
+    const description = document.getElementById("productDescription").value.trim();
 
     if(!name){
-
-      alert(
-        "اكتب اسم المنتج أولاً."
-      );
-
+      alert("الرجاء إدخال اسم المنتج.");
       return;
-
     }
-
-    if(price<0){
-
-      alert(
-        "سعر المنتج غير صحيح."
-      );
-
+    if(price < 0){
+      alert("سعر البيع غير صحيح.");
       return;
-
     }
 
     if(button){
-
-      button.disabled=true;
-      button.textContent=
-        "جاري حفظ المنتج...";
-
+      button.disabled = true;
+      button.textContent = "جاري الحفظ...";
     }
 
-    const id=
-      "NEXO-"+
-      Date.now()+
-      "-"+
-      Math.random()
-        .toString(36)
-        .slice(2,9);
+    const id = "NEXO-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
 
-    const product={
-
-      id:id,
-
-      name:name,
-
-      type:type,
-
-      price:price,
-
-      cost:
-        type==="physical"
-        ?cost
-        :0,
-
-      quantity:
-        type==="physical"
-        ?quantity
-        :0,
-
-      low:
-        type==="physical"
-        ?low
-        :0,
-
-      digitalLink:
-        type==="digital"
-        ?digitalLink
-        :"",
-
-      image:
-        selectedProductImage
-        ?"indexeddb:"+id
-        :"",
-
-      description:description,
-
-      createdAt:
-        new Date().toISOString()
-
+    const product = {
+      id: id,
+      name: name,
+      type: type,
+      price: price,
+      cost: (type === "physical") ? cost : 0,
+      quantity: (type === "physical") ? quantity : 0,
+      low: (type === "physical") ? low : 0,
+      digitalLink: (type === "digital") ? digitalLink : "",
+      image: selectedProductImage ? "indexeddb:" + id : "",
+      description: description,
+      createdAt: new Date().toISOString()
     };
-
-    /* حفظ بيانات المنتج في IndexedDB */
 
     await dbPutProduct(product);
 
-    /* حفظ الصورة كملف داخل IndexedDB */
-
     if(selectedProductImage){
-
-      await dbPutImage(
-        id,
-        selectedProductImage
-      );
-
+      await dbPutImage(id, selectedProductImage);
     }
-
-    /* نسخة معلومات خفيفة فقط */
 
     products.push(product);
-
     saveAll();
-
     clearProductForm();
-
     await renderProducts();
-
     updateDashboard();
-
     calculateAccounting();
 
-    alert(
-      "✅ تم إضافة المنتج والصورة بنجاح."
-    );
-
+    alert("✅ تم إضافة المنتج بنجاح.");
   }catch(error){
-
-    console.error(
-      "NEXO PRODUCT ERROR:",
-      error
-    );
-
-    alert(
-      "حدث خطأ أثناء حفظ المنتج.\n\n"+
-      error.message
-    );
-
+    console.error("Add Product Error:", error);
+    alert("تعذر حفظ المنتج: " + error.message);
   }finally{
+    if(button){
+      button.disabled = false;
+      button.textContent = "إضافة المنتج";
+    }
+  }
+}
+
+async function editProduct(id){
+  const product = products.find(p => p.id === id);
+  if(!product) return;
+
+  document.getElementById("editingProductId").value = product.id;
+  document.getElementById("productName").value = product.name || "";
+  document.getElementById("productType").value = product.type || "physical";
+  toggleProductType();
+  document.getElementById("productPrice").value = product.price || 0;
+  document.getElementById("productCost").value = product.cost || 0;
+  document.getElementById("productQuantity").value = product.quantity || 0;
+  document.getElementById("productLow").value = product.low || 0;
+  document.getElementById("productDigitalLink").value = product.digitalLink || "";
+  document.getElementById("productDescription").value = product.description || "";
+
+  const preview = document.getElementById("productPreview");
+  const imageUrl = await getProductImageUrl(product);
+  if(imageUrl){
+    preview.src = imageUrl;
+    preview.classList.remove("hidden");
+  }else{
+    preview.src = "";
+    preview.classList.add("hidden");
+  }
+
+  selectedProductImage = null; // سيتم تحديثها فقط إذا اختار صورة جديدة
+  document.getElementById("productFormTitle").textContent = "تعديل المنتج: " + product.name;
+  document.getElementById("productSubmitBtn").textContent = "حفظ التعديلات";
+  document.getElementById("productCancelBtn").classList.remove("hidden");
+
+  // التمرير إلى أعلى النموذج لسهولة التعديل
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function updateProduct(id){
+  const button = document.getElementById("productSubmitBtn");
+  try{
+    const index = products.findIndex(p => p.id === id);
+    if(index === -1) return;
+
+    const name = document.getElementById("productName").value.trim();
+    const type = document.getElementById("productType").value;
+    const price = Number(document.getElementById("productPrice").value || 0);
+    const cost = Number(document.getElementById("productCost").value || 0);
+    const quantity = Number(document.getElementById("productQuantity").value || 0);
+    const low = Number(document.getElementById("productLow").value || 0);
+    const digitalLink = document.getElementById("productDigitalLink").value.trim();
+    const description = document.getElementById("productDescription").value.trim();
+
+    if(!name){
+      alert("الرجاء إدخال اسم المنتج.");
+      return;
+    }
 
     if(button){
-
-      button.disabled=false;
-      button.textContent=
-        "إضافة المنتج";
-
+      button.disabled = true;
+      button.textContent = "جاري التحديث...";
     }
 
-  }
+    const existingProduct = products[index];
 
-}
+    const updatedProduct = {
+      ...existingProduct,
+      name: name,
+      type: type,
+      price: price,
+      cost: (type === "physical") ? cost : 0,
+      quantity: (type === "physical") ? quantity : 0,
+      low: (type === "physical") ? low : 0,
+      digitalLink: (type === "digital") ? digitalLink : "",
+      image: selectedProductImage ? "indexeddb:" + id : existingProduct.image,
+      description: description
+    };
 
+    await dbPutProduct(updatedProduct);
 
-/* =========================================================
-   تنظيف النموذج
-   ========================================================= */
-
-function clearProductForm(){
-
-  [
-    "productName",
-    "productPrice",
-    "productCost",
-    "productQuantity",
-    "productLow",
-    "productDigitalLink",
-    "productDescription"
-  ].forEach(id=>{
-
-    const element=
-      document.getElementById(id);
-
-    if(element)
-      element.value="";
-
-  });
-
-  const input=
-    document.getElementById(
-      "productImage"
-    );
-
-  if(input)
-    input.value="";
-
-  const preview=
-    document.getElementById(
-      "productPreview"
-    );
-
-  preview.src="";
-  preview.classList.add("hidden");
-
-  selectedProductImage=null;
-
-}
-
-
-/* =========================================================
-   جلب رابط صورة المنتج
-   ========================================================= */
-
-async function getProductImageUrl(product){
-
-  if(!product)
-    return "";
-
-  if(
-    product.image &&
-    product.image.startsWith("data:image")
-  ){
-
-    return product.image;
-
-  }
-
-  if(
-    product.image &&
-    product.image.startsWith("http")
-  ){
-
-    return product.image;
-
-  }
-
-  if(
-    product.image &&
-    product.image.startsWith("indexeddb:")
-  ){
-
-    const blob=
-      await dbGetImage(
-        product.id
-      );
-
-    if(blob){
-
-      return URL.createObjectURL(
-        blob
-      );
-
+    if(selectedProductImage){
+      await dbPutImage(id, selectedProductImage);
     }
 
-  }
-
-  return "";
-
-}
-
-
-/* =========================================================
-   عرض المنتجات
-   ========================================================= */
-
-async function renderProducts(){
-
-  const tbody=
-    document.getElementById(
-      "productsTable"
-    );
-
-  if(!products.length){
-
-    tbody.innerHTML=
-      `<tr>
-        <td colspan="7">لا توجد منتجات.</td>
-      </tr>`;
-
-    return;
-
-  }
-
-  tbody.innerHTML=
-    `<tr>
-      <td colspan="7">جاري تحميل المنتجات...</td>
-    </tr>`;
-
-  const rows=[];
-
-  for(const p of products){
-
-    let status="";
-
-    if(p.type==="digital"){
-
-      status=
-        `<span class="badge badge-success">
-          رقمي
-        </span>`;
-
-    }else if(Number(p.quantity)<=0){
-
-      status=
-        `<span class="badge badge-danger">
-          نفد
-        </span>`;
-
-    }else if(
-      Number(p.low)>0 &&
-      Number(p.quantity)<=Number(p.low)
-    ){
-
-      status=
-        `<span class="badge badge-warning">
-          مخزون منخفض
-        </span>`;
-
-    }else{
-
-      status=
-        `<span class="badge badge-success">
-          متوفر
-        </span>`;
-
-    }
-
-    const imageUrl=
-      await getProductImageUrl(p);
-
-    const imageHTML=
-      imageUrl
-      ?
-      `<img src="${imageUrl}"
-        style="width:55px;height:55px;object-fit:cover;border-radius:10px">`
-      :
-      "—";
-
-    rows.push(`
-
-      <tr>
-
-        <td>
-          ${imageHTML}
-        </td>
-
-        <td>
-          ${safe(p.name)}
-        </td>
-
-        <td>
-          ${p.type==="digital"?"رقمي":"عادي"}
-        </td>
-
-        <td>
-          ${money(p.price)}
-        </td>
-
-        <td>
-          ${p.type==="digital"?"غير محدود":p.quantity}
-        </td>
-
-        <td>
-          ${status}
-        </td>
-
-        <td>
-
-          <button
-            class="btn btn-danger"
-            onclick='deleteProduct(${JSON.stringify(p.id)})'>
-            حذف
-          </button>
-
-        </td>
-
-      </tr>
-
-    `);
-
-  }
-
-  tbody.innerHTML=
-    rows.join("");
-
-}
-
-
-/* =========================================================
-   حذف المنتج
-   ========================================================= */
-
-async function deleteProduct(id){
-
-  if(!confirm("هل تريد حذف المنتج؟"))
-    return;
-
-  try{
-
-    await dbDeleteProduct(id);
-
-    products=
-      products.filter(
-        p=>p.id!==id
-      );
-
+    products[index] = updatedProduct;
     saveAll();
-
+    cancelEditProduct();
     await renderProducts();
-
     updateDashboard();
-
     calculateAccounting();
 
+    alert("✅ تم تعديل المنتج بنجاح.");
   }catch(error){
+    console.error("Update Product Error:", error);
+    alert("تعذر تحديث المنتج: " + error.message);
+  }finally{
+    if(button){
+      button.disabled = false;
+      button.textContent = "حفظ التعديلات";
+    }
+  }
+}
 
-    alert(
-      "تعذر حذف المنتج."
-    );
+function cancelEditProduct(){
+  clearProductForm();
+  document.getElementById("editingProductId").value = "";
+  document.getElementById("productFormTitle").textContent = "إضافة منتج جديد";
+  document.getElementById("productSubmitBtn").textContent = "إضافة المنتج";
+  document.getElementById("productCancelBtn").classList.add("hidden");
+}
 
+function clearProductForm(){
+  ["productName", "productPrice", "productCost", "productQuantity", "productLow", "productDigitalLink", "productDescription"].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = "";
+  });
+  const fileInput = document.getElementById("productImage");
+  if(fileInput) fileInput.value = "";
+  const preview = document.getElementById("productPreview");
+  preview.src = "";
+  preview.classList.add("hidden");
+  selectedProductImage = null;
+}
+
+async function getProductImageUrl(product){
+  if(!product) return "";
+  if(product.image && product.image.startsWith("data:image")) return product.image;
+  if(product.image && product.image.startsWith("http")) return product.image;
+  if(product.image && product.image.startsWith("indexeddb:")){
+    const blob = await dbGetImage(product.id);
+    if(blob) return URL.createObjectURL(blob);
+  }
+  return "";
+}
+
+async function renderProducts(){
+  const tbody = document.getElementById("productsTable");
+  if(!products.length){
+    tbody.innerHTML = `<tr><td colspan="7">لا توجد منتجات مضافة حتى الآن.</td></tr>`;
+    return;
   }
 
+  tbody.innerHTML = `<tr><td colspan="7">جاري تحميل المنتجات...</td></tr>`;
+  let rows = [];
+
+  for(const p of products){
+    let status = "";
+    if(p.type === "digital"){
+      status = `<span class="badge badge-success">رقمي</span>`;
+    }else if(Number(p.quantity) <= 0){
+      status = `<span class="badge badge-danger">نفد المخزون</span>`;
+    }else if(Number(p.low) > 0 && Number(p.quantity) <= Number(p.low)){
+      status = `<span class="badge badge-warning">مخزون منخفض</span>`;
+    }else{
+      status = `<span class="badge badge-success">متوفر</span>`;
+    }
+
+    const imageUrl = await getProductImageUrl(p);
+    const imageHTML = imageUrl ? `<img src="${imageUrl}" style="width:55px;height:55px;object-fit:cover;border-radius:10px">` : "—";
+
+    rows.push(`
+      <tr>
+        <td>${imageHTML}</td>
+        <td>${safe(p.name)}</td>
+        <td>${p.type === "digital" ? "رقمي" : "عادي"}</td>
+        <td>${money(p.price)}</td>
+        <td>${p.type === "digital" ? "غير محدود" : p.quantity}</td>
+        <td>${status}</td>
+        <td>
+          <div class="actions">
+            <button class="btn btn-warning" onclick='editProduct(${JSON.stringify(p.id)})'>تعديل</button>
+            <button class="btn btn-danger" onclick='deleteProduct(${JSON.stringify(p.id)})'>حذف</button>
+          </div>
+        </td>
+      </tr>
+    `);
+  }
+  tbody.innerHTML = rows.join("");
+}
+
+async function deleteProduct(id){
+  if(!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;
+  try{
+    await dbDeleteProduct(id);
+    products = products.filter(p => p.id !== id);
+    saveAll();
+    await renderProducts();
+    updateDashboard();
+    calculateAccounting();
+  }catch(error){
+    alert("تعذر حذف المنتج.");
+  }
 }
 
 
 /* =========================================================
-   الطلبات
+   الطلبات والإيصالات
    ========================================================= */
 
 function renderOrders(){
-
-  const tbody=
-    document.getElementById(
-      "ordersTable"
-    );
-
+  const tbody = document.getElementById("ordersTable");
   if(!orders.length){
-
-    tbody.innerHTML=
-      `<tr>
-        <td colspan="7">لا توجد طلبات.</td>
-      </tr>`;
-
+    tbody.innerHTML = `<tr><td colspan="7">لا توجد طلبات مسجلة.</td></tr>`;
     return;
-
   }
 
-  tbody.innerHTML=
-    orders.map(order=>{
+  tbody.innerHTML = orders.map(order => {
+    let paymentText = "غير مدفوع";
+    let paymentClass = "badge-warning";
 
-      let paymentText="غير مدفوع";
-      let paymentClass="badge-warning";
+    if(order.paymentStatus === "paid" || order.paid === true){
+      paymentText = "مدفوع";
+      paymentClass = "badge-success";
+    }
+    if(order.paymentMethod === "bank" && order.paymentStatus !== "paid"){
+      paymentText = "تحويل بنكي — بانتظار التحقق";
+      paymentClass = "badge-warning";
+    }
 
-      if(
-        order.paymentStatus==="paid" ||
-        order.paid===true
-      ){
+    let receiptButton = "";
+    if(order.paymentMethod === "bank" && order.receipt){
+      receiptButton = `<button class="btn btn-primary" onclick='viewReceipt(${JSON.stringify(order.id)})'>إثبات التحويل</button>`;
+    }
 
-        paymentText="مدفوع";
-        paymentClass="badge-success";
-
-      }
-
-      if(
-        order.paymentMethod==="bank" &&
-        order.paymentStatus!=="paid"
-      ){
-
-        paymentText=
-          "تحويل بنكي — بانتظار التحقق";
-
-        paymentClass=
-          "badge-warning";
-
-      }
-
-      let receiptButton="";
-
-      if(
-        order.paymentMethod==="bank" &&
-        order.receipt
-      ){
-
-        receiptButton=
-          `<button
-            class="btn btn-primary"
-            onclick='viewReceipt(${JSON.stringify(order.id)})'>
-            إثبات التحويل
-          </button>`;
-
-      }
-
-      return`
-
+    return `
       <tr>
-
-      <td>${safe(order.id)}</td>
-
-      <td>
-      ${safe(
-        order.customerName||
-        order.customer||
-        "عميل"
-      )}
-      </td>
-
-      <td>${money(order.total)}</td>
-
-      <td>
-      <span class="badge ${paymentClass}">
-      ${paymentText}
-      </span>
-      </td>
-
-      <td>
-
-      <select onchange='changeOrderStatus(${JSON.stringify(order.id)},this.value)'>
-
-      <option value="pending"
-      ${order.status==="pending"?"selected":""}>
-      قيد الانتظار
-      </option>
-
-      <option value="processing"
-      ${order.status==="processing"?"selected":""}>
-      قيد التجهيز
-      </option>
-
-      <option value="completed"
-      ${order.status==="completed"?"selected":""}>
-      مكتمل
-      </option>
-
-      <option value="cancelled"
-      ${order.status==="cancelled"?"selected":""}>
-      ملغي
-      </option>
-
-      </select>
-
-      </td>
-
-      <td>
-      ${
-        order.date
-        ?new Date(order.date)
-          .toLocaleString("ar-SA")
-        :"—"
-      }
-      </td>
-
-      <td>
-
-      <div class="actions">
-
-      ${receiptButton}
-
-      <button
-      class="btn btn-dark"
-      onclick='printInvoice(${JSON.stringify(order.id)})'>
-      فاتورة
-      </button>
-
-      <button
-      class="btn btn-danger"
-      onclick='deleteOrder(${JSON.stringify(order.id)})'>
-      حذف
-      </button>
-
-      </div>
-
-      </td>
-
+        <td>${safe(order.id)}</td>
+        <td>${safe(order.customerName || order.customer || "عميل")}</td>
+        <td>${money(order.total)}</td>
+        <td><span class="badge ${paymentClass}">${paymentText}</span></td>
+        <td>
+          <select onchange='changeOrderStatus(${JSON.stringify(order.id)},this.value)'>
+            <option value="pending" ${order.status==="pending"?"selected":""}>قيد الانتظار</option>
+            <option value="processing" ${order.status==="processing"?"selected":""}>قيد التجهيز</option>
+            <option value="completed" ${order.status==="completed"?"selected":""}>مكتمل</option>
+            <option value="cancelled" ${order.status==="cancelled"?"selected":""}>ملغي</option>
+          </select>
+        </td>
+        <td>${order.date ? new Date(order.date).toLocaleString("ar-SA") : "—"}</td>
+        <td>
+          <div class="actions">
+            ${receiptButton}
+            <button class="btn btn-dark" onclick='printInvoice(${JSON.stringify(order.id)})'>فاتورة</button>
+            <button class="btn btn-danger" onclick='deleteOrder(${JSON.stringify(order.id)})'>حذف</button>
+          </div>
+        </td>
       </tr>
-
-      `;
-
-    }).join("");
-
+    `;
+  }).join("");
 }
 
-
-function changeOrderStatus(id,status){
-
-  const order=
-    orders.find(
-      o=>o.id===id
-    );
-
-  if(!order)return;
-
-  order.status=status;
-
+function changeOrderStatus(id, status){
+  const order = orders.find(o => o.id === id);
+  if(!order) return;
+  order.status = status;
   saveAll();
-
   calculateAccounting();
-
 }
-
 
 function deleteOrder(id){
-
-  if(!confirm("هل تريد حذف الطلب؟"))
-    return;
-
-  orders=
-    orders.filter(
-      o=>o.id!==id
-    );
-
+  if(!confirm("هل تريد حذف هذا الطلب؟")) return;
+  orders = orders.filter(o => o.id !== id);
   saveAll();
-
   renderOrders();
-
   calculateAccounting();
-
   updateDashboard();
+}
 
+function viewReceipt(orderId){
+  const order = orders.find(o => o.id === orderId);
+  if(!order) return;
+  currentReceiptOrderId = orderId;
+
+  document.getElementById("receiptInfo").innerHTML = `
+    <div class="card">
+      <p><strong>رقم الطلب:</strong> ${safe(order.id)}</p>
+      <p style="margin-top:8px"><strong>العميل:</strong> ${safe(order.customerName || order.customer || "عميل")}</p>
+      <p style="margin-top:8px"><strong>المبلغ:</strong> ${money(order.total)}</p>
+    </div>
+  `;
+
+  const image = document.getElementById("receiptImage");
+  if(order.receipt){
+    image.src = order.receipt;
+    image.classList.remove("hidden");
+  }else{
+    image.classList.add("hidden");
+  }
+  document.getElementById("receiptModal").classList.remove("hidden");
+}
+
+function closeReceipt(){
+  currentReceiptOrderId = null;
+  document.getElementById("receiptModal").classList.add("hidden");
+}
+
+function verifyPayment(){
+  const order = orders.find(o => o.id === currentReceiptOrderId);
+  if(!order) return;
+  order.paymentStatus = "paid";
+  order.paid = true;
+  saveAll();
+  closeReceipt();
+  renderOrders();
+  calculateAccounting();
+  alert("تم اعتماد الدفع بنجاح.");
+}
+
+function rejectPayment(){
+  const order = orders.find(o => o.id === currentReceiptOrderId);
+  if(!order) return;
+  order.paymentStatus = "rejected";
+  order.paid = false;
+  saveAll();
+  closeReceipt();
+  renderOrders();
+  calculateAccounting();
+  alert("تم رفض إثبات التحويل.");
 }
 
 
 /* =========================================================
-   البنك
+   التحويل البنكي
    ========================================================= */
 
 function loadBankSettings(){
-
   ensureBank();
-
-  document.getElementById("bankEnabled")
-    .checked=!!settings.bank.enabled;
-
-  document.getElementById("bankName")
-    .value=settings.bank.bankName||"";
-
-  document.getElementById("bankOwner")
-    .value=settings.bank.owner||"";
-
-  document.getElementById("bankAccount")
-    .value=settings.bank.account||"";
-
-  document.getElementById("bankIban")
-    .value=settings.bank.iban||"";
-
-  document.getElementById("bankInstructions")
-    .value=settings.bank.instructions||"";
-
+  document.getElementById("bankEnabled").checked = !!settings.bank.enabled;
+  document.getElementById("bankName").value = settings.bank.bankName || "";
+  document.getElementById("bankOwner").value = settings.bank.owner || "";
+  document.getElementById("bankAccount").value = settings.bank.account || "";
+  document.getElementById("bankIban").value = settings.bank.iban || "";
+  document.getElementById("bankInstructions").value = settings.bank.instructions || "";
   renderBankPreview();
-
 }
-
 
 function saveBankSettings(){
-
-  settings.bank={
-
-    enabled:
-      document
-      .getElementById("bankEnabled")
-      .checked,
-
-    bankName:
-      document
-      .getElementById("bankName")
-      .value.trim(),
-
-    owner:
-      document
-      .getElementById("bankOwner")
-      .value.trim(),
-
-    account:
-      document
-      .getElementById("bankAccount")
-      .value.trim(),
-
-    iban:
-      document
-      .getElementById("bankIban")
-      .value.trim(),
-
-    instructions:
-      document
-      .getElementById("bankInstructions")
-      .value.trim()
-
+  settings.bank = {
+    enabled: document.getElementById("bankEnabled").checked,
+    bankName: document.getElementById("bankName").value.trim(),
+    owner: document.getElementById("bankOwner").value.trim(),
+    account: document.getElementById("bankAccount").value.trim(),
+    iban: document.getElementById("bankIban").value.trim(),
+    instructions: document.getElementById("bankInstructions").value.trim()
   };
-
   saveAll();
-
   renderBankPreview();
-
   updateDashboard();
-
-  alert(
-    "تم حفظ بيانات التحويل البنكي."
-  );
-
+  alert("تم حفظ بيانات التحويل البنكي.");
 }
-
 
 function renderBankPreview(){
-
   ensureBank();
-
-  const b=settings.bank;
-
-  const box=
-    document.getElementById(
-      "bankPreview"
-    );
-
+  const b = settings.bank;
+  const box = document.getElementById("bankPreview");
   if(!b.enabled){
-
-    box.innerHTML=
-      `<div style="text-align:center">
-      🔴 التحويل البنكي غير مفعل
-      </div>`;
-
+    box.innerHTML = `<div style="text-align:center">🔴 التحويل البنكي غير مفعل حالياً</div>`;
     return;
-
   }
-
-  box.innerHTML=`
-
-  <div class="bank-name">
-  🏦 ${safe(b.bankName||"اسم البنك")}
-  </div>
-
-  <div class="bank-line">
-  <strong>صاحب الحساب:</strong>
-  ${safe(b.owner||"غير محدد")}
-  </div>
-
-  <div class="bank-line">
-  <strong>رقم الحساب:</strong>
-  ${safe(b.account||"غير محدد")}
-  </div>
-
-  <div class="bank-line">
-  <strong>IBAN:</strong>
-  ${safe(b.iban||"غير محدد")}
-  </div>
-
-  <div class="bank-line">
-  <strong>التعليمات:</strong><br>
-  ${safe(b.instructions||"لا توجد تعليمات")}
-  </div>
-
+  box.innerHTML = `
+    <div class="bank-name">🏦 ${safe(b.bankName || "اسم البنك")}</div>
+    <div class="bank-line"><strong>صاحب الحساب:</strong> ${safe(b.owner || "غير محدد")}</div>
+    <div class="bank-line"><strong>رقم الحساب:</strong> ${safe(b.account || "غير محدد")}</div>
+    <div class="bank-line"><strong>IBAN:</strong> ${safe(b.iban || "غير محدد")}</div>
+    <div class="bank-line"><strong>التعليمات:</strong><br>${safe(b.instructions || "لا توجد تعليمات")}</div>
   `;
-
 }
 
 
 /* =========================================================
-   إيصالات التحويل
-   ========================================================= */
-
-function viewReceipt(orderId){
-
-  const order=
-    orders.find(
-      o=>o.id===orderId
-    );
-
-  if(!order)return;
-
-  currentReceiptOrderId=
-    orderId;
-
-  document.getElementById(
-    "receiptInfo"
-  ).innerHTML=`
-
-  <div class="card">
-
-  <p>
-  <strong>رقم الطلب:</strong>
-  ${safe(order.id)}
-  </p>
-
-  <p style="margin-top:8px">
-  <strong>العميل:</strong>
-  ${safe(
-    order.customerName||
-    order.customer||
-    "عميل"
-  )}
-  </p>
-
-  <p style="margin-top:8px">
-  <strong>المبلغ:</strong>
-  ${money(order.total)}
-  </p>
-
-  </div>
-
-  `;
-
-  const image=
-    document.getElementById(
-      "receiptImage"
-    );
-
-  if(order.receipt){
-
-    image.src=
-      order.receipt;
-
-    image.classList.remove(
-      "hidden"
-    );
-
-  }else{
-
-    image.classList.add(
-      "hidden"
-    );
-
-  }
-
-  document.getElementById(
-    "receiptModal"
-  ).classList.remove(
-    "hidden"
-  );
-
-}
-
-
-function closeReceipt(){
-
-  currentReceiptOrderId=null;
-
-  document.getElementById(
-    "receiptModal"
-  ).classList.add(
-    "hidden"
-  );
-
-}
-
-
-function verifyPayment(){
-
-  const order=
-    orders.find(
-      o=>o.id===currentReceiptOrderId
-    );
-
-  if(!order)return;
-
-  order.paymentStatus="paid";
-  order.paid=true;
-
-  saveAll();
-
-  closeReceipt();
-
-  renderOrders();
-
-  calculateAccounting();
-
-  alert("تم اعتماد الدفع.");
-
-}
-
-
-function rejectPayment(){
-
-  const order=
-    orders.find(
-      o=>o.id===currentReceiptOrderId
-    );
-
-  if(!order)return;
-
-  order.paymentStatus="rejected";
-  order.paid=false;
-
-  saveAll();
-
-  closeReceipt();
-
-  renderOrders();
-
-  calculateAccounting();
-
-  alert("تم رفض إثبات التحويل.");
-
-}
-
-
-/* =========================================================
-   المصروفات
+   المصروفات والحسابات
    ========================================================= */
 
 function addExpense(){
+  const name = document.getElementById("expenseName").value.trim();
+  const amount = Number(document.getElementById("expenseAmount").value || 0);
 
-  const name=
-    document
-      .getElementById("expenseName")
-      .value.trim();
-
-  const amount=
-    Number(
-      document
-        .getElementById("expenseAmount")
-        .value||0
-    );
-
-  if(!name||amount<=0){
-
-    alert(
-      "أدخل اسم المصروف والمبلغ."
-    );
-
+  if(!name || amount <= 0){
+    alert("يرجى إدخال اسم المصروف ومبلغ صحيح.");
     return;
-
   }
 
   expenses.push({
-
-    id:Date.now().toString(),
-
-    name:name,
-
-    amount:amount,
-
-    date:new Date().toISOString()
-
+    id: Date.now().toString(),
+    name: name,
+    amount: amount,
+    date: new Date().toISOString()
   });
 
   saveAll();
-
-  document.getElementById(
-    "expenseName"
-  ).value="";
-
-  document.getElementById(
-    "expenseAmount"
-  ).value="";
-
+  document.getElementById("expenseName").value = "";
+  document.getElementById("expenseAmount").value = "";
   renderExpenses();
-
   calculateAccounting();
-
 }
-
 
 function renderExpenses(){
-
-  const tbody=
-    document.getElementById(
-      "expensesTable"
-    );
-
+  const tbody = document.getElementById("expensesTable");
   if(!expenses.length){
-
-    tbody.innerHTML=
-      `<tr>
-      <td colspan="4">لا توجد مصروفات.</td>
-      </tr>`;
-
+    tbody.innerHTML = `<tr><td colspan="4">لا توجد مصروفات مسجلة.</td></tr>`;
     return;
-
   }
 
-  tbody.innerHTML=
-    expenses.map(e=>`
-
+  tbody.innerHTML = expenses.map(e => `
     <tr>
-
-    <td>${safe(e.name)}</td>
-
-    <td>${money(e.amount)}</td>
-
-    <td>
-    ${new Date(e.date)
-      .toLocaleDateString("ar-SA")}
-    </td>
-
-    <td>
-
-    <button
-    class="btn btn-danger"
-    onclick='deleteExpense(${JSON.stringify(e.id)})'>
-    حذف
-    </button>
-
-    </td>
-
+      <td>${safe(e.name)}</td>
+      <td>${money(e.amount)}</td>
+      <td>${new Date(e.date).toLocaleDateString("ar-SA")}</td>
+      <td>
+        <button class="btn btn-danger" onclick='deleteExpense(${JSON.stringify(e.id)})'>حذف</button>
+      </td>
     </tr>
-
-    `).join("");
-
+  `).join("");
 }
-
 
 function deleteExpense(id){
-
-  expenses=
-    expenses.filter(
-      e=>e.id!==id
-    );
-
+  expenses = expenses.filter(e => e.id !== id);
   saveAll();
-
   renderExpenses();
-
   calculateAccounting();
-
 }
-
-
-/* =========================================================
-   الحسابات
-   ========================================================= */
 
 function calculateAccounting(){
+  let sales = 0;
+  let costs = 0;
 
-  let sales=0;
-  let costs=0;
-
-  orders.forEach(order=>{
-
-    if(order.status==="cancelled")
-      return;
-
-    if(
-      order.paymentStatus!=="paid" &&
-      order.paid!==true
-    )
-      return;
-
-    sales+=
-      Number(order.total||0);
+  orders.forEach(order => {
+    if(order.status === "cancelled") return;
+    if(order.paymentStatus !== "paid" && order.paid !== true) return;
+    sales += Number(order.total || 0);
 
     if(Array.isArray(order.items)){
-
-      order.items.forEach(item=>{
-
-        const product=
-          products.find(
-            p=>
-              p.id===item.productId||
-              p.id===item.id
-          );
-
-        const cost=
-          Number(
-            item.cost??
-            product?.cost??
-            0
-          );
-
-        const qty=
-          Number(
-            item.quantity||1
-          );
-
-        costs+=cost*qty;
-
+      order.items.forEach(item => {
+        const product = products.find(p => p.id === item.productId || p.id === item.id);
+        const cost = Number(item.cost ?? product?.cost ?? 0);
+        const qty = Number(item.quantity || 1);
+        costs += cost * qty;
       });
-
     }
-
   });
 
-  const expenseTotal=
-    expenses.reduce(
-      (sum,e)=>
-        sum+Number(e.amount||0),
-      0
-    );
+  const expenseTotal = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const profit = sales - costs - expenseTotal;
 
-  const profit=
-    sales-costs-expenseTotal;
+  document.getElementById("accSales").textContent = money(sales);
+  document.getElementById("accCosts").textContent = money(costs);
+  document.getElementById("accExpenses").textContent = money(expenseTotal);
+  document.getElementById("accProfit").textContent = money(profit);
 
-  document.getElementById(
-    "accSales"
-  ).textContent=
-    money(sales);
-
-  document.getElementById(
-    "accCosts"
-  ).textContent=
-    money(costs);
-
-  document.getElementById(
-    "accExpenses"
-  ).textContent=
-    money(expenseTotal);
-
-  document.getElementById(
-    "accProfit"
-  ).textContent=
-    money(profit);
-
-  document.getElementById(
-    "statSales"
-  ).textContent=
-    money(sales);
-
-  document.getElementById(
-    "statProfit"
-  ).textContent=
-    money(profit);
-
+  document.getElementById("statSales").textContent = money(sales);
+  document.getElementById("statProfit").textContent = money(profit);
 }
 
-
 function updateDashboard(){
-
-  const low=
-    products.filter(p=>
-      p.type==="physical" &&
-      Number(p.quantity)>0 &&
-      Number(p.low)>0 &&
-      Number(p.quantity)<=Number(p.low)
-    ).length;
-
-  document.getElementById(
-    "statLow"
-  ).textContent=low;
-
-  document.getElementById(
-    "statOrders"
-  ).textContent=
-    orders.length;
+  const low = products.filter(p => p.type === "physical" && Number(p.quantity) > 0 && Number(p.low) > 0 && Number(p.quantity) <= Number(p.low)).length;
+  document.getElementById("statLow").textContent = low;
+  document.getElementById("statOrders").textContent = orders.length;
 
   ensureBank();
-
-  document.getElementById(
-    "bankStatusDashboard"
-  ).innerHTML=
-    settings.bank.enabled
-    ?
-    `<span class="badge badge-success">
-    🟢 التحويل البنكي مفعل
-    </span>`
-    :
-    `<span class="badge badge-danger">
-    🔴 التحويل البنكي غير مفعل
-    </span>`;
-
+  document.getElementById("bankStatusDashboard").innerHTML = settings.bank.enabled ?
+    `<span class="badge badge-success">🟢 التحويل البنكي مفعل</span>` :
+    `<span class="badge badge-danger">🔴 التحويل البنكي غير مفعل</span>`;
 }
 
 
 /* =========================================================
-   إعدادات المتجر
+   إعدادات المتجر وطباعة الفواتير
    ========================================================= */
 
 function loadSettings(){
-
-  document.getElementById(
-    "setStoreName"
-  ).value=
-    settings.storeName||"";
-
-  document.getElementById(
-    "setCurrency"
-  ).value=
-    settings.currency||"ر.س";
-
-  document.getElementById(
-    "setStoreDescription"
-  ).value=
-    settings.storeDescription||"";
-
-  document.getElementById(
-    "setPhone"
-  ).value=
-    settings.phone||"";
-
-  document.getElementById(
-    "setWhatsapp"
-  ).value=
-    settings.whatsapp||"";
-
-  document.getElementById(
-    "setAddress"
-  ).value=
-    settings.address||"";
-
-  document.getElementById(
-    "setPrimary"
-  ).value=
-    settings.primary||"#6c4cff";
-
-  document.getElementById(
-    "setSecondary"
-  ).value=
-    settings.secondary||"#171326";
-
-  document.getElementById(
-    "setInvoiceTitle"
-  ).value=
-    settings.invoiceTitle||"فاتورة بيع";
-
-  document.getElementById(
-    "setTaxNumber"
-  ).value=
-    settings.taxNumber||"";
-
-  document.getElementById(
-    "setInvoiceFooter"
-  ).value=
-    settings.invoiceFooter||"";
-
-  document.getElementById(
-    "setAdminUser"
-  ).value=
-    settings.adminUser||"admin";
-
+  document.getElementById("setStoreName").value = settings.storeName || "";
+  document.getElementById("setCurrency").value = settings.currency || "ر.س";
+  document.getElementById("setStoreDescription").value = settings.storeDescription || "";
+  document.getElementById("setPhone").value = settings.phone || "";
+  document.getElementById("setWhatsapp").value = settings.whatsapp || "";
+  document.getElementById("setAddress").value = settings.address || "";
+  document.getElementById("setPrimary").value = settings.primary || "#6c4cff";
+  document.getElementById("setSecondary").value = settings.secondary || "#171326";
+  document.getElementById("setInvoiceTitle").value = settings.invoiceTitle || "فاتورة بيع";
+  document.getElementById("setTaxNumber").value = settings.taxNumber || "";
+  document.getElementById("setInvoiceFooter").value = settings.invoiceFooter || "";
+  document.getElementById("setAdminUser").value = settings.adminUser || "admin";
   applyTheme();
-
 }
-
 
 function saveSettings(){
-
-  settings.storeName=
-    document.getElementById(
-      "setStoreName"
-    ).value.trim();
-
-  settings.currency=
-    document.getElementById(
-      "setCurrency"
-    ).value.trim()||"ر.س";
-
-  settings.storeDescription=
-    document.getElementById(
-      "setStoreDescription"
-    ).value.trim();
-
-  settings.phone=
-    document.getElementById(
-      "setPhone"
-    ).value.trim();
-
-  settings.whatsapp=
-    document.getElementById(
-      "setWhatsapp"
-    ).value.trim();
-
-  settings.address=
-    document.getElementById(
-      "setAddress"
-    ).value.trim();
-
-  settings.primary=
-    document.getElementById(
-      "setPrimary"
-    ).value;
-
-  settings.secondary=
-    document.getElementById(
-      "setSecondary"
-    ).value;
-
-  settings.invoiceTitle=
-    document.getElementById(
-      "setInvoiceTitle"
-    ).value.trim();
-
-  settings.taxNumber=
-    document.getElementById(
-      "setTaxNumber"
-    ).value.trim();
-
-  settings.invoiceFooter=
-    document.getElementById(
-      "setInvoiceFooter"
-    ).value.trim();
+  settings.storeName = document.getElementById("setStoreName").value.trim();
+  settings.currency = document.getElementById("setCurrency").value.trim() || "ر.س";
+  settings.storeDescription = document.getElementById("setStoreDescription").value.trim();
+  settings.phone = document.getElementById("setPhone").value.trim();
+  settings.whatsapp = document.getElementById("setWhatsapp").value.trim();
+  settings.address = document.getElementById("setAddress").value.trim();
+  settings.primary = document.getElementById("setPrimary").value;
+  settings.secondary = document.getElementById("setSecondary").value;
+  settings.invoiceTitle = document.getElementById("setInvoiceTitle").value.trim();
+  settings.taxNumber = document.getElementById("setTaxNumber").value.trim();
+  settings.invoiceFooter = document.getElementById("setInvoiceFooter").value.trim();
 
   saveAll();
-
   applyTheme();
-
   calculateAccounting();
-
-  alert(
-    "تم حفظ إعدادات المتجر."
-  );
-
+  alert("تم حفظ إعدادات المتجر بنجاح.");
 }
-
 
 function saveAdminLogin(){
-
-  const user=
-    document.getElementById(
-      "setAdminUser"
-    ).value.trim();
-
-  const pass=
-    document.getElementById(
-      "setAdminPass"
-    ).value;
-
-  if(!user||!pass){
-
-    alert(
-      "أدخل اسم المستخدم وكلمة المرور."
-    );
-
+  const user = document.getElementById("setAdminUser").value.trim();
+  const pass = document.getElementById("setAdminPass").value;
+  if(!user || !pass){
+    alert("أدخل اسم المستخدم وكلمة المرور الجديدة.");
     return;
-
   }
-
-  settings.adminUser=user;
-  settings.adminPass=pass;
-
+  settings.adminUser = user;
+  settings.adminPass = pass;
   saveAll();
-
-  document.getElementById(
-    "setAdminPass"
-  ).value="";
-
-  alert(
-    "تم تغيير بيانات الدخول."
-  );
-
+  document.getElementById("setAdminPass").value = "";
+  alert("تم تغيير بيانات الدخول بنجاح.");
 }
-
 
 function applyTheme(){
-
-  document.documentElement.style
-    .setProperty(
-      "--primary",
-      settings.primary||"#6c4cff"
-    );
-
-  document.documentElement.style
-    .setProperty(
-      "--secondary",
-      settings.secondary||"#171326"
-    );
-
+  document.documentElement.style.setProperty("--primary", settings.primary || "#6c4cff");
+  document.documentElement.style.setProperty("--secondary", settings.secondary || "#171326");
 }
 
-
-/* =========================================================
-   الفاتورة
-   ========================================================= */
-
 function printInvoice(orderId){
+  const order = orders.find(o => o.id === orderId);
+  if(!order) return;
 
-  const order=
-    orders.find(
-      o=>o.id===orderId
-    );
-
-  if(!order)return;
-
-  let itemsHTML="";
-
+  let itemsHTML = "";
   if(Array.isArray(order.items)){
-
-    itemsHTML=
-      order.items.map(item=>`
-
+    itemsHTML = order.items.map(item => `
       <tr>
-
-      <td>${safe(item.name||"منتج")}</td>
-
-      <td>${Number(item.quantity||1)}</td>
-
-      <td>${money(item.price||0)}</td>
-
-      <td>
-      ${money(
-        Number(item.price||0)*
-        Number(item.quantity||1)
-      )}
-      </td>
-
+        <td>${safe(item.name || "منتج")}</td>
+        <td>${Number(item.quantity || 1)}</td>
+        <td>${money(item.price || 0)}</td>
+        <td>${money(Number(item.price || 0) * Number(item.quantity || 1))}</td>
       </tr>
-
-      `).join("");
-
+    `).join("");
   }
 
-  const win=
-    window.open(
-      "",
-      "_blank",
-      "width=900,height=700"
-    );
-
+  const win = window.open("", "_blank", "width=900,height=700");
   if(!win){
-
-    alert(
-      "اسمح بالنوافذ المنبثقة لطباعة الفاتورة."
-    );
-
+    alert("يرجى السماح بفتح النوافذ المنبثقة لطباعة الفاتورة.");
     return;
-
   }
 
   win.document.write(`
-
-  <!DOCTYPE html>
-
-  <html lang="ar" dir="rtl">
-
-  <head>
-
-  <meta charset="UTF-8">
-
-  <title>${safe(settings.invoiceTitle)}</title>
-
-  <style>
-
-  body{
-    font-family:Arial,Tahoma,sans-serif;
-    padding:30px;
-    color:#222
-  }
-
-  .header{
-    display:flex;
-    justify-content:space-between;
-    border-bottom:2px solid #222;
-    padding-bottom:20px;
-    margin-bottom:25px
-  }
-
-  h1{margin:0 0 8px}
-
-  table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:25px
-  }
-
-  th,td{
-    border:1px solid #ddd;
-    padding:12px;
-    text-align:right
-  }
-
-  th{background:#f3f3f3}
-
-  .total{
-    font-size:22px;
-    font-weight:bold;
-    margin-top:20px
-  }
-
-  .footer{
-    margin-top:50px;
-    text-align:center;
-    color:#777
-  }
-
-  </style>
-
-  </head>
-
-  <body>
-
-  <div class="header">
-
-  <div>
-
-  <h1>
-  ${safe(settings.storeName)}
-  </h1>
-
-  <div>
-  ${safe(settings.invoiceTitle)}
-  </div>
-
-  </div>
-
-  <div>
-
-  <div>
-  رقم الطلب:
-  ${safe(order.id)}
-  </div>
-
-  <div>
-  التاريخ:
-  ${
-    order.date
-    ?new Date(order.date)
-      .toLocaleString("ar-SA")
-    :""
-  }
-  </div>
-
-  </div>
-
-  </div>
-
-  <div>
-
-  <strong>العميل:</strong>
-
-  ${safe(
-    order.customerName||
-    order.customer||
-    "عميل"
-  )}
-
-  </div>
-
-  <table>
-
-  <thead>
-
-  <tr>
-  <th>المنتج</th>
-  <th>الكمية</th>
-  <th>السعر</th>
-  <th>الإجمالي</th>
-  </tr>
-
-  </thead>
-
-  <tbody>
-
-  ${itemsHTML}
-
-  </tbody>
-
-  </table>
-
-  <div class="total">
-
-  الإجمالي:
-  ${money(order.total)}
-
-  </div>
-
-  ${
-    settings.taxNumber
-    ?
-    `<div style="margin-top:15px">
-    الرقم الضريبي:
-    ${safe(settings.taxNumber)}
-    </div>`
-    :""
-  }
-
-  <div class="footer">
-  ${safe(settings.invoiceFooter)}
-  </div>
-
-  <script>
-
-  window.onload=function(){
-    window.print();
-  };
-
-  <\/script>
-
-  </body>
-
-  </html>
-
+    <!DOCTYPE html>
+    <html lang="ar" dir="rtl">
+    <head>
+    <meta charset="UTF-8">
+    <title>${safe(settings.invoiceTitle)}</title>
+    <style>
+      body{font-family:Arial,Tahoma,sans-serif;padding:30px;color:#222}
+      .header{display:flex;justify-content:space-between;border-bottom:2px solid #222;padding-bottom:20px;margin-bottom:25px}
+      h1{margin:0 0 8px}
+      table{width:100%;border-collapse:collapse;margin-top:25px}
+      th,td{border:1px solid #ddd;padding:12px;text-align:right}
+      th{background:#f3f3f3}
+      .total{font-size:22px;font-weight:bold;margin-top:20px}
+      .footer{margin-top:50px;text-align:center;color:#777}
+    </style>
+    </head>
+    <body>
+      <div class="header">
+        <div>
+          <h1>${safe(settings.storeName)}</h1>
+          <div>${safe(settings.invoiceTitle)}</div>
+        </div>
+        <div>
+          <div>رقم الطلب: ${safe(order.id)}</div>
+          <div>التاريخ: ${order.date ? new Date(order.date).toLocaleString("ar-SA") : ""}</div>
+        </div>
+      </div>
+      <div><strong>العميل:</strong> ${safe(order.customerName || order.customer || "عميل")}</div>
+      <table>
+        <thead>
+          <tr>
+            <th>المنتج</th>
+            <th>الكمية</th>
+            <th>السعر</th>
+            <th>الإجمالي</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHTML}
+        </tbody>
+      </table>
+      <div class="total">الإجمالي: ${money(order.total)}</div>
+      ${settings.taxNumber ? `<div style="margin-top:15px">الرقم الضريبي: ${safe(settings.taxNumber)}</div>` : ""}
+      <div class="footer">${safe(settings.invoiceFooter)}</div>
+      <script>window.onload = function(){ window.print(); };<\/script>
+    </body>
+    </html>
   `);
-
   win.document.close();
-
 }
 
 
@@ -3002,470 +1640,142 @@ function printInvoice(orderId){
    ========================================================= */
 
 async function exportBackup(){
-
-  const backupProducts=[];
-
+  const backupProducts = [];
   for(const product of products){
-
-    const copy={
-      ...product,
-      image:""
-    };
-
-    const blob=
-      await dbGetImage(
-        product.id
-      );
-
+    const copy = { ...product, image: "" };
+    const blob = await dbGetImage(product.id);
     if(blob){
-
-      copy.imageData=
-        await blobToDataURL(blob);
-
+      copy.imageData = await blobToDataURL(blob);
     }
-
     backupProducts.push(copy);
-
   }
 
-  const data={
-
-    products:backupProducts,
-
-    orders:orders,
-
-    expenses:expenses,
-
-    settings:settings,
-
-    exportedAt:
-      new Date().toISOString()
-
+  const data = {
+    products: backupProducts,
+    orders: orders,
+    expenses: expenses,
+    settings: settings,
+    exportedAt: new Date().toISOString()
   };
 
-  const blob=
-    new Blob(
-      [
-        JSON.stringify(
-          data,
-          null,
-          2
-        )
-      ],
-      {
-        type:"application/json"
-      }
-    );
-
-  const url=
-    URL.createObjectURL(blob);
-
-  const a=
-    document.createElement("a");
-
-  a.href=url;
-
-  a.download=
-    "nexo-store-backup.json";
-
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "nexo-store-backup.json";
   a.click();
-
-  setTimeout(
-    ()=>URL.revokeObjectURL(url),
-    1000
-  );
-
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-
 
 function blobToDataURL(blob){
-
-  return new Promise(
-    (resolve,reject)=>{
-
-      const reader=
-        new FileReader();
-
-      reader.onload=
-        ()=>resolve(
-          reader.result
-        );
-
-      reader.onerror=
-        ()=>reject(
-          reader.error
-        );
-
-      reader.readAsDataURL(blob);
-
-    }
-  );
-
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>resolve(reader.result);
+    reader.onerror = ()=>reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
 }
-
 
 function dataURLToBlob(dataURL){
-
-  const parts=
-    dataURL.split(",");
-
-  const mime=
-    parts[0]
-      .match(/:(.*?);/)[1];
-
-  const binary=
-    atob(parts[1]);
-
-  const array=
-    new Uint8Array(
-      binary.length
-    );
-
-  for(
-    let i=0;
-    i<binary.length;
-    i++
-  ){
-
-    array[i]=
-      binary.charCodeAt(i);
-
+  const parts = dataURL.split(",");
+  const mime = parts[0].match(/:(.*?);/)[1];
+  const binary = atob(parts[1]);
+  const array = new Uint8Array(binary.length);
+  for(let i=0; i<binary.length; i++){
+    array[i] = binary.charCodeAt(i);
   }
-
-  return new Blob(
-    [array],
-    {type:mime}
-  );
-
+  return new Blob([array], { type: mime });
 }
-
 
 async function importBackup(event){
+  const file = event.target.files[0];
+  if(!file) return;
 
-  const file=
-    event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = async function(e){
+    try{
+      const data = JSON.parse(e.target.result);
+      if(data.products){
+        products = [];
+        for(const product of data.products){
+          const copy = { ...product };
+          const imageData = copy.imageData;
+          delete copy.imageData;
 
-  if(!file)return;
-
-  const reader=
-    new FileReader();
-
-  reader.onload=
-    async function(e){
-
-      try{
-
-        const data=
-          JSON.parse(
-            e.target.result
-          );
-
-        if(data.products){
-
-          products=[];
-
-          for(
-            const product
-            of data.products
-          ){
-
-            const copy={
-              ...product
-            };
-
-            const imageData=
-              copy.imageData;
-
-            delete copy.imageData;
-
-            if(imageData){
-
-              copy.image=
-                "indexeddb:"+copy.id;
-
-              await dbPutProduct(
-                copy
-              );
-
-              await dbPutImage(
-                copy.id,
-                dataURLToBlob(
-                  imageData
-                )
-              );
-
-            }else{
-
-              await dbPutProduct(
-                copy
-              );
-
-            }
-
-            products.push(copy);
-
+          if(imageData){
+            copy.image = "indexeddb:" + copy.id;
+            await dbPutProduct(copy);
+            await dbPutImage(copy.id, dataURLToBlob(imageData));
+          }else{
+            await dbPutProduct(copy);
           }
-
+          products.push(copy);
         }
-
-        if(data.orders)
-          orders=data.orders;
-
-        if(data.expenses)
-          expenses=data.expenses;
-
-        if(data.settings)
-          settings=data.settings;
-
-        saveAll();
-
-        await refreshAll();
-
-        alert(
-          "تم استيراد النسخة الاحتياطية بنجاح."
-        );
-
-      }catch(error){
-
-        console.error(error);
-
-        alert(
-          "ملف النسخة الاحتياطية غير صالح."
-        );
-
       }
+      if(data.orders) orders = data.orders;
+      if(data.expenses) expenses = data.expenses;
+      if(data.settings) settings = data.settings;
 
-    };
-
+      saveAll();
+      await refreshAll();
+      alert("تم استيراد النسخة الاحتياطية بنجاح.");
+    }catch(error){
+      console.error(error);
+      alert("ملف النسخة الاحتياطية غير صالح.");
+    }
+  };
   reader.readAsText(file);
-
 }
-
-
-/* =========================================================
-   حذف جميع البيانات
-   ========================================================= */
 
 async function deleteAllData(){
-
-  if(
-    !confirm(
-      "تحذير: سيتم حذف جميع بيانات المتجر. هل أنت متأكد؟"
-    )
-  )
-    return;
+  if(!confirm("تحذير خطير: سيتم حذف كافة بيانات المتجر والمنتجات والإعدادات نهائياً. هل أنت متأكد؟")) return;
 
   try{
-
-    const database=
-      await openDatabase();
-
-    await new Promise(
-      (resolve,reject)=>{
-
-        const transaction=
-          database.transaction(
-            [
-              PRODUCT_STORE,
-              IMAGE_STORE
-            ],
-            "readwrite"
-          );
-
-        transaction
-          .objectStore(PRODUCT_STORE)
-          .clear();
-
-        transaction
-          .objectStore(IMAGE_STORE)
-          .clear();
-
-        transaction.oncomplete=
-          ()=>resolve();
-
-        transaction.onerror=
-          ()=>reject(
-            transaction.error
-          );
-
-      }
-    );
-
+    const database = await openDatabase();
+    await new Promise((resolve, reject)=>{
+      const transaction = database.transaction([PRODUCT_STORE, IMAGE_STORE], "readwrite");
+      transaction.objectStore(PRODUCT_STORE).clear();
+      transaction.objectStore(IMAGE_STORE).clear();
+      transaction.oncomplete = ()=>resolve();
+      transaction.onerror = ()=>reject(transaction.error);
+    });
   }catch(error){
-
     console.error(error);
-
   }
 
-  localStorage.removeItem(
-    "nexo_products"
-  );
-
-  localStorage.removeItem(
-    "nexo_orders"
-  );
-
-  localStorage.removeItem(
-    "nexo_expenses"
-  );
-
-  localStorage.removeItem(
-    "nexo_settings"
-  );
-
-  localStorage.removeItem(
-    "nexo_admin_logged"
-  );
-
-  alert(
-    "تم حذف البيانات."
-  );
-
+  localStorage.clear();
+  alert("تمت مسح كافة البيانات بنجاح.");
   location.reload();
-
 }
 
 
 /* =========================================================
-   ترقية المنتجات القديمة
-   ========================================================= */
-
-async function migrateOldProducts(){
-
-  if(!Array.isArray(products))
-    products=[];
-
-  for(const product of products){
-
-    if(
-      product.image &&
-      product.image.startsWith(
-        "data:image"
-      )
-    ){
-
-      try{
-
-        const blob=
-          dataURLToBlob(
-            product.image
-          );
-
-        await dbPutProduct({
-          ...product,
-          image:
-            "indexeddb:"+product.id
-        });
-
-        await dbPutImage(
-          product.id,
-          blob
-        );
-
-        product.image=
-          "indexeddb:"+product.id;
-
-      }catch(error){
-
-        console.error(
-          "Migration error:",
-          error
-        );
-
-      }
-
-    }else{
-
-      `else`
-
-      try{
-
-        await dbPutProduct(
-          product
-        );
-
-      }catch(error){
-
-        console.error(error);
-
-      }
-
-    }
-
-  }
-
-  saveAll();
-
-}
-
-
-/* =========================================================
-   تحديث كامل
+   التحديث والتشغيل العام
    ========================================================= */
 
 async function refreshAll(){
-
   ensureBank();
-
   loadSettings();
-
   loadBankSettings();
-
-  await migrateOldProducts();
-
   await renderProducts();
-
   renderOrders();
-
   renderExpenses();
-
   calculateAccounting();
-
   updateDashboard();
-
 }
 
-
-/* =========================================================
-   التشغيل
-   ========================================================= */
-
 (async function(){
-
   try{
-
     await openDatabase();
-
     ensureBank();
-
-    if(
-      localStorage.getItem(
-        "nexo_admin_logged"
-      )==="1"
-    ){
-
-      document
-        .getElementById("loginPage")
-        .classList.add("hidden");
-
-      document
-        .getElementById("app")
-        .classList.remove("hidden");
-
+    if(localStorage.getItem("nexo_admin_logged") === "1"){
+      document.getElementById("loginPage").classList.add("hidden");
+      document.getElementById("app").classList.remove("hidden");
       await refreshAll();
-
     }
-
   }catch(error){
-
-    console.error(error);
-
-    alert(
-      "تعذر تشغيل قاعدة تخزين الصور."
-    );
-
+    console.error("Initialization error:", error);
   }
-
 })();
 
 </script>
