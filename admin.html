@@ -1,8 +1,14 @@
-<!DOCTYPE html>  <html lang="ar" dir="rtl">  
+<!DOCTYPE html>  
+<html lang="ar" dir="rtl">  
 <head>  
 <meta charset="UTF-8">  
 <meta name="viewport" content="width=device-width,initial-scale=1">  
-<title>NEXO STORE — لوحة الإدارة</title>  <style>  
+<title>NEXO STORE — لوحة الإدارة</title>  
+
+<!-- مكتبة Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>  
 :root{  
   --primary:#6c4cff;  
   --secondary:#171326;  
@@ -139,24 +145,35 @@ th{background:#fafafa}
   .page-title{font-size:23px}  
   .topbar{padding:0 14px}  
 }  
-</style>  </head>  <body>  <div id="loginPage" class="login-page">  
+</style>  
+</head>  
+<body>  
+<div id="loginPage" class="login-page">  
 <div class="login-box">  
 <div class="logo-title">NEXO STORE</div>  
-<div class="login-subtitle">لوحة إدارة المتجر</div>  <div class="field">  
+<div class="login-subtitle">لوحة إدارة المتجر</div>  
+<div class="field">  
 <label>اسم المستخدم</label>  
 <input id="loginUser" type="text" placeholder="اسم المستخدم">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>كلمة المرور</label>  
 <input id="loginPass" type="password" placeholder="كلمة المرور">  
-</div>  <button class="btn btn-primary" style="width:100%" onclick="login()">دخول الإدارة</button>
-
+</div>  
+<button class="btn btn-primary" style="width:100%" onclick="login()">دخول الإدارة</button>
 <div id="loginError" style="color:#e53935;text-align:center;margin-top:12px"></div>  
 </div>  
-</div>  <div id="app" class="hidden">  <header class="topbar">  
+</div>  
+
+<div id="app" class="hidden">  
+<header class="topbar">  
 <div class="brand">NEXO STORE</div>  
 <button class="menu-btn" onclick="toggleSidebar()">☰</button>  
 <button class="btn btn-danger" onclick="logout()">خروج</button>  
-</header>  <div class="layout">  <aside id="sidebar" class="sidebar">  <button class="nav-btn active" onclick="showPage('dashboard',this)">📊 الرئيسية</button>
+</header>  
+<div class="layout">  
+<aside id="sidebar" class="sidebar">  
+<button class="nav-btn active" onclick="showPage('dashboard',this)">📊 الرئيسية</button>
 <button class="nav-btn" onclick="showPage('products',this)">📦 المنتجات</button>
 <button class="nav-btn" onclick="showPage('orders',this)">🛒 الطلبات</button>
 <button class="nav-btn" onclick="showPage('accounting',this)">💰 الحسابات</button>
@@ -164,62 +181,99 @@ th{background:#fafafa}
 <button class="nav-btn" onclick="showPage('bank',this)">🏦 التحويل البنكي</button>
 <button class="nav-btn" onclick="showPage('settings',this)">⚙️ إعدادات المتجر</button>
 <button class="nav-btn" onclick="showPage('backup',this)">💾 النسخ الاحتياطي</button>
+</aside>  
 
-</aside>  <main class="content">  <section id="dashboard" class="page active">  <h1 class="page-title">لوحة التحكم</h1>  <div class="stats">  <div class="stat">  
+<main class="content">  
+<section id="dashboard" class="page active">  
+<h1 class="page-title">لوحة التحكم</h1>  
+<div class="stats">  
+<div class="stat">  
 <div class="stat-title">إجمالي المبيعات</div>  
 <div id="statSales" class="stat-value">0</div>  
-</div>  <div class="stat">  
+</div>  
+<div class="stat">  
 <div class="stat-title">صافي الأرباح</div>  
 <div id="statProfit" class="stat-value">0</div>  
-</div>  <div class="stat">  
+</div>  
+<div class="stat">  
 <div class="stat-title">الطلبات</div>  
 <div id="statOrders" class="stat-value">0</div>  
-</div>  <div class="stat">  
+</div>  
+<div class="stat">  
 <div class="stat-title">مخزون منخفض</div>  
 <div id="statLow" class="stat-value">0</div>  
-</div>  </div>  <div class="grid">  <div class="card">  
+</div>  
+</div>  
+<div class="grid">  
+<div class="card">  
 <h3>حالة التحويل البنكي</h3>  
 <p id="bankStatusDashboard">غير مفعل</p>  
-</div>  <div class="card">  
+</div>  
+<div class="card">  
 <h3>معلومات سريعة</h3>  
 <p>يمكنك إدارة المنتجات والطلبات والحسابات وطرق الدفع من هذه اللوحة.</p>  
-</div>  </div>  
-</section>  <section id="products" class="page">  <h1 class="page-title">المنتجات</h1>  <div class="card">  <h3 id="productFormTitle">إضافة منتج جديد</h3>  
-<input type="hidden" id="editingProductId" value="">  <div class="form-grid">  <div class="field">  
+</div>  
+</div>  
+</section>  
+
+<section id="products" class="page">  
+<h1 class="page-title">المنتجات</h1>  
+<div class="card">  
+<h3 id="productFormTitle">إضافة منتج جديد</h3>  
+<input type="hidden" id="editingProductId" value="">  
+<div class="form-grid">  
+<div class="field">  
 <label>اسم المنتج</label>  
 <input id="productName" placeholder="اسم المنتج">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>نوع المنتج</label>  
 <select id="productType" onchange="toggleProductType()">  
 <option value="physical">منتج عادي / مادي</option>  
 <option value="digital">منتج رقمي</option>  
 </select>  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>سعر البيع</label>  
 <input id="productPrice" type="number" min="0" placeholder="0">  
-</div>  <div id="costField" class="field">  
+</div>  
+<div id="costField" class="field">  
 <label>سعر الشراء</label>  
 <input id="productCost" type="number" min="0" placeholder="0">  
-</div>  <div id="quantityField" class="field">  
+</div>  
+<div id="quantityField" class="field">  
 <label>الكمية</label>  
 <input id="productQuantity" type="number" min="0" placeholder="0">  
-</div>  <div id="lowField" class="field">  
+</div>  
+<div id="lowField" class="field">  
 <label>حد التنبيه</label>  
 <input id="productLow" type="number" min="0" placeholder="مثال: 5">  
-</div>  <div id="digitalLinkField" class="field hidden">  
+</div>  
+<div id="digitalLinkField" class="field hidden">  
 <label>رابط المنتج الرقمي</label>  
 <input id="productDigitalLink" placeholder="رابط التحميل أو المنتج">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>صورة المنتج</label>  
 <input id="productImage" type="file" accept="image/*" onchange="previewProductImage(event)">  
 <img id="productPreview" class="preview hidden">  
-</div>  <div class="field full">  
+</div>  
+<div class="field full">  
 <label>وصف المنتج</label>  
 <textarea id="productDescription" placeholder="اكتب وصف المنتج"></textarea>  
-</div>  </div>  <div class="actions">  
+</div>  
+</div>  
+<div class="actions">  
 <button id="productSubmitBtn" class="btn btn-primary" type="button" onclick="saveProductData()">إضافة المنتج</button>  
 <button id="productCancelBtn" class="btn btn-light hidden" type="button" onclick="cancelEditProduct()">إلغاء التعديل</button>  
-</div>  </div>  <div class="card">  <h3>المنتجات الحالية</h3>  <div class="table-wrap">  <table>  <thead>  
+</div>  
+</div>  
+
+<div class="card">  
+<h3>المنتجات الحالية</h3>  
+<div class="table-wrap">  
+<table>  
+<thead>  
 <tr>  
 <th>الصورة</th>  
 <th>المنتج</th>  
@@ -229,8 +283,19 @@ th{background:#fafafa}
 <th>الحالة</th>  
 <th>إجراءات</th>  
 </tr>  
-</thead>  <tbody id="productsTable"></tbody>  </table>  </div>  
-</div>  </section>  <section id="orders" class="page">  <h1 class="page-title">الطلبات</h1>  <div class="card">  <div class="table-wrap">  <table>  <thead>  
+</thead>  
+<tbody id="productsTable"></tbody>  
+</table>  
+</div>  
+</div>  
+</section>  
+
+<section id="orders" class="page">  
+<h1 class="page-title">الطلبات</h1>  
+<div class="card">  
+<div class="table-wrap">  
+<table>  
+<thead>  
 <tr>  
 <th>رقم الطلب</th>  
 <th>العميل</th>  
@@ -240,135 +305,235 @@ th{background:#fafafa}
 <th>التاريخ</th>  
 <th>الإجراءات</th>  
 </tr>  
-</thead>  <tbody id="ordersTable"></tbody>  </table>  </div>  
+</thead>  
+<tbody id="ordersTable"></tbody>  
+</table>  
 </div>  
-</section>  <section id="accounting" class="page">  <h1 class="page-title">الحسابات</h1>  <div class="stats">  <div class="stat">  
+</div>  
+</section>  
+
+<section id="accounting" class="page">  
+<h1 class="page-title">الحسابات</h1>  
+<div class="stats">  
+<div class="stat">  
 <div class="stat-title">المبيعات</div>  
 <div id="accSales" class="stat-value">0</div>  
-</div>  <div class="stat">  
+</div>  
+<div class="stat">  
 <div class="stat-title">تكلفة المنتجات</div>  
 <div id="accCosts" class="stat-value">0</div>  
-</div>  <div class="stat">  
+</div>  
+<div class="stat">  
 <div class="stat-title">المصروفات</div>  
 <div id="accExpenses" class="stat-value">0</div>  
-</div>  <div class="stat">  
+</div>  
+<div class="stat">  
 <div class="stat-title">صافي الربح</div>  
 <div id="accProfit" class="stat-value">0</div>  
-</div>  </div>  <div class="card">  
+</div>  
+</div>  
+<div class="card">  
 <h3>طريقة الحساب</h3>  
 <p>صافي الربح = المبيعات − تكلفة المنتجات − المصروفات</p>  
-</div>  </section>  <section id="expenses" class="page">  <h1 class="page-title">المصروفات</h1>  <div class="card">  <h3>إضافة مصروف</h3>  <div class="form-grid">  <div class="field">  
+</div>  
+</section>  
+
+<section id="expenses" class="page">  
+<h1 class="page-title">المصروفات</h1>  
+<div class="card">  
+<h3>إضافة مصروف</h3>  
+<div class="form-grid">  
+<div class="field">  
 <label>اسم المصروف</label>  
 <input id="expenseName" placeholder="مثال: شحن">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>المبلغ</label>  
 <input id="expenseAmount" type="number" min="0" placeholder="0">  
-</div>  </div>  <button class="btn btn-primary" onclick="addExpense()">إضافة المصروف</button>
+</div>  
+</div>  
+<button class="btn btn-primary" onclick="addExpense()">إضافة المصروف</button>
+</div>  
 
-</div>  <div class="card">  <h3>المصروفات السابقة</h3>  <div class="table-wrap">  <table>  <thead>  
+<div class="card">  
+<h3>المصروفات السابقة</h3>  
+<div class="table-wrap">  
+<table>  
+<thead>  
 <tr>  
 <th>المصروف</th>  
 <th>المبلغ</th>  
 <th>التاريخ</th>  
 <th>حذف</th>  
 </tr>  
-</thead>  <tbody id="expensesTable"></tbody>  </table>  </div>  
-</div>  </section>  <section id="bank" class="page">  <h1 class="page-title">التحويل البنكي</h1>  <div class="notice">  
+</thead>  
+<tbody id="expensesTable"></tbody>  
+</table>  
+</div>  
+</div>  
+</section>  
+
+<section id="bank" class="page">  
+<h1 class="page-title">التحويل البنكي</h1>  
+<div class="notice">  
 عدّل بيانات البنك من هنا، وهذه البيانات هي التي سيستخدمها المتجر عند اختيار العميل التحويل البنكي.  
-</div>  <div class="card">  <div class="switch-row">  <div>  
+</div>  
+<div class="card">  
+<div class="switch-row">  
+<div>  
 <strong>تفعيل التحويل البنكي</strong>  
 <div style="color:#777;margin-top:5px">إذا فعلته سيظهر كطريقة دفع في المتجر.</div>  
-</div>  <label class="switch">  
+</div>  
+<label class="switch">  
 <input id="bankEnabled" type="checkbox">  
 <span class="slider"></span>  
-</label>  </div>  <div class="form-grid">  <div class="field">  
+</label>  
+</div>  
+<div class="form-grid">  
+<div class="field">  
 <label>اسم البنك</label>  
 <input id="bankName" placeholder="مثال: الراجحي">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>اسم صاحب الحساب</label>  
 <input id="bankOwner" placeholder="اسم صاحب الحساب">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>رقم الحساب</label>  
 <input id="bankAccount" inputmode="numeric" placeholder="رقم الحساب">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>IBAN</label>  
 <input id="bankIban" placeholder="SA...">  
-</div>  <div class="field full">  
+</div>  
+<div class="field full">  
 <label>تعليمات التحويل</label>  
 <textarea id="bankInstructions" placeholder="اكتب للعميل ماذا يفعل بعد التحويل"></textarea>  
-</div>  </div>  <div class="actions">  
+</div>  
+</div>  
+<div class="actions">  
 <button class="btn btn-primary" onclick="saveBankSettings()">حفظ بيانات البنك</button>  
-</div>  </div>  <div class="card">  
+</div>  
+</div>  
+<div class="card">  
 <h3>معاينة بيانات البنك</h3>  
 <div id="bankPreview" class="bank-preview"></div>  
-</div>  </section>  <section id="settings" class="page">  <h1 class="page-title">إعدادات المتجر</h1>  <div class="card">  <h3>معلومات المتجر</h3>  <div class="form-grid">  <div class="field">  
+</div>  
+</section>  
+
+<section id="settings" class="page">  
+<h1 class="page-title">إعدادات المتجر</h1>  
+<div class="card">  
+<h3>معلومات المتجر</h3>  
+<div class="form-grid">  
+<div class="field">  
 <label>اسم المتجر</label>  
 <input id="setStoreName">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>العملة</label>  
 <input id="setCurrency">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>وصف المتجر</label>  
 <input id="setStoreDescription">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>رقم الهاتف</label>  
 <input id="setPhone">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>واتساب</label>  
 <input id="setWhatsapp">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>العنوان</label>  
 <input id="setAddress">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>اللون الرئيسي</label>  
 <input id="setPrimary" type="color">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>اللون الثانوي</label>  
 <input id="setSecondary" type="color">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>عنوان الفاتورة</label>  
 <input id="setInvoiceTitle">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>الرقم الضريبي</label>  
 <input id="setTaxNumber">  
-</div>  <div class="field full">  
+</div>  
+<div class="field full">  
 <label>نهاية الفاتورة</label>  
 <input id="setInvoiceFooter">  
-</div>  </div>  <button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
+</div>  
+</div>  
+<button class="btn btn-primary" onclick="saveSettings()">حفظ الإعدادات</button>
+</div>  
 
-</div>  <div class="card">  <h3>دخول الإدارة</h3>  <div class="form-grid">  <div class="field">  
+<div class="card">  
+<h3>دخول الإدارة</h3>  
+<div class="form-grid">  
+<div class="field">  
 <label>اسم المستخدم الجديد</label>  
 <input id="setAdminUser">  
-</div>  <div class="field">  
+</div>  
+<div class="field">  
 <label>كلمة المرور الجديدة</label>  
 <input id="setAdminPass" type="password">  
-</div>  </div>  <button class="btn btn-warning" onclick="saveAdminLogin()">تغيير بيانات الدخول</button>
+</div>  
+</div>  
+<button class="btn btn-warning" onclick="saveAdminLogin()">تغيير بيانات الدخول</button>
+</div>  
+</section>  
 
-</div>  </section>  <section id="backup" class="page">  <h1 class="page-title">النسخ الاحتياطي</h1>  <div class="card">  <h3>حفظ نسخة من المتجر</h3>  <p style="color:#777;margin-bottom:15px">  
+<section id="backup" class="page">  
+<h1 class="page-title">النسخ الاحتياطي</h1>  
+<div class="card">  
+<h3>حفظ نسخة من المتجر</h3>  
+<p style="color:#777;margin-bottom:15px">  
 سيتم حفظ المنتجات والطلبات والمصروفات والإعدادات وبيانات التحويل البنكي.  
-</p>  <div class="actions">  <button class="btn btn-primary" onclick="exportBackup()">تصدير نسخة احتياطية</button>
-
+</p>  
+<div class="actions">  
+<button class="btn btn-primary" onclick="exportBackup()">تصدير نسخة احتياطية</button>
 <label class="btn btn-light">  
 استيراد نسخة  
 <input type="file" accept=".json" hidden onchange="importBackup(event)">  
-</label>  <button class="btn btn-danger" onclick="deleteAllData()">حذف كل البيانات</button>
+</label>  
+<button class="btn btn-danger" onclick="deleteAllData()">حذف كل البيانات</button>
+</div>  
+</div>  
+</section>  
+</main>  
+</div>  
+</div>  
 
-</div>  
-</div>  
-</section>  </main>  
-</div>  
-</div>  <div id="receiptModal" class="modal hidden">  <div class="modal-box">  <h2>إثبات التحويل البنكي</h2>  <div id="receiptInfo" style="margin-top:15px"></div>  <img id="receiptImage" class="receipt-img hidden">  <div class="actions">  <button class="btn btn-success" onclick="verifyPayment()">✅ اعتماد الدفع</button>
+<div id="receiptModal" class="modal hidden">  
+<div class="modal-box">  
+<h2>إثبات التحويل البنكي</h2>  
+<div id="receiptInfo" style="margin-top:15px"></div>  
+<img id="receiptImage" class="receipt-img hidden">  
+<div class="actions">  
+<button class="btn btn-success" onclick="verifyPayment()">✅ اعتماد الدفع</button>
 <button class="btn btn-danger" onclick="rejectPayment()">❌ رفض التحويل</button>
 <button class="btn btn-light" onclick="closeReceipt()">إغلاق</button>
+</div>  
+</div>  
+</div>  
 
-</div>  
-</div>  
-</div>  <script>  
-  
+<script>  
 /* =========================================================  
-   NEXO STORE — جافاسكريبت المحسن لمعالجة الصور وتعديل المنتجات  
+   إعدادات اتصال SUPABASE (ضع بياناتك هنا)  
    ========================================================= */  
-  
+const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co'; // استبدل برابط مشروعك
+const SUPABASE_KEY = 'sb_publis_YOUR_KEY_HERE';             // استبدل بمفتاحك العام
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
 const DEFAULT_SETTINGS={  
   storeName:"NEXO STORE",  
   storeDescription:"متجر إلكتروني",  
@@ -397,97 +562,78 @@ const DEFAULT_SETTINGS={
 };  
   
 let settings = JSON.parse(localStorage.getItem("nexo_settings")) || JSON.parse(JSON.stringify(DEFAULT_SETTINGS));  
-let products = JSON.parse(localStorage.getItem("nexo_products")) || [];  
+let products = [];  
 let orders = JSON.parse(localStorage.getItem("nexo_orders")) || [];  
 let expenses = JSON.parse(localStorage.getItem("nexo_expenses")) || [];  
   
 let selectedProductImage = null;  
 let currentReceiptOrderId = null;  
-  
-const DB_NAME = "NEXO_STORE_DATABASE";  
-const DB_VERSION = 1;  
-const PRODUCT_STORE = "products";  
-const IMAGE_STORE = "product_images";  
-  
-let db = null;  
-  
-  
+
+
 /* =========================================================  
-   IndexedDB إدارة قاعدة البيانات للصور  
+   جلب وحفظ المنتجات من SUPABASE  
    ========================================================= */  
-  
-function openDatabase(){  
-  return new Promise((resolve, reject)=>{  
-    if(db){  
-      resolve(db);  
-      return;  
-    }  
-    const request = indexedDB.open(DB_NAME, DB_VERSION);  
-  
-    request.onupgradeneeded = function(event){  
-      const database = event.target.result;  
-      if(!database.objectStoreNames.contains(PRODUCT_STORE)){  
-        database.createObjectStore(PRODUCT_STORE, {keyPath:"id"});  
-      }  
-      if(!database.objectStoreNames.contains(IMAGE_STORE)){  
-        database.createObjectStore(IMAGE_STORE, {keyPath:"productId"});  
-      }  
-    };  
-  
-    request.onsuccess = function(event){  
-      db = event.target.result;  
-      resolve(db);  
-    };  
-  
-    request.onerror = function(){  
-      reject(request.error || new Error("تعذر فتح قاعدة بيانات الصور."));  
-    };  
-  });  
-}  
-  
-async function dbPutProduct(product){  
-  const database = await openDatabase();  
-  return new Promise((resolve, reject)=>{  
-    const transaction = database.transaction(PRODUCT_STORE, "readwrite");  
-    transaction.objectStore(PRODUCT_STORE).put(product);  
-    transaction.oncomplete = ()=>resolve(true);  
-    transaction.onerror = ()=>reject(transaction.error);  
-  });  
-}  
-  
-async function dbDeleteProduct(id){  
-  const database = await openDatabase();  
-  return new Promise((resolve, reject)=>{  
-    const transaction = database.transaction([PRODUCT_STORE, IMAGE_STORE], "readwrite");  
-    transaction.objectStore(PRODUCT_STORE).delete(id);  
-    transaction.objectStore(IMAGE_STORE).delete(id);  
-    transaction.oncomplete = ()=>resolve(true);  
-    transaction.onerror = ()=>reject(transaction.error);  
-  });  
-}  
-  
-async function dbPutImage(productId, blob){  
-  const database = await openDatabase();  
-  return new Promise((resolve, reject)=>{  
-    const transaction = database.transaction(IMAGE_STORE, "readwrite");  
-    transaction.objectStore(IMAGE_STORE).put({ productId: productId, blob: blob });  
-    transaction.oncomplete = ()=>resolve(true);  
-    transaction.onerror = ()=>reject(transaction.error);  
-  });  
-}  
-  
-async function dbGetImage(productId){  
-  const database = await openDatabase();  
-  return new Promise((resolve, reject)=>{  
-    const request = database.transaction(IMAGE_STORE, "readonly").objectStore(IMAGE_STORE).get(productId);  
-    request.onsuccess = ()=>resolve(request.result ? request.result.blob : null);  
-    request.onerror = ()=>reject(request.error);  
-  });  
-}  
+
+async function fetchProductsFromSupabase() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    products = (data || []).map(p => ({
+      id: String(p.id),
+      name: p.name,
+      type: p.type,
+      price: Number(p.price || 0),
+      cost: Number(p.cost || 0),
+      quantity: Number(p.quantity || 0),
+      low: Number(p.low || 0),
+      digitalLink: p.digital_link || '',
+      image: p.image_url || '',
+      description: p.description || '',
+      createdAt: p.created_at
+    }));
+  } catch (err) {
+    console.error("Error fetching products from Supabase:", err);
+  }
+}
+
+async function saveProductToSupabase(productObj) {
+  const dbData = {
+    id: productObj.id,
+    name: productObj.name,
+    type: productObj.type,
+    price: productObj.price,
+    cost: productObj.cost,
+    quantity: productObj.quantity,
+    low: productObj.low,
+    digital_link: productObj.digitalLink,
+    image_url: productObj.image,
+    description: productObj.description
+  };
+
+  const { error } = await supabaseClient
+    .from('products')
+    .upsert(dbData);
+
+  if (error) throw error;
+}
+
+async function deleteProductFromSupabase(id) {
+  const { error } = await supabaseClient
+    .from('products')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+}
   
   
 /* =========================================================  
-   ضغط الصور وعرضها بشكل دقيق  
+   ضغط الصور ورفعها  
    ========================================================= */  
   
 function compressImage(file, maxWidth=1200, quality=0.8){  
@@ -539,11 +685,16 @@ async function previewProductImage(event){
   if(!file) return;  
   
   try{  
-    selectedProductImage = await compressImage(file, 1200, 0.8);  
-    const url = URL.createObjectURL(selectedProductImage);  
-    const preview = document.getElementById("productPreview");  
-    preview.src = url;  
-    preview.classList.remove("hidden");  
+    const compressedBlob = await compressImage(file, 800, 0.7);  
+    // تحويل الصورة المضغطة إلى DataURL لحفظها مباشرة كرابط نصي في قاعدة البيانات السحابية
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      selectedProductImage = e.target.result;
+      const preview = document.getElementById("productPreview");  
+      preview.src = selectedProductImage;  
+      preview.classList.remove("hidden");  
+    };
+    reader.readAsDataURL(compressedBlob);
   }catch(error){  
     selectedProductImage = null;  
     event.target.value = "";  
@@ -551,48 +702,14 @@ async function previewProductImage(event){
   }  
 }  
   
-async function getProductImageUrl(product){  
-  if(!product) return "";  
-  if(product.image && product.image.startsWith("data:image")) return product.image;  
-  if(product.image && product.image.startsWith("http")) return product.image;  
-  if(product.image && product.image.startsWith("indexeddb:")){  
-    try{  
-      const blob = await dbGetImage(product.id);  
-      if(blob) return URL.createObjectURL(blob);  
-    }catch(e){  
-      console.error("Error reading image from IndexedDB:", e);  
-    }  
-  }  
-  // فحص احتياطي مباشر من قاعدة البيانات المحلية لو كان الرابط غير مكتوب صراحة  
-  try{  
-    const blob = await dbGetImage(product.id);  
-    if(blob) return URL.createObjectURL(blob);  
-  }catch(e){}  
-    
-  return "";  
-}  
-  
   
 /* =========================================================  
-   حفظ البيانات الأساسية  
+   حفظ البيانات المحلية الأخرى  
    ========================================================= */  
   
 function saveAll(){  
   try{  
     localStorage.setItem("nexo_settings", JSON.stringify(settings));  
-    localStorage.setItem("nexo_products", JSON.stringify(products.map(p => ({  
-      id: p.id,  
-      name: p.name,  
-      type: p.type,  
-      price: p.price,  
-      cost: p.cost,  
-      quantity: p.quantity,  
-      low: p.low,  
-      digitalLink: p.digitalLink,  
-      description: p.description,  
-      createdAt: p.createdAt,  
-      image: p.image || ""  
-    }))));  
     localStorage.setItem("nexo_orders", JSON.stringify(orders));  
     localStorage.setItem("nexo_expenses", JSON.stringify(expenses));  
     return true;  
@@ -670,7 +787,7 @@ function toggleProductType(){
   
   
 /* =========================================================  
-   إضافة وتعديل المنتجات  
+   إضافة وتعديل المنتجات (عبر Supabase)  
    ========================================================= */  
   
 async function saveProductData(){  
@@ -705,10 +822,10 @@ async function addProduct(){
   
     if(button){  
       button.disabled = true;  
-      button.textContent = "جاري الحفظ...";  
+      button.textContent = "جاري الحفظ في السحابة...";  
     }  
   
-    const id = "NEXO-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);  
+    const id = Date.now().toString();  
   
     const product = {  
       id: id,  
@@ -719,28 +836,22 @@ async function addProduct(){
       quantity: (type === "physical") ? quantity : 0,  
       low: (type === "physical") ? low : 0,  
       digitalLink: (type === "digital") ? digitalLink : "",  
-      image: selectedProductImage ? "indexeddb:" + id : "",  
-      description: description,  
-      createdAt: new Date().toISOString()  
+      image: selectedProductImage || "",  
+      description: description  
     };  
   
-    await dbPutProduct(product);  
+    await saveProductToSupabase(product);  
   
-    if(selectedProductImage){  
-      await dbPutImage(id, selectedProductImage);  
-    }  
-  
-    products.push(product);  
-    saveAll();  
+    products.unshift(product);  
     clearProductForm();  
     await renderProducts();  
     updateDashboard();  
     calculateAccounting();  
   
-    alert("✅ تم إضافة المنتج بنجاح.");  
+    alert("✅ تم إضافة المنتج بنجاح إلى سوبابيس.");  
   }catch(error){  
     console.error("Add Product Error:", error);  
-    alert("تعذر حفظ المنتج: " + error.message);  
+    alert("تعذر حفظ المنتج: " + (error.message || error));  
   }finally{  
     if(button){  
       button.disabled = false;  
@@ -765,16 +876,15 @@ async function editProduct(id){
   document.getElementById("productDescription").value = product.description || "";  
   
   const preview = document.getElementById("productPreview");  
-  const imageUrl = await getProductImageUrl(product);  
-  if(imageUrl){  
-    preview.src = imageUrl;  
+  if(product.image){  
+    preview.src = product.image;  
     preview.classList.remove("hidden");  
   }else{  
     preview.src = "";  
     preview.classList.add("hidden");  
   }  
   
-  selectedProductImage = null;   
+  selectedProductImage = product.image || null;   
   document.getElementById("productFormTitle").textContent = "تعديل المنتج: " + product.name;  
   document.getElementById("productSubmitBtn").textContent = "حفظ التعديلات";  
   document.getElementById("productCancelBtn").classList.remove("hidden");  
@@ -818,18 +928,13 @@ async function updateProduct(id){
       quantity: (type === "physical") ? quantity : 0,  
       low: (type === "physical") ? low : 0,  
       digitalLink: (type === "digital") ? digitalLink : "",  
-      image: selectedProductImage ? "indexeddb:" + id : existingProduct.image,  
+      image: selectedProductImage !== null ? selectedProductImage : existingProduct.image,  
       description: description  
     };  
   
-    await dbPutProduct(updatedProduct);  
-  
-    if(selectedProductImage){  
-      await dbPutImage(id, selectedProductImage);  
-    }  
+    await saveProductToSupabase(updatedProduct);  
   
     products[index] = updatedProduct;  
-    saveAll();  
     cancelEditProduct();  
     await renderProducts();  
     updateDashboard();  
@@ -838,7 +943,7 @@ async function updateProduct(id){
     alert("✅ تم تعديل المنتج بنجاح.");  
   }catch(error){  
     console.error("Update Product Error:", error);  
-    alert("تعذر تحديث المنتج: " + error.message);  
+    alert("تعذر تحديث المنتج: " + (error.message || error));  
   }finally{  
     if(button){  
       button.disabled = false;  
@@ -875,10 +980,7 @@ async function renderProducts(){
     return;  
   }  
   
-  tbody.innerHTML = `<tr><td colspan="7">جاري تحميل المنتجات...</td></tr>`;  
-  let rows = [];  
-  
-  for(const p of products){  
+  tbody.innerHTML = products.map(p => {  
     let status = "";  
     if(p.type === "digital"){  
       status = `<span class="badge badge-success">رقمي</span>`;  
@@ -890,10 +992,9 @@ async function renderProducts(){
       status = `<span class="badge badge-success">متوفر</span>`;  
     }  
   
-    const imageUrl = await getProductImageUrl(p);  
-    const imageHTML = imageUrl ? `<img src="${imageUrl}" style="width:55px;height:55px;object-fit:cover;border-radius:10px">` : "—";  
+    const imageHTML = p.image ? `<img src="${p.image}" style="width:55px;height:55px;object-fit:cover;border-radius:10px">` : "—";  
   
-    rows.push(`  
+    return `  
       <tr>  
         <td>${imageHTML}</td>  
         <td>${safe(p.name)}</td>  
@@ -908,17 +1009,15 @@ async function renderProducts(){
           </div>  
         </td>  
       </tr>  
-    `);  
-  }  
-  tbody.innerHTML = rows.join("");  
+    `;  
+  }).join("");  
 }  
   
 async function deleteProduct(id){  
   if(!confirm("هل أنت متأكد من حذف هذا المنتج؟")) return;  
   try{  
-    await dbDeleteProduct(id);  
+    await deleteProductFromSupabase(id);  
     products = products.filter(p => p.id !== id);  
-    saveAll();  
     await renderProducts();  
     updateDashboard();  
     calculateAccounting();  
@@ -1055,7 +1154,7 @@ function rejectPayment(){
   
   
 /* =========================================================  
-   التحويل البنكي  
+   التحويل البنكي وإعدادات المتجر والمصروفات  
    ========================================================= */  
   
 function loadBankSettings(){  
@@ -1100,11 +1199,6 @@ function renderBankPreview(){
     <div class="bank-line"><strong>التعليمات:</strong><br>${safe(b.instructions || "لا توجد تعليمات")}</div>  
   `;  
 }  
-  
-  
-/* =========================================================  
-   المصروفات والحسابات  
-   ========================================================= */  
   
 function addExpense(){  
   const name = document.getElementById("expenseName").value.trim();  
@@ -1197,11 +1291,6 @@ function updateDashboard(){
     `<span class="badge badge-danger">🔴 التحويل البنكي غير مفعل</span>`;  
 }  
   
-  
-/* =========================================================  
-   إعدادات المتجر وطباعة الفواتير  
-   ========================================================= */  
-  
 function loadSettings(){  
   document.getElementById("setStoreName").value = settings.storeName || "";  
   document.getElementById("setCurrency").value = settings.currency || "ر.س";  
@@ -1293,188 +1382,129 @@ function printInvoice(orderId){
       th{background:#f3f3f3}  
       .total{font-size:22px;font-weight:bold;margin-top:20px}  
       .footer{margin-top:50px;text-align:center;color:#777}  
-    </style>  </head>  
-<body>  
-  <div class="header">  
-    <div>  
-      <h1>${safe(settings.storeName)}</h1>  
-      <div>${safe(settings.invoiceTitle)}</div>  
-    </div>  
-    <div>  
-      <div>رقم الطلب: ${safe(order.id)}</div>  
-      <div>التاريخ: ${order.date ? new Date(order.date).toLocaleString("ar-SA") : ""}</div>  
-    </div>  
-  </div>  
-  <div><strong>العميل:</strong> ${safe(order.customerName || order.customer || "عميل")}</div>  
-  <table>  
-    <thead>  
-      <tr>  
-        <th>المنتج</th>  
-        <th>الكمية</th>  
-        <th>السعر</th>  
-        <th>الإجمالي</th>  
-      </tr>  
-    </thead>  
-    <tbody>  
-      ${itemsHTML}  
-    </tbody>  
-  </table>  
-  <div class="total">الإجمالي: ${money(order.total)}</div>  
-  ${settings.taxNumber ? `<div style="margin-top:15px">الرقم الضريبي: ${safe(settings.taxNumber)}</div>` : ""}  
-  <div class="footer">${safe(settings.invoiceFooter)}</div>  
-  <script>window.onload = function(){ window.print(); };<\/script>  
+    </style>  
+    </head>  
+    <body>  
+      <div class="header">  
+        <div>  
+          <h1>${safe(settings.storeName)}</h1>  
+          <div>${safe(settings.invoiceTitle)}</div>  
+        </div>  
+        <div>  
+          <div>رقم الطلب: ${safe(order.id)}</div>  
+          <div>التاريخ: ${order.date ? new Date(order.date).toLocaleString("ar-SA") : ""}</div>  
+        </div>  
+      </div>  
+      <div><strong>العميل:</strong> ${safe(order.customerName || order.customer || "عميل")}</div>  
+      <table>  
+        <thead>  
+          <tr>  
+            <th>المنتج</th>  
+            <th>الكمية</th>  
+            <th>السعر</th>  
+            <th>الإجمالي</th>  
+          </tr>  
+        </thead>  
+        <tbody>  
+          ${itemsHTML}  
+        </tbody>  
+      </table>  
+      <div class="total">الإجمالي: ${money(order.total)}</div>  
+      ${settings.taxNumber ? `<div style="margin-top:15px">الرقم الضريبي: ${safe(settings.taxNumber)}</div>` : ""}  
+      <div class="footer">${safe(settings.invoiceFooter)}</div>  
+      <script>window.onload = function(){ window.print(); };<\/script>  
+    </body>  
+    </html>  
+  `);  
+  win.document.close();  
+}  
+  
+function exportBackup(){  
+  const data = {  
+    products: products,  
+    orders: orders,  
+    expenses: expenses,  
+    settings: settings,  
+    exportedAt: new Date().toISOString()  
+  };  
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });  
+  const url = URL.createObjectURL(blob);  
+  const a = document.createElement("a");  
+  a.href = url;  
+  a.download = "nexo-store-backup.json";  
+  a.click();  
+  setTimeout(() => URL.revokeObjectURL(url), 1000);  
+}  
+  
+async function importBackup(event){  
+  const file = event.target.files[0];  
+  if(!file) return;  
+  
+  const reader = new FileReader();  
+  reader.onload = async function(e){  
+    try{  
+      const data = JSON.parse(e.target.result);  
+      if(data.products){  
+        for(const p of data.products){  
+          await saveProductToSupabase(p);  
+        }  
+      }  
+      if(data.orders) orders = data.orders;  
+      if(data.expenses) expenses = data.expenses;  
+      if(data.settings) settings = data.settings;  
+  
+      saveAll();  
+      await refreshAll();  
+      alert("تم استيراد النسخة الاحتياطية بنجاح.");  
+    }catch(error){  
+      console.error(error);  
+      alert("ملف النسخة الاحتياطية غير صالح.");  
+    }  
+  };  
+  reader.readAsText(file);  
+}  
+  
+async function deleteAllData(){  
+  if(!confirm("تحذير خطير: سيتم حذف كافة بيانات المنتجات من سوبابيس ومن المتجر نهائياً. هل أنت متأكد؟")) return;  
+
+  try {
+    const { error } = await supabaseClient.from('products').delete().neq('id', '0');
+  } catch(e){}
+
+  localStorage.clear();  
+  alert("تمت مسح كافة البيانات بنجاح.");  
+  location.reload();  
+}  
+  
+async function refreshAll(){  
+  ensureBank();  
+  loadSettings();  
+  loadBankSettings();  
+  await fetchProductsFromSupabase();
+  await renderProducts();  
+  renderOrders();  
+  renderExpenses();  
+  calculateAccounting();  
+  updateDashboard();  
+}  
+  
+(async function(){  
+  try{  
+    ensureBank();  
+    if(localStorage.getItem("nexo_admin_logged") === "1"){  
+      document.getElementById("loginPage").classList.add("hidden");  
+      document.getElementById("app").classList.remove("hidden");  
+      await refreshAll();  
+    }  
+  }catch(error){  
+    console.error("Initialization error:", error);  
+  }  
+})();  
+</script>  
 </body>  
 </html>
 
-`);
-win.document.close();
-}
-
-/* =========================================================
-النسخ الاحتياطي
-========================================================= */
-
-async function exportBackup(){
-const backupProducts = [];
-for(const product of products){
-const copy = { ...product };
-const blob = await dbGetImage(product.id);
-if(blob){
-copy.imageData = await blobToDataURL(blob);
-}
-backupProducts.push(copy);
-}
-
-const data = {
-products: backupProducts,
-orders: orders,
-expenses: expenses,
-settings: settings,
-exportedAt: new Date().toISOString()
-};
-
-const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-const url = URL.createObjectURL(blob);
-const a = document.createElement("a");
-a.href = url;
-a.download = "nexo-store-backup.json";
-a.click();
-setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-function blobToDataURL(blob){
-return new Promise((resolve, reject)=>{
-const reader = new FileReader();
-reader.onload = ()=>resolve(reader.result);
-reader.onerror = ()=>reject(reader.error);
-reader.readAsDataURL(blob);
-});
-}
-
-function dataURLToBlob(dataURL){
-const parts = dataURL.split(",");
-const mime = parts[0].match(/:(.*?);/)[1];
-const binary = atob(parts[1]);
-const array = new Uint8Array(binary.length);
-for(let i=0; i<binary.length; i++){
-array[i] = binary.charCodeAt(i);
-}
-return new Blob([array], { type: mime });
-}
-
-async function importBackup(event){
-const file = event.target.files[0];
-if(!file) return;
-
-const reader = new FileReader();
-reader.onload = async function(e){
-try{
-const data = JSON.parse(e.target.result);
-if(data.products){
-products = [];
-for(const product of data.products){
-const copy = { ...product };
-const imageData = copy.imageData;
-delete copy.imageData;
-
-if(imageData){  
-        copy.image = "indexeddb:" + copy.id;  
-        await dbPutProduct(copy);  
-        await dbPutImage(copy.id, dataURLToBlob(imageData));  
-      }else{  
-        await dbPutProduct(copy);  
-      }  
-      products.push(copy);  
-    }  
-  }  
-  if(data.orders) orders = data.orders;  
-  if(data.expenses) expenses = data.expenses;  
-  if(data.settings) settings = data.settings;  
-
-  saveAll();  
-  await refreshAll();  
-  alert("تم استيراد النسخة الاحتياطية بنجاح.");  
-}catch(error){  
-  console.error(error);  
-  alert("ملف النسخة الاحتياطية غير صالح.");  
-}
-
-};
-reader.readAsText(file);
-}
-
-async function deleteAllData(){
-if(!confirm("تحذير خطير: سيتم حذف كافة بيانات المتجر والمنتجات والإعدادات نهائياً. هل أنت متأكد؟")) return;
-
-try{
-const database = await openDatabase();
-await new Promise((resolve, reject)=>{
-const transaction = database.transaction([PRODUCT_STORE, IMAGE_STORE], "readwrite");
-transaction.objectStore(PRODUCT_STORE).clear();
-transaction.objectStore(IMAGE_STORE).clear();
-transaction.oncomplete = ()=>resolve();
-transaction.onerror = ()=>reject(transaction.error);
-});
-}catch(error){
-console.error(error);
-}
-
-localStorage.clear();
-alert("تمت مسح كافة البيانات بنجاح.");
-location.reload();
-}
-
-/* =========================================================
-التحديث والتشغيل العام
-========================================================= */
-
-async function refreshAll(){
-ensureBank();
-loadSettings();
-loadBankSettings();
-await renderProducts();
-renderOrders();
-renderExpenses();
-calculateAccounting();
-updateDashboard();
-}
-
-(async function(){
-try{
-await openDatabase();
-ensureBank();
-if(localStorage.getItem("nexo_admin_logged") === "1"){
-document.getElementById("loginPage").classList.add("hidden");
-document.getElementById("app").classList.remove("hidden");
-await refreshAll();
-}
-}catch(error){
-console.error("Initialization error:", error);
-}
-})();
-
-</script>  </body>  
-</html>  
 
 
 
