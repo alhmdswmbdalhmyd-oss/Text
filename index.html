@@ -15,6 +15,7 @@
 :root{
   --primary:#111827;
   --accent:#2563eb;
+  --accent2:#60a5fa;
   --green:#16a34a;
   --red:#dc2626;
   --bg:#f6f7f9;
@@ -22,7 +23,8 @@
   --text:#111827;
   --muted:#6b7280;
   --line:#e5e7eb;
-  --shadow:0 12px 35px rgba(0,0,0,.08);
+  --shadow:0 14px 40px rgba(17,24,39,.09);
+  --glow:0 0 25px rgba(37,99,235,.16);
 }
 
 *{
@@ -31,17 +33,21 @@
   padding:0;
 }
 
+html{
+  scroll-behavior:smooth;
+}
+
 body{
   font-family:"Cairo",sans-serif;
-  background:var(--bg);
+  background:
+    radial-gradient(circle at 10% 10%,rgba(37,99,235,.035),transparent 28%),
+    radial-gradient(circle at 90% 30%,rgba(96,165,250,.035),transparent 28%),
+    var(--bg);
   color:var(--text);
   min-height:100vh;
 }
 
-button,
-input,
-select,
-textarea{
+button,input,select,textarea{
   font-family:inherit;
 }
 
@@ -54,9 +60,7 @@ a{
   color:inherit;
 }
 
-/* =========================
-   LOADER
-========================= */
+/* LOADER */
 
 .loader-screen{
   position:fixed;
@@ -66,7 +70,7 @@ a{
   display:flex;
   align-items:center;
   justify-content:center;
-  transition:.4s;
+  transition:.5s ease;
 }
 
 .loader-box{
@@ -79,6 +83,7 @@ a{
   font-size:38px;
   font-weight:900;
   letter-spacing:2px;
+  animation:logoPulse 1.5s ease-in-out infinite;
 }
 
 .loader-logo span{
@@ -97,7 +102,7 @@ a{
 .loader-line div{
   width:0;
   height:100%;
-  background:var(--accent);
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
   animation:loading 1.5s ease forwards;
 }
 
@@ -105,12 +110,15 @@ a{
   to{width:100%}
 }
 
-/* =========================
-   HEADER
-========================= */
+@keyframes logoPulse{
+  50%{transform:scale(1.035)}
+}
+
+/* HEADER */
 
 header{
-  background:#fff;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);
   border-bottom:1px solid var(--line);
   position:sticky;
   top:0;
@@ -131,10 +139,15 @@ header{
   font-size:25px;
   font-weight:900;
   white-space:nowrap;
+  transition:.25s;
 }
 
 .logo span{
   color:var(--accent);
+}
+
+.logo:hover{
+  transform:translateY(-1px);
 }
 
 .header-actions{
@@ -151,12 +164,14 @@ header{
   border-radius:13px;
   font-weight:700;
   color:var(--text);
-  transition:.2s;
+  transition:.25s ease;
 }
 
 .header-btn:hover{
   border-color:var(--accent);
   color:var(--accent);
+  box-shadow:var(--glow);
+  transform:translateY(-2px);
 }
 
 .cart-btn{
@@ -171,7 +186,7 @@ header{
   height:21px;
   padding:0 5px;
   border-radius:50px;
-  background:#ef4444;
+  background:linear-gradient(135deg,#ef4444,#dc2626);
   color:#fff;
   display:flex;
   align-items:center;
@@ -180,9 +195,7 @@ header{
   font-weight:900;
 }
 
-/* =========================
-   WHATSAPP FLOAT
-========================= */
+/* WHATSAPP */
 
 .whatsapp-float{
   position:fixed;
@@ -192,7 +205,7 @@ header{
   height:54px;
   padding:0 20px;
   border-radius:50px;
-  background:#16a34a;
+  background:linear-gradient(135deg,#16a34a,#15803d);
   color:#fff;
   display:flex;
   align-items:center;
@@ -201,26 +214,39 @@ header{
   font-size:14px;
   font-weight:900;
   box-shadow:0 8px 25px rgba(0,0,0,.20);
-  transition:.2s;
+  transition:.25s ease;
 }
 
 .whatsapp-float:hover{
-  background:#15803d;
-  transform:translateY(-3px);
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:0 12px 30px rgba(22,163,74,.25);
 }
 
-/* =========================
-   HERO
-========================= */
+/* HERO */
 
 .hero{
   width:min(1200px,94%);
   margin:25px auto 20px;
-  background:linear-gradient(135deg,#111827,#1e40af);
+  background:
+    radial-gradient(circle at 85% 15%,rgba(96,165,250,.22),transparent 25%),
+    linear-gradient(135deg,#111827,#1e40af);
   color:#fff;
   border-radius:28px;
   padding:45px 35px;
   box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:50%;
+  left:-80px;
+  bottom:-100px;
 }
 
 .hero h1{
@@ -228,6 +254,8 @@ header{
   font-weight:900;
   line-height:1.2;
   margin-bottom:10px;
+  position:relative;
+  z-index:1;
 }
 
 .hero p{
@@ -235,6 +263,8 @@ header{
   font-size:16px;
   max-width:700px;
   line-height:2;
+  position:relative;
+  z-index:1;
 }
 
 .hero-actions{
@@ -242,6 +272,8 @@ header{
   flex-wrap:wrap;
   gap:10px;
   margin-top:22px;
+  position:relative;
+  z-index:1;
 }
 
 .hero-btn{
@@ -251,6 +283,12 @@ header{
   font-weight:800;
   background:#fff;
   color:#111827;
+  transition:.25s;
+}
+
+.hero-btn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,.18);
 }
 
 .hero-btn.secondary{
@@ -259,9 +297,7 @@ header{
   border:1px solid rgba(255,255,255,.25);
 }
 
-/* =========================
-   MAIN
-========================= */
+/* MAIN */
 
 .container{
   width:min(1200px,94%);
@@ -283,10 +319,12 @@ header{
   padding:0 17px;
   outline:none;
   font-size:14px;
+  transition:.25s;
 }
 
 .search-box input:focus{
   border-color:var(--accent);
+  box-shadow:var(--glow);
 }
 
 .categories{
@@ -303,12 +341,20 @@ header{
   padding:10px 17px;
   border-radius:12px;
   font-weight:700;
+  transition:.25s;
+}
+
+.category-btn:hover{
+  border-color:var(--accent);
+  color:var(--accent);
+  transform:translateY(-2px);
 }
 
 .category-btn.active{
-  background:var(--primary);
+  background:linear-gradient(135deg,var(--primary),#26344d);
   color:#fff;
   border-color:var(--primary);
+  box-shadow:0 7px 18px rgba(17,24,39,.15);
 }
 
 .section-title{
@@ -317,9 +363,7 @@ header{
   margin:10px 0 18px;
 }
 
-/* =========================
-   PRODUCTS
-========================= */
+/* PRODUCTS */
 
 .products-grid{
   display:grid;
@@ -333,19 +377,34 @@ header{
   border:1px solid var(--line);
   border-radius:21px;
   overflow:hidden;
-  transition:.2s;
+  transition:.3s ease;
   box-shadow:0 4px 15px rgba(0,0,0,.03);
   cursor:pointer;
+  animation:cardIn .45s ease both;
 }
 
 .card:hover{
-  transform:translateY(-4px);
-  box-shadow:var(--shadow);
+  transform:translateY(-7px);
+  box-shadow:var(--shadow),var(--glow);
+  border-color:rgba(37,99,235,.18);
+}
+
+@keyframes cardIn{
+  from{
+    opacity:0;
+    transform:translateY(12px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
 }
 
 .pic{
   height:240px;
-  background:#f8fafc;
+  background:
+    radial-gradient(circle at center,rgba(37,99,235,.055),transparent 65%),
+    #f8fafc;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -358,6 +417,11 @@ header{
   height:100%;
   object-fit:contain;
   display:block;
+  transition:.3s;
+}
+
+.card:hover .pic img{
+  transform:scale(1.045);
 }
 
 .card-body{
@@ -405,13 +469,22 @@ header{
   height:45px;
   border:0;
   border-radius:12px;
-  background:var(--primary);
+  background:linear-gradient(135deg,var(--primary),#26344d);
   color:#fff;
   font-weight:800;
+  transition:.25s ease;
 }
 
 .add-btn:hover{
-  background:#2563eb;
+  background:linear-gradient(135deg,var(--accent),#1d4ed8);
+  transform:translateY(-2px);
+  box-shadow:0 8px 20px rgba(37,99,235,.2);
+}
+
+.add-btn:active,
+.detail-add:active,
+.checkout-btn:active{
+  transform:scale(.98);
 }
 
 .empty{
@@ -424,14 +497,13 @@ header{
   grid-column:1/-1;
 }
 
-/* =========================
-   MODALS
-========================= */
+/* MODALS */
 
 .modal{
   position:fixed;
   inset:0;
   background:rgba(0,0,0,.58);
+  backdrop-filter:blur(4px);
   z-index:500;
   display:none;
   align-items:center;
@@ -441,6 +513,7 @@ header{
 
 .modal.open{
   display:flex;
+  animation:modalBg .2s ease;
 }
 
 .modal-box{
@@ -451,6 +524,23 @@ header{
   border-radius:25px;
   padding:22px;
   box-shadow:0 20px 70px rgba(0,0,0,.25);
+  animation:modalIn .25s ease;
+}
+
+@keyframes modalIn{
+  from{
+    opacity:0;
+    transform:translateY(18px) scale(.97);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+@keyframes modalBg{
+  from{opacity:0}
+  to{opacity:1}
 }
 
 .product-modal-box{
@@ -477,11 +567,16 @@ header{
   background:#f3f4f6;
   border-radius:12px;
   font-size:18px;
+  transition:.2s;
 }
 
-/* =========================
-   PRODUCT DETAILS
-========================= */
+.close-btn:hover{
+  background:#fee2e2;
+  color:var(--red);
+  transform:rotate(4deg);
+}
+
+/* PRODUCT DETAILS */
 
 .product-details{
   display:grid;
@@ -491,7 +586,9 @@ header{
 
 .product-detail-image{
   min-height:420px;
-  background:#f8fafc;
+  background:
+    radial-gradient(circle at center,rgba(37,99,235,.055),transparent 65%),
+    #f8fafc;
   border:1px solid var(--line);
   border-radius:20px;
   padding:20px;
@@ -543,6 +640,10 @@ header{
 
 .description-box{
   margin-top:20px;
+  padding:15px;
+  background:#f8fafc;
+  border-radius:15px;
+  border:1px solid var(--line);
 }
 
 .description-box h3{
@@ -562,15 +663,20 @@ header{
   height:52px;
   border:0;
   border-radius:14px;
-  background:var(--primary);
+  background:linear-gradient(135deg,var(--primary),#26344d);
   color:#fff;
   font-size:16px;
   font-weight:900;
+  transition:.25s;
 }
 
-/* =========================
-   CART
-========================= */
+.detail-add:hover{
+  background:linear-gradient(135deg,var(--accent),#1d4ed8);
+  transform:translateY(-2px);
+  box-shadow:0 9px 22px rgba(37,99,235,.22);
+}
+
+/* CART */
 
 .cart-items{
   display:flex;
@@ -634,6 +740,12 @@ header{
   background:#fff;
   border-radius:9px;
   font-weight:900;
+  transition:.2s;
+}
+
+.qty button:hover{
+  border-color:var(--accent);
+  color:var(--accent);
 }
 
 .qty span{
@@ -674,15 +786,20 @@ header{
   height:50px;
   border:0;
   border-radius:14px;
-  background:var(--primary);
+  background:linear-gradient(135deg,var(--primary),#26344d);
   color:#fff;
   font-weight:900;
   margin-top:15px;
+  transition:.25s;
 }
 
-/* =========================
-   FORMS
-========================= */
+.checkout-btn:hover{
+  background:linear-gradient(135deg,var(--accent),#1d4ed8);
+  transform:translateY(-2px);
+  box-shadow:0 9px 22px rgba(37,99,235,.2);
+}
+
+/* FORMS */
 
 .form-group{
   margin-bottom:14px;
@@ -705,6 +822,7 @@ header{
   padding:10px 13px;
   outline:none;
   background:#fff;
+  transition:.2s;
 }
 
 .form-group textarea{
@@ -716,6 +834,7 @@ header{
 .form-group textarea:focus,
 .form-group select:focus{
   border-color:var(--accent);
+  box-shadow:var(--glow);
 }
 
 .fulfillment,
@@ -733,12 +852,19 @@ header{
   text-align:center;
   font-weight:800;
   cursor:pointer;
+  transition:.2s;
+}
+
+.option:hover{
+  border-color:var(--accent);
+  transform:translateY(-2px);
 }
 
 .option.active{
   border-color:var(--accent);
   background:#eff6ff;
   color:#1d4ed8;
+  box-shadow:var(--glow);
 }
 
 .checkout-total{
@@ -752,9 +878,53 @@ header{
   margin-bottom:0;
 }
 
-/* =========================
-   TRACKING
-========================= */
+/* PICKUP LOCATION */
+
+.pickup-location-box{
+  margin-top:12px;
+  padding:14px;
+  background:linear-gradient(135deg,#eff6ff,#f8fafc);
+  border:1px solid #bfdbfe;
+  border-radius:15px;
+}
+
+.pickup-location-title{
+  font-weight:900;
+  margin-bottom:7px;
+  color:#1e40af;
+}
+
+.location-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.location-btn{
+  flex:1;
+  min-width:150px;
+  border:0;
+  border-radius:11px;
+  padding:11px 13px;
+  font-weight:800;
+  background:#2563eb;
+  color:#fff;
+  transition:.2s;
+}
+
+.location-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 7px 18px rgba(37,99,235,.2);
+}
+
+.location-btn.secondary{
+  background:#fff;
+  color:#1d4ed8;
+  border:1px solid #bfdbfe;
+}
+
+/* TRACKING */
 
 .track-result{
   margin-top:18px;
@@ -777,9 +947,7 @@ header{
   font-weight:900;
 }
 
-/* =========================
-   SUCCESS
-========================= */
+/* SUCCESS */
 
 .success{
   text-align:center;
@@ -797,6 +965,18 @@ header{
   justify-content:center;
   font-size:35px;
   margin:0 auto 15px;
+  animation:successPop .45s ease;
+}
+
+@keyframes successPop{
+  from{
+    transform:scale(.6);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
 }
 
 .success h2{
@@ -818,9 +998,7 @@ header{
   font-weight:900;
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* FOOTER */
 
 footer{
   background:#111827;
@@ -853,9 +1031,7 @@ footer{
   line-height:2;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media(max-width:950px){
 
@@ -972,27 +1148,27 @@ footer{
     font-size:10px;
   }
 
+  .location-buttons{
+    flex-direction:column;
+  }
+
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOADER -->
 <div class="loader-screen" id="loader">
   <div class="loader-box">
     <div class="loader-logo">
       NEXO <span>STORE</span>
     </div>
-
     <div class="loader-line">
       <div></div>
     </div>
   </div>
 </div>
 
-
-<!-- HEADER -->
 <header>
   <div class="header-inner">
 
@@ -1002,31 +1178,19 @@ footer{
 
     <div class="header-actions">
 
-      <button
-        class="header-btn"
-        onclick="openTrack()"
-      >
+      <button class="header-btn" type="button" onclick="openTrack()">
         🔎 استعلام الطلب
       </button>
 
-      <button
-        class="header-btn cart-btn"
-        onclick="openCart()"
-      >
+      <button class="header-btn cart-btn" type="button" onclick="openCart()">
         🛒 السلة
-        <span
-          class="cart-badge"
-          id="cartCount"
-        >0</span>
+        <span class="cart-badge" id="cartCount">0</span>
       </button>
 
     </div>
-
   </div>
 </header>
 
-
-<!-- واتساب ثابت أسفل يسار الشاشة -->
 <a
   class="whatsapp-float"
   href="https://wa.me/966501203710"
@@ -1038,10 +1202,7 @@ footer{
   💬 تواصل معنا
 </a>
 
-
-<!-- HERO -->
 <section class="hero">
-
   <div class="container">
 
     <h1 id="heroTitle">
@@ -1054,28 +1215,18 @@ footer{
 
     <div class="hero-actions">
 
-      <button
-        class="hero-btn"
-        onclick="scrollToProducts()"
-      >
+      <button class="hero-btn" type="button" onclick="scrollToProducts()">
         🛍️ تصفح المنتجات
       </button>
 
-      <button
-        class="hero-btn secondary"
-        onclick="openTrack()"
-      >
+      <button class="hero-btn secondary" type="button" onclick="openTrack()">
         📦 تتبع طلبك
       </button>
 
     </div>
-
   </div>
-
 </section>
 
-
-<!-- MAIN -->
 <main class="container">
 
   <div class="search-box">
@@ -1089,50 +1240,30 @@ footer{
 
   </div>
 
-
   <div class="categories">
 
-    <button
-      class="category-btn active"
-      onclick="setCategory('all',this)"
-    >
+    <button class="category-btn active" type="button" onclick="setCategory('all',this)">
       الكل
     </button>
 
-    <button
-      class="category-btn"
-      onclick="setCategory('digital',this)"
-    >
+    <button class="category-btn" type="button" onclick="setCategory('digital',this)">
       المنتجات الرقمية
     </button>
 
-    <button
-      class="category-btn"
-      onclick="setCategory('physical',this)"
-    >
+    <button class="category-btn" type="button" onclick="setCategory('physical',this)">
       المنتجات المتنوعة
     </button>
 
   </div>
 
-
-  <h2
-    class="section-title"
-    id="productsTitle"
-  >
+  <h2 class="section-title" id="productsTitle">
     المنتجات
   </h2>
 
-
-  <div
-    class="products-grid"
-    id="productsGrid"
-  ></div>
+  <div class="products-grid" id="productsGrid"></div>
 
 </main>
 
-
-<!-- FOOTER -->
 <footer>
 
   <div class="footer-inner">
@@ -1143,10 +1274,7 @@ footer{
         NEXO <span>STORE</span>
       </div>
 
-      <div
-        class="footer-text"
-        id="footerDescription"
-      >
+      <div class="footer-text" id="footerDescription">
         متجرك الإلكتروني.
       </div>
 
@@ -1161,13 +1289,8 @@ footer{
 
 </footer>
 
-
 <!-- PRODUCT DETAILS -->
-<div
-  class="modal"
-  id="productModal"
-  onclick="modalOutside(event,'productModal')"
->
+<div class="modal" id="productModal" onclick="modalOutside(event,'productModal')">
 
   <div class="modal-box product-modal-box">
 
@@ -1177,10 +1300,7 @@ footer{
         تفاصيل المنتج
       </div>
 
-      <button
-        class="close-btn"
-        onclick="closeProduct()"
-      >
+      <button class="close-btn" type="button" onclick="closeProduct()">
         ✕
       </button>
 
@@ -1189,16 +1309,10 @@ footer{
     <div id="productDetails"></div>
 
   </div>
-
 </div>
 
-
 <!-- CART -->
-<div
-  class="modal"
-  id="cartModal"
-  onclick="modalOutside(event,'cartModal')"
->
+<div class="modal" id="cartModal" onclick="modalOutside(event,'cartModal')">
 
   <div class="modal-box">
 
@@ -1208,10 +1322,7 @@ footer{
         🛒 سلة المشتريات
       </div>
 
-      <button
-        class="close-btn"
-        onclick="closeCart()"
-      >
+      <button class="close-btn" type="button" onclick="closeCart()">
         ✕
       </button>
 
@@ -1220,16 +1331,10 @@ footer{
     <div id="cartItems"></div>
 
   </div>
-
 </div>
 
-
 <!-- CHECKOUT -->
-<div
-  class="modal"
-  id="checkoutModal"
-  onclick="modalOutside(event,'checkoutModal')"
->
+<div class="modal" id="checkoutModal" onclick="modalOutside(event,'checkoutModal')">
 
   <div class="modal-box">
 
@@ -1239,63 +1344,28 @@ footer{
         إتمام الطلب
       </div>
 
-      <button
-        class="close-btn"
-        onclick="closeCheckout()"
-      >
+      <button class="close-btn" type="button" onclick="closeCheckout()">
         ✕
       </button>
 
     </div>
 
-
     <form id="checkoutForm">
 
       <div class="form-group">
-
-        <label>
-          الاسم الكامل
-        </label>
-
-        <input
-          id="customerName"
-          required
-          placeholder="اكتب اسمك"
-        >
-
+        <label>الاسم الكامل</label>
+        <input id="customerName" required placeholder="اكتب اسمك">
       </div>
-
 
       <div class="form-group">
-
-        <label>
-          رقم الجوال
-        </label>
-
-        <input
-          id="customerPhone"
-          required
-          type="tel"
-          placeholder="05xxxxxxxx"
-        >
-
+        <label>رقم الجوال</label>
+        <input id="customerPhone" required type="tel" placeholder="05xxxxxxxx">
       </div>
-
 
       <div class="form-group">
-
-        <label>
-          البريد الإلكتروني
-        </label>
-
-        <input
-          id="customerEmail"
-          type="email"
-          placeholder="example@email.com"
-        >
-
+        <label>البريد الإلكتروني</label>
+        <input id="customerEmail" type="email" placeholder="example@email.com">
       </div>
-
 
       <div class="form-group">
 
@@ -1305,26 +1375,17 @@ footer{
 
         <div class="fulfillment">
 
-          <div
-            class="option active"
-            id="deliveryOption"
-            onclick="selectFulfillment('delivery')"
-          >
+          <div class="option active" id="deliveryOption" onclick="selectFulfillment('delivery')">
             🚚 توصيل
           </div>
 
-          <div
-            class="option"
-            id="pickupOption"
-            onclick="selectFulfillment('pickup')"
-          >
-            📍 استلام
+          <div class="option" id="pickupOption" onclick="selectFulfillment('pickup')">
+            📍 استلام بنفسي
           </div>
 
         </div>
 
       </div>
-
 
       <div id="deliveryFields">
 
@@ -1334,13 +1395,9 @@ footer{
             المدينة
           </label>
 
-          <input
-            id="customerCity"
-            placeholder="مكة المكرمة"
-          >
+          <input id="customerCity" placeholder="مكة المكرمة">
 
         </div>
-
 
         <div class="form-group">
 
@@ -1348,15 +1405,11 @@ footer{
             العنوان
           </label>
 
-          <textarea
-            id="customerAddress"
-            placeholder="اكتب عنوان التوصيل بالتفصيل"
-          ></textarea>
+          <textarea id="customerAddress" placeholder="اكتب عنوان التوصيل بالتفصيل"></textarea>
 
         </div>
 
       </div>
-
 
       <div
         id="pickupInfo"
@@ -1371,20 +1424,15 @@ footer{
         "
       ></div>
 
-
       <div class="form-group">
 
         <label>
           ملاحظات
         </label>
 
-        <textarea
-          id="customerNote"
-          placeholder="أي ملاحظات إضافية..."
-        ></textarea>
+        <textarea id="customerNote" placeholder="أي ملاحظات إضافية..."></textarea>
 
       </div>
-
 
       <div class="form-group">
 
@@ -1394,27 +1442,15 @@ footer{
 
         <div class="payment-options">
 
-          <div
-            class="option active"
-            id="cashPayment"
-            onclick="selectPayment('cash')"
-          >
+          <div class="option active" id="cashPayment" onclick="selectPayment('cash')">
             💵 عند الاستلام
           </div>
 
-          <div
-            class="option"
-            id="moyasarPayment"
-            onclick="selectPayment('moyasar')"
-          >
+          <div class="option" id="moyasarPayment" onclick="selectPayment('moyasar')">
             💳 بطاقة
           </div>
 
-          <div
-            class="option"
-            id="paypalPayment"
-            onclick="selectPayment('paypal')"
-          >
+          <div class="option" id="paypalPayment" onclick="selectPayment('paypal')">
             🅿️ PayPal
           </div>
 
@@ -1422,33 +1458,19 @@ footer{
 
       </div>
 
+      <div class="checkout-total" id="checkoutSummary"></div>
 
-      <div
-        class="checkout-total"
-        id="checkoutSummary"
-      ></div>
-
-
-      <button
-        class="checkout-btn"
-        type="submit"
-      >
+      <button class="checkout-btn" type="submit">
         تأكيد الطلب
       </button>
 
     </form>
 
   </div>
-
 </div>
 
-
 <!-- TRACK -->
-<div
-  class="modal"
-  id="trackModal"
-  onclick="modalOutside(event,'trackModal')"
->
+<div class="modal" id="trackModal" onclick="modalOutside(event,'trackModal')">
 
   <div class="modal-box">
 
@@ -1458,15 +1480,11 @@ footer{
         🔎 استعلام الطلب
       </div>
 
-      <button
-        class="close-btn"
-        onclick="closeTrack()"
-      >
+      <button class="close-btn" type="button" onclick="closeTrack()">
         ✕
       </button>
 
     </div>
-
 
     <div class="form-group">
 
@@ -1474,37 +1492,21 @@ footer{
         رقم الطلب
       </label>
 
-      <input
-        id="trackNumber"
-        placeholder="مثال: NEXO-12345678"
-      >
+      <input id="trackNumber" placeholder="مثال: NEXO-12345678">
 
     </div>
 
-
-    <button
-      class="checkout-btn"
-      onclick="trackOrder()"
-    >
+    <button class="checkout-btn" type="button" onclick="trackOrder()">
       استعلام
     </button>
 
-
-    <div
-      id="trackResult"
-      class="track-result"
-    ></div>
+    <div id="trackResult" class="track-result"></div>
 
   </div>
-
 </div>
 
-
 <!-- SUCCESS -->
-<div
-  class="modal"
-  id="successModal"
->
+<div class="modal" id="successModal">
 
   <div class="modal-box">
 
@@ -1522,32 +1524,20 @@ footer{
         تم تسجيل طلبك بنجاح.
       </p>
 
-      <div
-        class="order-code"
-        id="successOrderNumber"
-      ></div>
+      <div class="order-code" id="successOrderNumber"></div>
 
       <div id="successDetails"></div>
 
-      <button
-        class="checkout-btn"
-        onclick="closeSuccess()"
-      >
+      <button class="checkout-btn" type="button" onclick="closeSuccess()">
         تم
       </button>
 
     </div>
 
   </div>
-
 </div>
 
-
 <script>
-
-/* =========================
-   STORAGE
-========================= */
 
 const K = {
   products:"nexo_products",
@@ -1566,16 +1556,11 @@ let fulfillment = "delivery";
 let payment = "cash";
 
 
-/* =========================
-   HELPERS
-========================= */
-
 function getData(key,fallback){
 
   try{
 
-    const data =
-      localStorage.getItem(key);
+    const data = localStorage.getItem(key);
 
     if(!data){
       return fallback;
@@ -1594,18 +1579,31 @@ function getData(key,fallback){
 
 function saveData(key,data){
 
-  localStorage.setItem(
-    key,
-    JSON.stringify(data)
-  );
+  try{
+
+    localStorage.setItem(
+      key,
+      JSON.stringify(data)
+    );
+
+    return true;
+
+  }catch(error){
+
+    showSmallMessage(
+      "تعذر حفظ البيانات في الجهاز."
+    );
+
+    return false;
+
+  }
 
 }
 
 
 function money(value){
 
-  const number =
-    Number(value || 0);
+  const number = Number(value || 0);
 
   return number
     .toFixed(2)
@@ -1655,23 +1653,40 @@ function productImage(product){
 
 
 /* =========================
+   FIXED PRODUCT ID
+========================= */
+
+function getProductId(product){
+
+  return String(
+    product.id ??
+    product._id ??
+    product.productId ??
+    ""
+  );
+
+}
+
+
+function findProduct(id){
+
+  return products.find(product=>
+    getProductId(product) === String(id)
+  );
+
+}
+
+
+/* =========================
    INIT
 ========================= */
 
 function init(){
 
-  products =
-    getData(K.products,[]);
-
-  orders =
-    getData(K.orders,[]);
-
-  settings =
-    getData(K.settings,{});
-
-  cart =
-    getData(K.cart,[]);
-
+  products = getData(K.products,[]);
+  orders = getData(K.orders,[]);
+  settings = getData(K.settings,{});
+  cart = getData(K.cart,[]);
 
   if(!Array.isArray(products)){
     products = [];
@@ -1685,21 +1700,13 @@ function init(){
     cart = [];
   }
 
-
   applySettings();
-
   renderProducts();
-
   updateCartCount();
-
   updateCheckoutSummary();
 
-
-  document.getElementById(
-    "footerYear"
-  ).textContent =
+  document.getElementById("footerYear").textContent =
     new Date().getFullYear();
-
 
   setTimeout(()=>{
 
@@ -1711,9 +1718,7 @@ function init(){
       loader.style.opacity = "0";
 
       setTimeout(()=>{
-
         loader.style.display = "none";
-
       },400);
 
     }
@@ -1739,32 +1744,18 @@ function applySettings(){
     settings.description ||
     "متجرك الإلكتروني للمنتجات الرقمية والمنتجات المتنوعة.";
 
+  document.title = storeName;
 
-  document.title =
+  document.getElementById("headerLogo").textContent =
     storeName;
 
-
-  document.getElementById(
-    "headerLogo"
-  ).textContent =
+  document.getElementById("heroTitle").textContent =
     storeName;
 
-
-  document.getElementById(
-    "heroTitle"
-  ).textContent =
-    storeName;
-
-
-  document.getElementById(
-    "heroDescription"
-  ).textContent =
+  document.getElementById("heroDescription").textContent =
     description;
 
-
-  document.getElementById(
-    "footerDescription"
-  ).textContent =
+  document.getElementById("footerDescription").textContent =
     description;
 
 }
@@ -1776,9 +1767,7 @@ function applySettings(){
 
 function setCategory(category,button){
 
-  currentCategory =
-    category;
-
+  currentCategory = category;
 
   document
     .querySelectorAll(".category-btn")
@@ -1786,11 +1775,9 @@ function setCategory(category,button){
       btn.classList.remove("active");
     });
 
-
   if(button){
     button.classList.add("active");
   }
-
 
   renderProducts();
 
@@ -1804,10 +1791,7 @@ function setCategory(category,button){
 function renderProducts(){
 
   const grid =
-    document.getElementById(
-      "productsGrid"
-    );
-
+    document.getElementById("productsGrid");
 
   const search =
     document
@@ -1815,7 +1799,6 @@ function renderProducts(){
       .value
       .trim()
       .toLowerCase();
-
 
   const filtered =
     products.filter(product=>{
@@ -1827,49 +1810,33 @@ function renderProducts(){
           ""
         ).toLowerCase();
 
-
       const description =
         String(
           product.description ||
           ""
         ).toLowerCase();
 
-
       const type =
         product.type ||
         product.category ||
         "";
 
-
       let categoryMatch = true;
 
-
       if(currentCategory === "digital"){
-
-        categoryMatch =
-          type === "digital";
-
+        categoryMatch = type === "digital";
       }
-
 
       if(currentCategory === "physical"){
-
-        categoryMatch =
-          type !== "digital";
-
+        categoryMatch = type !== "digital";
       }
-
 
       const searchMatch =
         !search ||
         name.includes(search) ||
         description.includes(search);
 
-
-      return (
-        categoryMatch &&
-        searchMatch
-      );
+      return categoryMatch && searchMatch;
 
     });
 
@@ -1890,20 +1857,12 @@ function renderProducts(){
   grid.innerHTML =
     filtered.map(product=>{
 
-      const id =
-        String(
-          product.id ??
-          product._id ??
-          product.productId ??
-          ""
-        );
-
+      const id = getProductId(product);
 
       const name =
         product.name ||
         product.title ||
         "منتج";
-
 
       const price =
         Number(
@@ -1913,20 +1872,21 @@ function renderProducts(){
           0
         );
 
+      const image = productImage(product);
+      const type = productType(product);
 
-      const image =
-        productImage(product);
 
-
-      const type =
-        productType(product);
-
+      /*
+        تم إصلاح المشكلة هنا:
+        كان onclick يستخدم علامات اقتباس متداخلة
+        مما يجعل زر المنتج لا يعمل بشكل صحيح.
+      */
 
       return `
 
         <article
           class="card"
-          onclick="openProduct(${JSON.stringify(id)})"
+          onclick='openProduct(${JSON.stringify(id)})'
         >
 
           <div class="pic">
@@ -1939,18 +1899,15 @@ function renderProducts(){
 
           </div>
 
-
           <div class="card-body">
 
             <div class="card-name">
               ${escapeHtml(name)}
             </div>
 
-
             <div class="card-price">
               ${money(price)} ر.س
             </div>
-
 
             <div class="card-meta">
 
@@ -1964,13 +1921,10 @@ function renderProducts(){
 
             </div>
 
-
             <button
               class="add-btn"
-              onclick="
-                event.stopPropagation();
-                addToCart(${JSON.stringify(id)});
-              "
+              type="button"
+              onclick='event.stopPropagation(); addToCart(${JSON.stringify(id)});'
             >
               🛒 أضف للسلة
             </button>
@@ -1992,27 +1946,16 @@ function renderProducts(){
 
 function openProduct(id){
 
-  const product =
-    products.find(p=>
-      String(
-        p.id ??
-        p._id ??
-        p.productId ??
-        ""
-      ) === String(id)
-    );
-
+  const product = findProduct(id);
 
   if(!product){
     return;
   }
 
-
   const name =
     product.name ||
     product.title ||
     "منتج";
-
 
   const price =
     Number(
@@ -2022,23 +1965,15 @@ function openProduct(id){
       0
     );
 
-
   const description =
     product.description ||
     "لا يوجد وصف لهذا المنتج.";
 
-
-  const type =
-    productType(product);
-
-
-  const image =
-    productImage(product);
+  const type = productType(product);
+  const image = productImage(product);
 
 
-  document.getElementById(
-    "productDetails"
-  ).innerHTML = `
+  document.getElementById("productDetails").innerHTML = `
 
     <div class="product-details">
 
@@ -2051,18 +1986,15 @@ function openProduct(id){
 
       </div>
 
-
       <div class="product-detail-info">
 
         <h2>
           ${escapeHtml(name)}
         </h2>
 
-
         <div class="detail-price">
           ${money(price)} ر.س
         </div>
-
 
         <div class="detail-row">
 
@@ -2075,7 +2007,6 @@ function openProduct(id){
           </span>
 
         </div>
-
 
         <div class="detail-row">
 
@@ -2092,7 +2023,6 @@ function openProduct(id){
 
         </div>
 
-
         <div class="detail-row">
 
           <span class="detail-label">
@@ -2104,7 +2034,6 @@ function openProduct(id){
           </span>
 
         </div>
-
 
         <div class="description-box">
 
@@ -2118,13 +2047,10 @@ function openProduct(id){
 
         </div>
 
-
         <button
           class="detail-add"
-          onclick="
-            addToCart(${JSON.stringify(String(id))});
-            closeProduct();
-          "
+          type="button"
+          onclick='addToCart(${JSON.stringify(String(id))}); closeProduct();'
         >
           🛒 أضف المنتج إلى السلة
         </button>
@@ -2158,19 +2084,16 @@ function closeProduct(){
 
 function addToCart(id){
 
-  const product =
-    products.find(p=>
-      String(
-        p.id ??
-        p._id ??
-        p.productId ??
-        ""
-      ) === String(id)
-    );
-
+  const product = findProduct(id);
 
   if(!product){
+
+    showSmallMessage(
+      "المنتج غير موجود."
+    );
+
     return;
+
   }
 
 
@@ -2195,7 +2118,9 @@ function addToCart(id){
   }
 
 
-  saveData(K.cart,cart);
+  if(!saveData(K.cart,cart)){
+    return;
+  }
 
   updateCartCount();
 
@@ -2213,16 +2138,13 @@ function changeQty(id,difference){
       String(item.id) === String(id)
     );
 
-
   if(!item){
     return;
   }
 
-
   item.quantity =
     Number(item.quantity || 0) +
     Number(difference);
-
 
   if(item.quantity <= 0){
 
@@ -2233,13 +2155,10 @@ function changeQty(id,difference){
 
   }
 
-
   saveData(K.cart,cart);
 
   updateCartCount();
-
   renderCart();
-
   updateCheckoutSummary();
 
 }
@@ -2252,13 +2171,10 @@ function removeFromCart(id){
       String(item.id) !== String(id)
     );
 
-
   saveData(K.cart,cart);
 
   updateCartCount();
-
   renderCart();
-
   updateCheckoutSummary();
 
 }
@@ -2274,10 +2190,7 @@ function updateCartCount(){
       0
     );
 
-
-  document.getElementById(
-    "cartCount"
-  ).textContent =
+  document.getElementById("cartCount").textContent =
     count;
 
 }
@@ -2310,10 +2223,7 @@ function closeCart(){
 function renderCart(){
 
   const box =
-    document.getElementById(
-      "cartItems"
-    );
-
+    document.getElementById("cartItems");
 
   if(!cart.length){
 
@@ -2327,28 +2237,16 @@ function renderCart(){
 
   }
 
-
   let subtotal = 0;
-
 
   const html =
     cart.map(item=>{
 
-      const product =
-        products.find(p=>
-          String(
-            p.id ??
-            p._id ??
-            p.productId ??
-            ""
-          ) === String(item.id)
-        );
-
+      const product = findProduct(item.id);
 
       if(!product){
         return "";
       }
-
 
       const price =
         Number(
@@ -2358,15 +2256,10 @@ function renderCart(){
           0
         );
 
-
       const quantity =
-        Number(
-          item.quantity || 1
-        );
+        Number(item.quantity || 1);
 
-
-      subtotal +=
-        price * quantity;
+      subtotal += price * quantity;
 
 
       return `
@@ -2381,7 +2274,6 @@ function renderCart(){
             >
 
           </div>
-
 
           <div class="cart-item-info">
 
@@ -2399,47 +2291,32 @@ function renderCart(){
 
           </div>
 
-
           <div class="qty">
 
             <button
-              onclick="
-                changeQty(
-                  ${JSON.stringify(String(item.id))},
-                  -1
-                )
-              "
+              type="button"
+              onclick='changeQty(${JSON.stringify(String(item.id))},-1)'
             >
               −
             </button>
-
 
             <span>
               ${quantity}
             </span>
 
-
             <button
-              onclick="
-                changeQty(
-                  ${JSON.stringify(String(item.id))},
-                  1
-                )
-              "
+              type="button"
+              onclick='changeQty(${JSON.stringify(String(item.id))},1)'
             >
               +
             </button>
 
           </div>
 
-
           <button
             class="remove-btn"
-            onclick="
-              removeFromCart(
-                ${JSON.stringify(String(item.id))}
-              )
-            "
+            type="button"
+            onclick='removeFromCart(${JSON.stringify(String(item.id))})'
           >
             حذف
           </button>
@@ -2454,14 +2331,10 @@ function renderCart(){
   const discount =
     calculateDiscount(subtotal);
 
-
   const delivery =
     fulfillment === "delivery"
-      ? Number(
-          settings.deliveryFee || 0
-        )
+      ? Number(settings.deliveryFee || 0)
       : 0;
-
 
   const total =
     Math.max(
@@ -2478,7 +2351,6 @@ function renderCart(){
       ${html}
     </div>
 
-
     <div class="cart-summary">
 
       <div class="summary-row">
@@ -2488,14 +2360,12 @@ function renderCart(){
         </strong>
       </div>
 
-
       <div class="summary-row">
         <span>الخصم</span>
         <strong>
           ${money(discount)} ر.س
         </strong>
       </div>
-
 
       <div class="summary-row">
         <span>التوصيل</span>
@@ -2504,7 +2374,6 @@ function renderCart(){
         </strong>
       </div>
 
-
       <div class="summary-row summary-total">
         <span>الإجمالي</span>
         <strong>
@@ -2512,9 +2381,9 @@ function renderCart(){
         </strong>
       </div>
 
-
       <button
         class="checkout-btn"
+        type="button"
         onclick="openCheckout()"
       >
         متابعة لإتمام الطلب
@@ -2535,12 +2404,10 @@ function calculateDiscount(subtotal){
 
   let percentage = 0;
 
-
   const tiers =
     settings.wholesaleTiers ||
     settings.wholesale ||
     {};
-
 
   const totalQuantity =
     cart.reduce(
@@ -2551,31 +2418,19 @@ function calculateDiscount(subtotal){
     );
 
 
-  if(
-    tiers["20"] !== undefined &&
-    totalQuantity >= 20
-  ){
+  if(tiers["20"] !== undefined && totalQuantity >= 20){
 
-    percentage =
-      Number(tiers["20"]);
+    percentage = Number(tiers["20"]);
 
   }
-  else if(
-    tiers["10"] !== undefined &&
-    totalQuantity >= 10
-  ){
+  else if(tiers["10"] !== undefined && totalQuantity >= 10){
 
-    percentage =
-      Number(tiers["10"]);
+    percentage = Number(tiers["10"]);
 
   }
-  else if(
-    tiers["5"] !== undefined &&
-    totalQuantity >= 5
-  ){
+  else if(tiers["5"] !== undefined && totalQuantity >= 5){
 
-    percentage =
-      Number(tiers["5"]);
+    percentage = Number(tiers["5"]);
 
   }
   else{
@@ -2593,11 +2448,7 @@ function calculateDiscount(subtotal){
   }
 
 
-  return (
-    subtotal *
-    percentage /
-    100
-  );
+  return subtotal * percentage / 100;
 
 }
 
@@ -2610,27 +2461,16 @@ function openCheckout(){
 
   if(!cart.length){
 
-    showSmallMessage(
-      "السلة فارغة"
-    );
-
+    showSmallMessage("السلة فارغة");
     return;
 
   }
 
-
   closeCart();
 
-  selectFulfillment(
-    fulfillment
-  );
-
-  selectPayment(
-    payment
-  );
-
+  selectFulfillment(fulfillment);
+  selectPayment(payment);
   updateCheckoutSummary();
-
 
   document
     .getElementById("checkoutModal")
@@ -2648,10 +2488,88 @@ function closeCheckout(){
 }
 
 
+/* =========================
+   PICKUP LOCATION
+========================= */
+
+function getStoreMapUrl(){
+
+  const direct =
+    settings.pickupMapUrl ||
+    settings.storeMapUrl ||
+    settings.mapUrl ||
+    "";
+
+  if(direct){
+    return direct;
+  }
+
+
+  const lat =
+    settings.pickupLatitude ||
+    settings.storeLatitude ||
+    settings.latitude;
+
+  const lng =
+    settings.pickupLongitude ||
+    settings.storeLongitude ||
+    settings.longitude;
+
+
+  if(lat && lng){
+
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(lat + "," + lng)}`;
+
+  }
+
+
+  const address =
+    settings.address ||
+    settings.storeAddress ||
+    "";
+
+
+  if(address){
+
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(address)}`;
+
+  }
+
+
+  return "";
+
+}
+
+
+function openStoreLocation(){
+
+  const url =
+    getStoreMapUrl();
+
+
+  if(!url){
+
+    showSmallMessage(
+      "موقع المتجر غير مضاف في إعدادات المتجر."
+    );
+
+    return;
+
+  }
+
+
+  window.open(
+    url,
+    "_blank",
+    "noopener"
+  );
+
+}
+
+
 function selectFulfillment(type){
 
   fulfillment = type;
-
 
   document
     .getElementById("deliveryOption")
@@ -2660,14 +2578,12 @@ function selectFulfillment(type){
       type === "delivery"
     );
 
-
   document
     .getElementById("pickupOption")
     .classList.toggle(
       "active",
       type === "pickup"
     );
-
 
   document
     .getElementById("deliveryFields")
@@ -2678,9 +2594,7 @@ function selectFulfillment(type){
 
 
   const pickupInfo =
-    document.getElementById(
-      "pickupInfo"
-    );
+    document.getElementById("pickupInfo");
 
 
   if(type === "pickup"){
@@ -2688,30 +2602,82 @@ function selectFulfillment(type){
     const phone =
       settings.pickupPhone ||
       settings.ownerPhone ||
+      settings.phone ||
       "0501203710";
 
+    const mapUrl =
+      getStoreMapUrl();
 
-    pickupInfo.style.display =
-      "block";
-
+    pickupInfo.style.display = "block";
 
     pickupInfo.innerHTML = `
-      <strong>
-        📍 الاستلام من المتجر
-      </strong>
-      <br>
-      سيتم التواصل معك لتأكيد وقت الاستلام.
-      <br>
-      رقم التواصل:
-      <strong>
-        ${escapeHtml(phone)}
-      </strong>
+
+      <div class="pickup-location-box">
+
+        <div class="pickup-location-title">
+          📍 اخترت الاستلام بنفسك
+        </div>
+
+        <div>
+          بعد تأكيد الطلب سيظهر لك رقم الطلب.
+          تعال إلى موقع المتجر وأعطِ صاحب المتجر
+          <strong>رقم الطلب</strong> لاستلام المنتج.
+        </div>
+
+        <br>
+
+        رقم التواصل:
+        <strong>
+          ${escapeHtml(phone)}
+        </strong>
+
+        <div class="location-buttons">
+
+          ${
+            mapUrl
+            ?
+            `
+              <button
+                class="location-btn"
+                type="button"
+                onclick="openStoreLocation()"
+              >
+                📍 موقعي
+              </button>
+            `
+            :
+            `
+              <button
+                class="location-btn secondary"
+                type="button"
+                onclick="openStoreLocation()"
+              >
+                📍 موقعي
+              </button>
+            `
+          }
+
+        </div>
+
+        ${
+          !mapUrl
+          ?
+          `
+            <div style="font-size:12px;margin-top:8px;color:#6b7280">
+              موقع المتجر يحتاج إضافته من إعدادات المتجر.
+            </div>
+          `
+          :
+          ""
+        }
+
+      </div>
+
     `;
 
   }else{
 
-    pickupInfo.style.display =
-      "none";
+    pickupInfo.style.display = "none";
 
   }
 
@@ -2725,7 +2691,6 @@ function selectPayment(type){
 
   payment = type;
 
-
   document
     .getElementById("cashPayment")
     .classList.toggle(
@@ -2733,14 +2698,12 @@ function selectPayment(type){
       type === "cash"
     );
 
-
   document
     .getElementById("moyasarPayment")
     .classList.toggle(
       "active",
       type === "moyasar"
     );
-
 
   document
     .getElementById("paypalPayment")
@@ -2760,24 +2723,13 @@ function calculateCart(){
 
   let subtotal = 0;
 
-
   cart.forEach(item=>{
 
-    const product =
-      products.find(p=>
-        String(
-          p.id ??
-          p._id ??
-          p.productId ??
-          ""
-        ) === String(item.id)
-      );
-
+    const product = findProduct(item.id);
 
     if(!product){
       return;
     }
-
 
     const price =
       Number(
@@ -2786,7 +2738,6 @@ function calculateCart(){
         product.sellingPrice ??
         0
       );
-
 
     subtotal +=
       price *
@@ -2798,14 +2749,10 @@ function calculateCart(){
   const discount =
     calculateDiscount(subtotal);
 
-
   const delivery =
     fulfillment === "delivery"
-      ? Number(
-          settings.deliveryFee || 0
-        )
+      ? Number(settings.deliveryFee || 0)
       : 0;
-
 
   const total =
     Math.max(
@@ -2833,19 +2780,14 @@ function calculateCart(){
 function updateCheckoutSummary(){
 
   const box =
-    document.getElementById(
-      "checkoutSummary"
-    );
-
+    document.getElementById("checkoutSummary");
 
   if(!box){
     return;
   }
 
-
   const data =
     calculateCart();
-
 
   box.innerHTML = `
 
@@ -2861,7 +2803,6 @@ function updateCheckoutSummary(){
 
     </div>
 
-
     <div class="summary-row">
 
       <span>
@@ -2874,7 +2815,6 @@ function updateCheckoutSummary(){
 
     </div>
 
-
     <div class="summary-row">
 
       <span>
@@ -2886,7 +2826,6 @@ function updateCheckoutSummary(){
       </strong>
 
     </div>
-
 
     <div class="summary-row summary-total">
 
@@ -2918,7 +2857,6 @@ function generateOrderNumber(){
       90000000
     );
 
-
   return `NEXO-${random}`;
 
 }
@@ -2937,21 +2875,11 @@ function buildOrder(){
   const items =
     cart.map(item=>{
 
-      const product =
-        products.find(p=>
-          String(
-            p.id ??
-            p._id ??
-            p.productId ??
-            ""
-          ) === String(item.id)
-        );
-
+      const product = findProduct(item.id);
 
       if(!product){
         return null;
       }
-
 
       const price =
         Number(
@@ -2960,7 +2888,6 @@ function buildOrder(){
           product.sellingPrice ??
           0
         );
-
 
       return {
 
@@ -3001,58 +2928,44 @@ function buildOrder(){
 
       name:
         document
-          .getElementById(
-            "customerName"
-          )
+          .getElementById("customerName")
           .value
           .trim(),
 
       phone:
         document
-          .getElementById(
-            "customerPhone"
-          )
+          .getElementById("customerPhone")
           .value
           .trim(),
 
       email:
         document
-          .getElementById(
-            "customerEmail"
-          )
+          .getElementById("customerEmail")
           .value
           .trim(),
 
       city:
         document
-          .getElementById(
-            "customerCity"
-          )
+          .getElementById("customerCity")
           .value
           .trim(),
 
       address:
         document
-          .getElementById(
-            "customerAddress"
-          )
+          .getElementById("customerAddress")
           .value
           .trim(),
 
       note:
         document
-          .getElementById(
-            "customerNote"
-          )
+          .getElementById("customerNote")
           .value
           .trim()
 
     },
 
     fulfillment,
-
     payment,
-
     items,
 
     subtotal:
@@ -3086,25 +2999,11 @@ function saveCompletedOrder(order){
 
   orders.push(order);
 
-  saveData(
-    K.orders,
-    orders
-  );
-
-
-  /*
-    المنتجات غير محدودة.
-    لذلك لا يتم خصم أي كمية من المخزون.
-  */
-
+  saveData(K.orders,orders);
 
   cart = [];
 
-  saveData(
-    K.cart,
-    cart
-  );
-
+  saveData(K.cart,cart);
 
   updateCartCount();
 
@@ -3251,20 +3150,16 @@ document
    SUCCESS
 ========================= */
 
-function showOrderSuccess(
-  order,
-  message
-){
+function showOrderSuccess(order,message){
 
-  document.getElementById(
-    "successOrderNumber"
-  ).textContent =
+  document.getElementById("successOrderNumber").textContent =
     order.orderNumber;
 
 
   const pickupPhone =
     settings.pickupPhone ||
     settings.ownerPhone ||
+    settings.phone ||
     "0501203710";
 
 
@@ -3272,6 +3167,10 @@ function showOrderSuccess(
 
 
   if(order.fulfillment === "pickup"){
+
+    const mapUrl =
+      getStoreMapUrl();
+
 
     extra += `
 
@@ -3290,11 +3189,37 @@ function showOrderSuccess(
 
         <br>
 
+        تعال إلى المتجر وأعطِ صاحب المتجر
+        <strong>رقم الطلب:</strong>
+
+        <strong>
+          ${escapeHtml(order.orderNumber)}
+        </strong>
+
+        <br>
+
         رقم التواصل:
 
         <strong>
           ${escapeHtml(pickupPhone)}
         </strong>
+
+        ${
+          mapUrl
+          ?
+          `
+            <button
+              class="location-btn"
+              type="button"
+              style="margin-top:10px;width:100%"
+              onclick="openStoreLocation()"
+            >
+              📍 الانتقال إلى موقع المتجر
+            </button>
+          `
+          :
+          ""
+        }
 
       </div>
 
@@ -3329,9 +3254,7 @@ function showOrderSuccess(
   }
 
 
-  document.getElementById(
-    "successDetails"
-  ).innerHTML =
+  document.getElementById("successDetails").innerHTML =
     extra;
 
 
@@ -3361,7 +3284,6 @@ function openTrack(){
     .getElementById("trackModal")
     .classList.add("open");
 
-
   document
     .getElementById("trackNumber")
     .focus();
@@ -3382,28 +3304,22 @@ function trackOrder(){
 
   const number =
     document
-      .getElementById(
-        "trackNumber"
-      )
+      .getElementById("trackNumber")
       .value
       .trim()
       .toUpperCase();
 
 
   const result =
-    document.getElementById(
-      "trackResult"
-    );
+    document.getElementById("trackResult");
 
 
   if(!number){
 
     result.innerHTML = `
-
       <div class="status-box">
         اكتب رقم الطلب أولاً.
       </div>
-
     `;
 
     return;
@@ -3422,11 +3338,9 @@ function trackOrder(){
   if(!order){
 
     result.innerHTML = `
-
       <div class="status-box">
         لم يتم العثور على هذا الطلب.
       </div>
-
     `;
 
     return;
@@ -3465,9 +3379,7 @@ function trackOrder(){
 
 
   const status =
-    statusMap[
-      order.status
-    ] ||
+    statusMap[order.status] ||
     statusMap.new;
 
 
@@ -3541,10 +3453,7 @@ function modalOutside(event,id){
 function showSmallMessage(message){
 
   const old =
-    document.getElementById(
-      "smallMessage"
-    );
-
+    document.getElementById("smallMessage");
 
   if(old){
     old.remove();
@@ -3554,47 +3463,22 @@ function showSmallMessage(message){
   const box =
     document.createElement("div");
 
+  box.id = "smallMessage";
 
-  box.id =
-    "smallMessage";
+  box.textContent = message;
 
-
-  box.textContent =
-    message;
-
-
-  box.style.position =
-    "fixed";
-
-  box.style.bottom =
-    "85px";
-
-  box.style.left =
-    "50%";
-
-  box.style.transform =
-    "translateX(-50%)";
-
-  box.style.background =
-    "#111827";
-
-  box.style.color =
-    "#fff";
-
-  box.style.padding =
-    "13px 20px";
-
-  box.style.borderRadius =
-    "13px";
-
-  box.style.zIndex =
-    "9999";
-
-  box.style.fontWeight =
-    "800";
-
-  box.style.boxShadow =
-    "0 10px 30px rgba(0,0,0,.2)";
+  box.style.position = "fixed";
+  box.style.bottom = "85px";
+  box.style.left = "50%";
+  box.style.transform = "translateX(-50%)";
+  box.style.background = "#111827";
+  box.style.color = "#fff";
+  box.style.padding = "13px 20px";
+  box.style.borderRadius = "13px";
+  box.style.zIndex = "9999";
+  box.style.fontWeight = "800";
+  box.style.boxShadow = "0 10px 30px rgba(0,0,0,.2)";
+  box.style.animation = "modalIn .2s ease";
 
 
   document.body.appendChild(box);
@@ -3607,9 +3491,7 @@ function showSmallMessage(message){
 }
 
 
-/* =========================
-   ESC
-========================= */
+/* ESC */
 
 document.addEventListener(
   "keydown",
@@ -3618,7 +3500,6 @@ document.addEventListener(
     if(event.key !== "Escape"){
       return;
     }
-
 
     document
       .querySelectorAll(".modal.open")
@@ -3630,9 +3511,7 @@ document.addEventListener(
 );
 
 
-/* =========================
-   START
-========================= */
+/* START */
 
 init();
 
