@@ -27,15 +27,8 @@
   --glow:0 0 25px rgba(37,99,235,.16);
 }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
-html{
-  scroll-behavior:smooth;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 
 body{
   font-family:"Cairo",sans-serif;
@@ -47,20 +40,9 @@ body{
   min-height:100vh;
 }
 
-button,input,select,textarea{
-  font-family:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-a{
-  text-decoration:none;
-  color:inherit;
-}
-
-/* LOADER */
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+a{text-decoration:none;color:inherit}
 
 .loader-screen{
   position:fixed;
@@ -73,22 +55,14 @@ a{
   transition:.5s ease;
 }
 
-.loader-box{
-  text-align:center;
-  width:90%;
-  max-width:350px;
-}
-
+.loader-box{text-align:center;width:90%;max-width:350px}
 .loader-logo{
   font-size:38px;
   font-weight:900;
   letter-spacing:2px;
   animation:logoPulse 1.5s ease-in-out infinite;
 }
-
-.loader-logo span{
-  color:var(--accent);
-}
+.loader-logo span{color:var(--accent)}
 
 .loader-line{
   height:5px;
@@ -106,15 +80,8 @@ a{
   animation:loading 1.5s ease forwards;
 }
 
-@keyframes loading{
-  to{width:100%}
-}
-
-@keyframes logoPulse{
-  50%{transform:scale(1.035)}
-}
-
-/* HEADER */
+@keyframes loading{to{width:100%}}
+@keyframes logoPulse{50%{transform:scale(1.035)}}
 
 header{
   background:rgba(255,255,255,.94);
@@ -135,20 +102,9 @@ header{
   gap:15px;
 }
 
-.logo{
-  font-size:25px;
-  font-weight:900;
-  white-space:nowrap;
-  transition:.25s;
-}
-
-.logo span{
-  color:var(--accent);
-}
-
-.logo:hover{
-  transform:translateY(-1px);
-}
+.logo{font-size:25px;font-weight:900;white-space:nowrap;transition:.25s}
+.logo span{color:var(--accent)}
+.logo:hover{transform:translateY(-1px)}
 
 .header-actions{
   display:flex;
@@ -195,8 +151,6 @@ header{
   font-weight:900;
 }
 
-/* WHATSAPP */
-
 .whatsapp-float{
   position:fixed;
   left:18px;
@@ -221,8 +175,6 @@ header{
   transform:translateY(-4px) scale(1.02);
   box-shadow:0 12px 30px rgba(22,163,74,.25);
 }
-
-/* HERO */
 
 .hero{
   width:min(1200px,94%);
@@ -297,12 +249,7 @@ header{
   border:1px solid rgba(255,255,255,.25);
 }
 
-/* MAIN */
-
-.container{
-  width:min(1200px,94%);
-  margin:auto;
-}
+.container{width:min(1200px,94%);margin:auto}
 
 .search-box{
   display:flex;
@@ -363,8 +310,6 @@ header{
   margin:10px 0 18px;
 }
 
-/* PRODUCTS */
-
 .products-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -390,14 +335,8 @@ header{
 }
 
 @keyframes cardIn{
-  from{
-    opacity:0;
-    transform:translateY(12px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
 .pic{
@@ -420,13 +359,9 @@ header{
   transition:.3s;
 }
 
-.card:hover .pic img{
-  transform:scale(1.045);
-}
+.card:hover .pic img{transform:scale(1.045)}
 
-.card-body{
-  padding:16px;
-}
+.card-body{padding:16px}
 
 .card-name{
   font-size:17px;
@@ -497,8 +432,6 @@ header{
   grid-column:1/-1;
 }
 
-/* MODALS */
-
 .modal{
   position:fixed;
   inset:0;
@@ -528,14 +461,8 @@ header{
 }
 
 @keyframes modalIn{
-  from{
-    opacity:0;
-    transform:translateY(18px) scale(.97);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0) scale(1);
-  }
+  from{opacity:0;transform:translateY(18px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
 }
 
 @keyframes modalBg{
@@ -543,9 +470,7 @@ header{
   to{opacity:1}
 }
 
-.product-modal-box{
-  width:min(950px,100%);
-}
+.product-modal-box{width:min(950px,100%)}
 
 .modal-head{
   display:flex;
@@ -555,10 +480,7 @@ header{
   margin-bottom:18px;
 }
 
-.modal-title{
-  font-size:22px;
-  font-weight:900;
-}
+.modal-title{font-size:22px;font-weight:900}
 
 .close-btn{
   width:40px;
@@ -575,8 +497,6 @@ header{
   color:var(--red);
   transform:rotate(4deg);
 }
-
-/* PRODUCT DETAILS */
 
 .product-details{
   display:grid;
@@ -604,9 +524,7 @@ header{
   object-fit:contain;
 }
 
-.product-detail-info{
-  padding:5px;
-}
+.product-detail-info{padding:5px}
 
 .product-detail-info h2{
   font-size:28px;
@@ -630,13 +548,8 @@ header{
   font-size:14px;
 }
 
-.detail-label{
-  color:var(--muted);
-}
-
-.detail-value{
-  font-weight:800;
-}
+.detail-label{color:var(--muted)}
+.detail-value{font-weight:800}
 
 .description-box{
   margin-top:20px;
@@ -676,8 +589,6 @@ header{
   box-shadow:0 9px 22px rgba(37,99,235,.22);
 }
 
-/* CART */
-
 .cart-items{
   display:flex;
   flex-direction:column;
@@ -716,16 +627,8 @@ header{
   min-width:0;
 }
 
-.cart-item-name{
-  font-weight:900;
-  font-size:14px;
-}
-
-.cart-item-price{
-  color:var(--accent);
-  font-weight:800;
-  font-size:13px;
-}
+.cart-item-name{font-weight:900;font-size:14px}
+.cart-item-price{color:var(--accent);font-weight:800;font-size:13px}
 
 .qty{
   display:flex;
@@ -799,11 +702,7 @@ header{
   box-shadow:0 9px 22px rgba(37,99,235,.2);
 }
 
-/* FORMS */
-
-.form-group{
-  margin-bottom:14px;
-}
+.form-group{margin-bottom:14px}
 
 .form-group label{
   display:block;
@@ -874,11 +773,7 @@ header{
   margin:15px 0;
 }
 
-.checkout-total .summary-row:last-child{
-  margin-bottom:0;
-}
-
-/* PICKUP LOCATION */
+.checkout-total .summary-row:last-child{margin-bottom:0}
 
 .pickup-location-box{
   margin-top:12px;
@@ -924,11 +819,7 @@ header{
   border:1px solid #bfdbfe;
 }
 
-/* TRACKING */
-
-.track-result{
-  margin-top:18px;
-}
+.track-result{margin-top:18px}
 
 .status-box{
   background:#f8fafc;
@@ -943,11 +834,7 @@ header{
   margin-bottom:10px;
 }
 
-.order-number{
-  font-weight:900;
-}
-
-/* SUCCESS */
+.order-number{font-weight:900}
 
 .success{
   text-align:center;
@@ -969,20 +856,11 @@ header{
 }
 
 @keyframes successPop{
-  from{
-    transform:scale(.6);
-    opacity:0;
-  }
-  to{
-    transform:scale(1);
-    opacity:1;
-  }
+  from{transform:scale(.6);opacity:0}
+  to{transform:scale(1);opacity:1}
 }
 
-.success h2{
-  font-size:24px;
-  margin-bottom:8px;
-}
+.success h2{font-size:24px;margin-bottom:8px}
 
 .success p{
   color:var(--muted);
@@ -997,8 +875,6 @@ header{
   font-size:18px;
   font-weight:900;
 }
-
-/* FOOTER */
 
 footer{
   background:#111827;
@@ -1016,14 +892,8 @@ footer{
   flex-wrap:wrap;
 }
 
-.footer-logo{
-  font-size:24px;
-  font-weight:900;
-}
-
-.footer-logo span{
-  color:#60a5fa;
-}
+.footer-logo{font-size:24px;font-weight:900}
+.footer-logo span{color:#60a5fa}
 
 .footer-text{
   color:#9ca3af;
@@ -1031,33 +901,16 @@ footer{
   line-height:2;
 }
 
-/* RESPONSIVE */
-
 @media(max-width:950px){
-
-  .products-grid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .product-details{
-    grid-template-columns:1fr;
-  }
-
-  .product-detail-image{
-    min-height:330px;
-  }
-
+  .products-grid{grid-template-columns:repeat(3,1fr)}
+  .product-details{grid-template-columns:1fr}
+  .product-detail-image{min-height:330px}
 }
 
 @media(max-width:700px){
 
-  .header-inner{
-    min-height:68px;
-  }
-
-  .logo{
-    font-size:20px;
-  }
+  .header-inner{min-height:68px}
+  .logo{font-size:20px}
 
   .header-btn{
     padding:0 10px;
@@ -1074,26 +927,16 @@ footer{
     padding:10px;
   }
 
-  .card-body{
-    padding:12px;
-  }
-
-  .card-name{
-    font-size:14px;
-  }
-
-  .card-price{
-    font-size:17px;
-  }
+  .card-body{padding:12px}
+  .card-name{font-size:14px}
+  .card-price{font-size:17px}
 
   .hero{
     padding:30px 22px;
     border-radius:22px;
   }
 
-  .hero h1{
-    font-size:30px;
-  }
+  .hero h1{font-size:30px}
 
   .fulfillment,
   .payment-options{
@@ -1105,21 +948,13 @@ footer{
     flex-wrap:wrap;
   }
 
-  .qty{
-    margin-right:auto;
-  }
-
+  .qty{margin-right:auto}
 }
 
 @media(max-width:450px){
 
-  .products-grid{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .pic{
-    height:155px;
-  }
+  .products-grid{grid-template-columns:1fr 1fr}
+  .pic{height:155px}
 
   .whatsapp-float{
     left:14px;
@@ -1136,22 +971,13 @@ footer{
     font-size:21px;
   }
 
-  .header-actions{
-    gap:5px;
-  }
+  .header-actions{gap:5px}
 
-  .cart-btn{
-    font-size:0;
-  }
+  .cart-btn{font-size:0}
 
-  .cart-btn .cart-badge{
-    font-size:10px;
-  }
+  .cart-btn .cart-badge{font-size:10px}
 
-  .location-buttons{
-    flex-direction:column;
-  }
-
+  .location-buttons{flex-direction:column}
 }
 </style>
 </head>
@@ -1289,7 +1115,6 @@ footer{
 
 </footer>
 
-<!-- PRODUCT DETAILS -->
 <div class="modal" id="productModal" onclick="modalOutside(event,'productModal')">
 
   <div class="modal-box product-modal-box">
@@ -1311,7 +1136,6 @@ footer{
   </div>
 </div>
 
-<!-- CART -->
 <div class="modal" id="cartModal" onclick="modalOutside(event,'cartModal')">
 
   <div class="modal-box">
@@ -1333,7 +1157,6 @@ footer{
   </div>
 </div>
 
-<!-- CHECKOUT -->
 <div class="modal" id="checkoutModal" onclick="modalOutside(event,'checkoutModal')">
 
   <div class="modal-box">
@@ -1469,7 +1292,6 @@ footer{
   </div>
 </div>
 
-<!-- TRACK -->
 <div class="modal" id="trackModal" onclick="modalOutside(event,'trackModal')">
 
   <div class="modal-box">
@@ -1505,7 +1327,6 @@ footer{
   </div>
 </div>
 
-<!-- SUCCESS -->
 <div class="modal" id="successModal">
 
   <div class="modal-box">
@@ -1546,6 +1367,9 @@ const K = {
   cart:"nexo_cart"
 };
 
+const DB_NAME = "NEXO_STORE_DATABASE";
+const DB_VERSION = 1;
+
 let products = [];
 let orders = [];
 let settings = {};
@@ -1554,6 +1378,507 @@ let cart = [];
 let currentCategory = "all";
 let fulfillment = "delivery";
 let payment = "cash";
+
+/* =========================================================
+   IMAGE FIX
+   يقرأ صور المنتجات من IndexedDB بدون تغيير تصميم المتجر
+========================================================= */
+
+let imageUrls = new Map();
+let imageObjectUrls = [];
+
+function openNexoDatabase(){
+
+  return new Promise((resolve,reject)=>{
+
+    if(!("indexedDB" in window)){
+      resolve(null);
+      return;
+    }
+
+    let request;
+
+    try{
+      request = indexedDB.open(DB_NAME,DB_VERSION);
+    }catch(error){
+      resolve(null);
+      return;
+    }
+
+    request.onerror = ()=>{
+      resolve(null);
+    };
+
+    request.onsuccess = ()=>{
+      resolve(request.result);
+    };
+
+    request.onupgradeneeded = event=>{
+
+      const db = event.target.result;
+
+      if(!db.objectStoreNames.contains("products")){
+        db.createObjectStore("products",{keyPath:"id"});
+      }
+
+      if(!db.objectStoreNames.contains("product_images")){
+        db.createObjectStore("product_images");
+      }
+
+    };
+
+  });
+
+}
+
+
+function getAllFromStore(db,storeName){
+
+  return new Promise(resolve=>{
+
+    if(!db || !db.objectStoreNames.contains(storeName)){
+      resolve([]);
+      return;
+    }
+
+    try{
+
+      const transaction =
+        db.transaction(storeName,"readonly");
+
+      const store =
+        transaction.objectStore(storeName);
+
+      const request =
+        store.getAll();
+
+      request.onsuccess = ()=>{
+        resolve(
+          Array.isArray(request.result)
+            ? request.result
+            : []
+        );
+      };
+
+      request.onerror = ()=>{
+        resolve([]);
+      };
+
+    }catch(error){
+
+      resolve([]);
+
+    }
+
+  });
+
+}
+
+
+function getIndexedDBValue(db,storeName,key){
+
+  return new Promise(resolve=>{
+
+    if(!db || !db.objectStoreNames.contains(storeName)){
+      resolve(null);
+      return;
+    }
+
+    try{
+
+      const transaction =
+        db.transaction(storeName,"readonly");
+
+      const store =
+        transaction.objectStore(storeName);
+
+      const request =
+        store.get(key);
+
+      request.onsuccess = ()=>{
+        resolve(
+          request.result ?? null
+        );
+      };
+
+      request.onerror = ()=>{
+        resolve(null);
+      };
+
+    }catch(error){
+
+      resolve(null);
+
+    }
+
+  });
+
+}
+
+
+async function findIndexedImage(db,id){
+
+  if(!db){
+    return null;
+  }
+
+  const idString = String(id ?? "");
+
+  if(!idString){
+    return null;
+  }
+
+  /* المحاولة الأولى: ID كنص */
+  let value =
+    await getIndexedDBValue(
+      db,
+      "product_images",
+      idString
+    );
+
+  if(value){
+    return value;
+  }
+
+  /* المحاولة الثانية: ID كرقم */
+  if(/^\d+$/.test(idString)){
+
+    value =
+      await getIndexedDBValue(
+        db,
+        "product_images",
+        Number(idString)
+      );
+
+    if(value){
+      return value;
+    }
+
+  }
+
+  /*
+    بعض نسخ لوحة الإدارة قد تخزن الصورة
+    داخل سجل الصورة نفسه بدل أن يكون الـID
+    هو مفتاح الـobject store.
+  */
+
+  const allImages =
+    await getAllFromStore(
+      db,
+      "product_images"
+    );
+
+  for(const item of allImages){
+
+    if(!item){
+      continue;
+    }
+
+    const possibleIds = [
+      item.id,
+      item.productId,
+      item.productID,
+      item._id,
+      item.key
+    ];
+
+    if(
+      possibleIds.some(
+        x=>String(x ?? "") === idString
+      )
+    ){
+
+      return (
+        item.blob ||
+        item.file ||
+        item.image ||
+        item.data ||
+        item.url ||
+        item.src ||
+        null
+      );
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+function revokeOldImageUrls(){
+
+  imageObjectUrls.forEach(url=>{
+
+    try{
+      URL.revokeObjectURL(url);
+    }catch(error){}
+
+  });
+
+  imageObjectUrls = [];
+  imageUrls.clear();
+
+}
+
+
+function imageValueToUrl(value){
+
+  if(!value){
+    return "";
+  }
+
+  /*
+    إذا كانت الصورة Data URL
+  */
+  if(typeof value === "string"){
+
+    if(
+      value.startsWith("data:image/") ||
+      value.startsWith("blob:") ||
+      value.startsWith("http://") ||
+      value.startsWith("https://")
+    ){
+
+      return value;
+
+    }
+
+    /*
+      أحياناً تكون قيمة الصورة Base64 فقط
+    */
+    if(
+      value.length > 100 &&
+      /^[A-Za-z0-9+/=\r\n]+$/.test(value)
+    ){
+
+      return "data:image/jpeg;base64," + value;
+
+    }
+
+    return value;
+
+  }
+
+  /*
+    Blob أو File
+  */
+  if(
+    typeof Blob !== "undefined" &&
+    value instanceof Blob
+  ){
+
+    try{
+
+      const url =
+        URL.createObjectURL(value);
+
+      imageObjectUrls.push(url);
+
+      return url;
+
+    }catch(error){
+
+      return "";
+
+    }
+
+  }
+
+  /*
+    إذا كان السجل يحتوي على Blob داخله
+  */
+  if(typeof value === "object"){
+
+    const nested =
+      value.blob ||
+      value.file ||
+      value.image ||
+      value.data ||
+      value.url ||
+      value.src ||
+      null;
+
+    if(nested && nested !== value){
+
+      return imageValueToUrl(nested);
+
+    }
+
+  }
+
+  return "";
+
+}
+
+
+async function loadIndexedDBImages(){
+
+  revokeOldImageUrls();
+
+  const db =
+    await openNexoDatabase();
+
+  if(!db){
+    return;
+  }
+
+  try{
+
+    /*
+      أولاً نقرأ المنتجات من IndexedDB.
+      إذا كانت موجودة نستخدمها أيضاً كنسخة احتياطية
+      للمنتجات الموجودة في localStorage.
+    */
+
+    const dbProducts =
+      await getAllFromStore(
+        db,
+        "products"
+      );
+
+    if(dbProducts.length){
+
+      const localById =
+        new Map(
+          products.map(product=>[
+            getProductId(product),
+            product
+          ])
+        );
+
+      dbProducts.forEach(dbProduct=>{
+
+        const id =
+          getProductId(dbProduct);
+
+        if(!id){
+          return;
+        }
+
+        const local =
+          localById.get(id);
+
+        /*
+          نحافظ على بيانات localStorage،
+          ونضيف أي بيانات ناقصة من IndexedDB.
+        */
+
+        if(local){
+
+          Object.keys(dbProduct).forEach(key=>{
+
+            if(
+              local[key] === undefined ||
+              local[key] === null ||
+              local[key] === ""
+            ){
+
+              local[key] =
+                dbProduct[key];
+
+            }
+
+          });
+
+        }else{
+
+          products.push(dbProduct);
+
+        }
+
+      });
+
+    }
+
+
+    /*
+      تحميل صورة كل منتج.
+    */
+
+    for(const product of products){
+
+      const id =
+        getProductId(product);
+
+      if(!id){
+        continue;
+      }
+
+      let value = null;
+
+      /*
+        إذا كانت الصورة موجودة أصلاً كـBlob
+        داخل بيانات المنتج.
+      */
+
+      if(
+        product.image &&
+        typeof product.image !== "string"
+      ){
+
+        value = product.image;
+
+      }
+
+      /*
+        إذا كانت الصورة عبارة عن كائن.
+      */
+
+      if(!value && product.imageBlob){
+        value = product.imageBlob;
+      }
+
+      if(!value && product.imageFile){
+        value = product.imageFile;
+      }
+
+      /*
+        البحث داخل product_images.
+      */
+
+      if(!value){
+
+        value =
+          await findIndexedImage(
+            db,
+            id
+          );
+
+      }
+
+      const url =
+        imageValueToUrl(value);
+
+      if(url){
+
+        imageUrls.set(
+          id,
+          url
+        );
+
+      }
+
+    }
+
+    /*
+      إغلاق قاعدة البيانات بعد القراءة.
+    */
+
+    try{
+      db.close();
+    }catch(error){}
+
+  }catch(error){
+
+    try{
+      db.close();
+    }catch(closeError){}
+
+  }
+
+}
 
 
 function getData(key,fallback){
@@ -1608,7 +1933,7 @@ function money(value){
   return number
     .toFixed(2)
     .replace(/\.00$/,"")
-    .replace(/(\.\d)0$/,"$1");
+    .replace(/(\.\d)0$/,"");
 
 }
 
@@ -1640,21 +1965,54 @@ function productType(product){
 }
 
 
+/* =========================================================
+   الصورة الآن تبحث أولاً في IndexedDB
+========================================================= */
+
 function productImage(product){
 
-  return (
+  const id =
+    getProductId(product);
+
+  /*
+    الصورة التي تم تحميلها من IndexedDB
+  */
+
+  const indexedImage =
+    imageUrls.get(id);
+
+  if(indexedImage){
+    return indexedImage;
+  }
+
+  /*
+    دعم الصور الموجودة مباشرة في بيانات المنتج
+  */
+
+  const direct =
     product.image ||
     product.imageUrl ||
     product.img ||
-    "https://via.placeholder.com/700x500?text=NEXO+STORE"
-  );
+    product.photo ||
+    product.picture ||
+    product.thumbnail ||
+    "";
+
+  if(direct){
+
+    const directUrl =
+      imageValueToUrl(direct);
+
+    if(directUrl){
+      return directUrl;
+    }
+
+  }
+
+  return "https://via.placeholder.com/700x500?text=NEXO+STORE";
 
 }
 
-
-/* =========================
-   FIXED PRODUCT ID
-========================= */
 
 function getProductId(product){
 
@@ -1681,7 +2039,7 @@ function findProduct(id){
    INIT
 ========================= */
 
-function init(){
+async function init(){
 
   products = getData(K.products,[]);
   orders = getData(K.orders,[]);
@@ -1699,6 +2057,14 @@ function init(){
   if(!Array.isArray(cart)){
     cart = [];
   }
+
+  /*
+    هنا الإصلاح الأساسي:
+    ننتظر تحميل الصور من IndexedDB
+    قبل عرض المنتجات.
+  */
+
+  await loadIndexedDBImages();
 
   applySettings();
   renderProducts();
@@ -1875,13 +2241,6 @@ function renderProducts(){
       const image = productImage(product);
       const type = productType(product);
 
-
-      /*
-        تم إصلاح المشكلة هنا:
-        كان onclick يستخدم علامات اقتباس متداخلة
-        مما يجعل زر المنتج لا يعمل بشكل صحيح.
-      */
-
       return `
 
         <article
@@ -1895,6 +2254,7 @@ function renderProducts(){
               src="${escapeHtml(image)}"
               alt="${escapeHtml(name)}"
               loading="lazy"
+              onerror="this.onerror=null;this.src='https://via.placeholder.com/700x500?text=NEXO+STORE';"
             >
 
           </div>
@@ -1982,6 +2342,7 @@ function openProduct(id){
         <img
           src="${escapeHtml(image)}"
           alt="${escapeHtml(name)}"
+          onerror="this.onerror=null;this.src='https://via.placeholder.com/700x500?text=NEXO+STORE';"
         >
 
       </div>
@@ -2271,6 +2632,7 @@ function renderCart(){
             <img
               src="${escapeHtml(productImage(product))}"
               alt="${escapeHtml(product.name || "منتج")}"
+              onerror="this.onerror=null;this.src='https://via.placeholder.com/700x500?text=NEXO+STORE';"
             >
 
           </div>
@@ -3491,8 +3853,6 @@ function showSmallMessage(message){
 }
 
 
-/* ESC */
-
 document.addEventListener(
   "keydown",
   function(event){
@@ -3511,6 +3871,26 @@ document.addEventListener(
 );
 
 
+/* =========================================================
+   تحرير روابط الصور عند إغلاق الصفحة
+========================================================= */
+
+window.addEventListener(
+  "beforeunload",
+  function(){
+
+    imageObjectUrls.forEach(url=>{
+
+      try{
+        URL.revokeObjectURL(url);
+      }catch(error){}
+
+    });
+
+  }
+);
+
+
 /* START */
 
 init();
@@ -3519,3 +3899,4 @@ init();
 
 </body>
 </html>
+```0
