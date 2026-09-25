@@ -13,7 +13,7 @@
 body{
 margin:0;
 font-family:Arial,Tahoma,sans-serif;
-background:#f5f7fa;
+background:#f4f7fb;
 color:#172033
 }
 
@@ -26,20 +26,21 @@ min-height:100vh;
 display:flex;
 align-items:center;
 justify-content:center;
-padding:20px
+padding:20px;
+background:linear-gradient(135deg,#111827,#273449)
 }
 
 .login-box{
-background:white;
+background:#fff;
 width:100%;
-max-width:420px;
-padding:30px;
-border-radius:24px;
-box-shadow:0 15px 50px #0001
+max-width:430px;
+padding:32px;
+border-radius:25px;
+box-shadow:0 25px 80px #0005
 }
 
 .logo{
-font-size:28px;
+font-size:30px;
 font-weight:900;
 text-align:center
 }
@@ -54,6 +55,13 @@ border-radius:12px;
 background:#fff;
 outline:none;
 margin-top:7px
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+border-color:#111827;
+box-shadow:0 0 0 3px #11182712
 }
 
 textarea{
@@ -76,6 +84,8 @@ color:#fff;
 font-weight:bold
 }
 
+.btn:hover{opacity:.9}
+
 .btn.light{
 background:#eef1f5;
 color:#172033
@@ -83,26 +93,29 @@ color:#172033
 
 .btn.danger{background:#dc2626}
 .btn.success{background:#16a34a}
+.btn.blue{background:#2563eb}
+.btn.orange{background:#ea580c}
 
 header{
 position:sticky;
 top:0;
-z-index:10;
+z-index:50;
 background:#fff;
 border-bottom:1px solid #e8ebf0
 }
 
 .nav{
-max-width:1250px;
+max-width:1300px;
 margin:auto;
 padding:15px 20px;
 display:flex;
 align-items:center;
-justify-content:space-between
+justify-content:space-between;
+gap:15px
 }
 
 .container{
-max-width:1250px;
+max-width:1300px;
 margin:auto;
 padding:25px 20px
 }
@@ -115,10 +128,11 @@ margin-bottom:20px
 }
 
 .stat{
-background:white;
+background:#fff;
 padding:20px;
 border-radius:18px;
-box-shadow:0 5px 20px #00000008
+box-shadow:0 5px 20px #00000008;
+border:1px solid #edf0f4
 }
 
 .stat-title{
@@ -127,7 +141,7 @@ font-size:13px
 }
 
 .stat-number{
-font-size:25px;
+font-size:24px;
 font-weight:900;
 margin-top:8px
 }
@@ -136,7 +150,8 @@ margin-top:8px
 display:flex;
 gap:8px;
 overflow:auto;
-margin-bottom:20px
+margin-bottom:20px;
+padding-bottom:3px
 }
 
 .tab{
@@ -149,15 +164,16 @@ white-space:nowrap
 
 .tab.active{
 background:#111827;
-color:white
+color:#fff
 }
 
 .panel{
-background:white;
+background:#fff;
 padding:22px;
 border-radius:20px;
 margin-bottom:20px;
-box-shadow:0 5px 20px #00000008
+box-shadow:0 5px 20px #00000008;
+border:1px solid #edf0f4
 }
 
 .panel-head{
@@ -183,7 +199,8 @@ gap:15px
 .product{
 border:1px solid #e7ebf0;
 border-radius:17px;
-overflow:hidden
+overflow:hidden;
+background:#fff
 }
 
 .product img{
@@ -287,6 +304,11 @@ background:#fef2f2;
 border-color:#fecaca
 }
 
+.warning{
+background:#fff7ed;
+border-color:#fed7aa
+}
+
 .expense-item{
 display:flex;
 align-items:center;
@@ -316,6 +338,44 @@ text-align:right
 .account-table th{
 color:#7b8494;
 font-size:13px
+}
+
+.chart{
+display:grid;
+gap:10px
+}
+
+.chart-row{
+display:grid;
+grid-template-columns:100px 1fr 100px;
+align-items:center;
+gap:10px
+}
+
+.chart-bar{
+height:12px;
+background:#e5e7eb;
+border-radius:99px;
+overflow:hidden
+}
+
+.chart-fill{
+height:100%;
+background:#111827;
+border-radius:99px
+}
+
+.report-box{
+padding:15px;
+background:#f8fafc;
+border-radius:15px;
+margin-top:12px
+}
+
+hr{
+border:0;
+border-top:1px solid #edf0f4;
+margin:20px 0
 }
 
 @media(max-width:1100px){
@@ -357,8 +417,16 @@ padding:15px
 padding:12px 15px
 }
 
+.chart-row{
+grid-template-columns:70px 1fr 80px
+}
+
 .account-table{
 font-size:13px
+}
+
+.stat-number{
+font-size:19px
 }
 }
 </style>
@@ -375,7 +443,7 @@ font-size:13px
 <div class="logo">NEXO STORE</div>
 
 <p style="text-align:center" class="muted">
-لوحة التحكم
+لوحة إدارة المتجر
 </p>
 
 <label>
@@ -389,12 +457,13 @@ font-size:13px
 </label>
 
 <button class="btn" style="width:100%" onclick="login()">
-دخول
+دخول إلى لوحة الإدارة
 </button>
 
 <p id="loginError" style="color:#dc2626;text-align:center"></p>
 
 </div>
+
 </section>
 
 
@@ -403,6 +472,7 @@ font-size:13px
 <div id="adminPage" class="hidden">
 
 <header>
+
 <div class="nav">
 
 <strong style="font-size:22px">
@@ -412,8 +482,13 @@ NEXO STORE
 <div class="actions">
 
 <button class="btn light"
-onclick="window.open('index.html','_blank')">
+onclick="openStore()">
 فتح المتجر
+</button>
+
+<button class="btn light"
+onclick="backupData()">
+نسخة احتياطية
 </button>
 
 <button class="btn danger"
@@ -424,6 +499,7 @@ onclick="logout()">
 </div>
 
 </div>
+
 </header>
 
 
@@ -441,7 +517,7 @@ onclick="logout()">
 
 <div class="stat">
 <div class="stat-title">المبيعات</div>
-<div id="sSales" class="stat-number">0</div>
+<div id="sSales" class="stat-number">0 ر.س</div>
 </div>
 
 <div class="stat">
@@ -460,7 +536,7 @@ onclick="logout()">
 </div>
 
 <div class="stat">
-<div class="stat-title">زوار المتجر</div>
+<div class="stat-title">الزوار</div>
 <div id="sVisitors" class="stat-number">0</div>
 </div>
 
@@ -468,8 +544,10 @@ onclick="logout()">
 
 
 <div class="notice">
-عداد الزوار الحالي يحسب الزيارات من هذا المتصفح فقط.
-لعداد حقيقي من جميع الأجهزة نحتاج قاعدة بيانات أو خدمة إحصائيات.
+<strong>تنبيه مهم:</strong>
+هذه النسخة تحفظ البيانات في المتصفح باستخدام LocalStorage.
+لكي يرى التاجر الطلبات الحقيقية القادمة من جميع أجهزة العملاء،
+يجب ربط المتجر لاحقًا بقاعدة بيانات مشتركة.
 </div>
 
 
@@ -477,24 +555,34 @@ onclick="logout()">
 
 <div class="tabs">
 
-<button class="tab active" onclick="tab('dashboard',this)">
+<button class="tab active"
+onclick="tab('dashboard',this)">
 الرئيسية
 </button>
 
-<button class="tab" onclick="tab('accounting',this)">
+<button class="tab"
+onclick="tab('accounting',this)">
 📊 الحسابات
 </button>
 
-<button class="tab" onclick="tab('products',this)">
-المنتجات
+<button class="tab"
+onclick="tab('products',this)">
+📦 المنتجات
 </button>
 
-<button class="tab" onclick="tab('orders',this)">
-الطلبات
+<button class="tab"
+onclick="tab('orders',this)">
+🛒 الطلبات
 </button>
 
-<button class="tab" onclick="tab('settings',this)">
-الإعدادات
+<button class="tab"
+onclick="tab('reports',this)">
+📈 التقارير
+</button>
+
+<button class="tab"
+onclick="tab('settings',this)">
+⚙️ الإعدادات
 </button>
 
 </div>
@@ -506,7 +594,21 @@ onclick="logout()">
 
 <div class="panel">
 
-<h2>آخر الطلبات</h2>
+<div class="panel-head">
+
+<div>
+<h2>لوحة المتجر</h2>
+<p class="muted">
+نظرة سريعة على حالة المتجر
+</p>
+</div>
+
+<button class="btn light"
+onclick="refreshAll()">
+تحديث
+</button>
+
+</div>
 
 <div id="latest"></div>
 
@@ -524,13 +626,16 @@ onclick="logout()">
 <div class="panel-head">
 
 <div>
-<h2>📊 حسابات التجارة</h2>
+<h2>📊 الحسابات</h2>
+
 <p class="muted">
-ملخص مالي تلقائي للمتجر
+الحسابات المالية يتم تحديثها تلقائيًا من الطلبات والمصروفات.
 </p>
+
 </div>
 
-<button class="btn light" onclick="renderAccounting()">
+<button class="btn light"
+onclick="renderAccounting()">
 تحديث الحسابات
 </button>
 
@@ -540,51 +645,122 @@ onclick="logout()">
 <div class="account-grid">
 
 <div class="account-card">
+
 <div class="icon">💰</div>
-<div class="title">إجمالي المبيعات</div>
-<div id="aSales" class="value">0 ر.س</div>
+
+<div class="title">
+إجمالي المبيعات
 </div>
 
+<div id="aSales" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
 <div class="account-card">
+
 <div class="icon">📦</div>
-<div class="title">تكلفة المنتجات</div>
-<div id="aCost" class="value">0 ر.س</div>
+
+<div class="title">
+تكلفة المنتجات
 </div>
 
+<div id="aCost" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
 <div class="account-card profit">
+
 <div class="icon">📈</div>
-<div class="title">الربح قبل المصروفات</div>
-<div id="aGrossProfit" class="value">0 ر.س</div>
+
+<div class="title">
+الربح قبل المصروفات
 </div>
 
+<div id="aGrossProfit" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
 <div class="account-card">
+
 <div class="icon">📉</div>
-<div class="title">المصروفات</div>
-<div id="aExpenses" class="value">0 ر.س</div>
+
+<div class="title">
+المصروفات
 </div>
 
-<div class="account-card profit">
+<div id="aExpenses" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
+<div id="netCard" class="account-card profit">
+
 <div class="icon">💵</div>
-<div class="title">صافي الربح</div>
-<div id="aNetProfit" class="value">0 ر.س</div>
+
+<div class="title">
+صافي الربح
 </div>
 
+<div id="aNetProfit" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
 <div class="account-card">
+
 <div class="icon">🧾</div>
-<div class="title">عدد الطلبات</div>
-<div id="aOrders" class="value">0</div>
+
+<div class="title">
+الطلبات المحسوبة
 </div>
 
+<div id="aOrders" class="value">
+0
+</div>
+
+</div>
+
+
 <div class="account-card">
+
 <div class="icon">📊</div>
-<div class="title">متوسط الطلب</div>
-<div id="aAverage" class="value">0 ر.س</div>
+
+<div class="title">
+متوسط الطلب
 </div>
 
+<div id="aAverage" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
 <div class="account-card">
+
 <div class="icon">💳</div>
-<div class="title">المدفوع</div>
-<div id="aPaid" class="value">0 ر.س</div>
+
+<div class="title">
+المدفوع
+</div>
+
+<div id="aPaid" class="value">
+0 ر.س
+</div>
+
 </div>
 
 </div>
@@ -593,27 +769,62 @@ onclick="logout()">
 <div class="account-grid">
 
 <div class="account-card">
+
 <div class="icon">📅</div>
-<div class="title">مبيعات اليوم</div>
-<div id="aToday" class="value">0 ر.س</div>
+
+<div class="title">
+مبيعات اليوم
 </div>
 
+<div id="aToday" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
 <div class="account-card">
+
 <div class="icon">🗓️</div>
-<div class="title">مبيعات هذا الشهر</div>
-<div id="aMonth" class="value">0 ر.س</div>
+
+<div class="title">
+مبيعات هذا الشهر
 </div>
 
+<div id="aMonth" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
 <div class="account-card">
+
 <div class="icon">💵</div>
-<div class="title">المدفوع نقدًا</div>
-<div id="aCash" class="value">0 ر.س</div>
+
+<div class="title">
+المدفوع نقدًا
 </div>
 
-<div class="account-card">
+<div id="aCash" class="value">
+0 ر.س
+</div>
+
+</div>
+
+
+<div class="account-card warning">
+
 <div class="icon">⏳</div>
-<div class="title">غير المدفوع</div>
-<div id="aUnpaid" class="value">0 ر.س</div>
+
+<div class="title">
+غير المدفوع
+</div>
+
+<div id="aUnpaid" class="value">
+0 ر.س
+</div>
+
 </div>
 
 </div>
@@ -629,7 +840,8 @@ onclick="logout()">
 
 <h2>📉 المصروفات</h2>
 
-<button class="btn" onclick="openExpense()">
+<button class="btn"
+onclick="openExpense()">
 + إضافة مصروف
 </button>
 
@@ -642,28 +854,55 @@ onclick="logout()">
 
 <label>
 اسم المصروف
-<input id="eName" placeholder="مثال: شحن، تغليف، إعلان">
+<input id="eName"
+placeholder="مثال: شحن، تغليف، إعلان">
 </label>
 
 <label>
 المبلغ
-<input id="eAmount" type="number" min="0" step=".01">
+<input id="eAmount"
+type="number"
+min="0"
+step=".01">
 </label>
 
 </div>
 
+
+<label>
+التصنيف
+
+<select id="eCategory">
+
+<option value="shipping">شحن</option>
+<option value="marketing">تسويق وإعلانات</option>
+<option value="packaging">تغليف</option>
+<option value="platform">منصة</option>
+<option value="other">أخرى</option>
+
+</select>
+
+</label>
+
+
 <label>
 ملاحظات
-<textarea id="eNote" placeholder="اختياري"></textarea>
+
+<textarea id="eNote"
+placeholder="اختياري"></textarea>
+
 </label>
+
 
 <div class="actions">
 
-<button class="btn success" onclick="saveExpense()">
+<button class="btn success"
+onclick="saveExpense()">
 حفظ المصروف
 </button>
 
-<button class="btn light" onclick="closeExpense()">
+<button class="btn light"
+onclick="closeExpense()">
 إلغاء
 </button>
 
@@ -679,7 +918,7 @@ onclick="logout()">
 </div>
 
 
-<!-- ACCOUNT SUMMARY -->
+<!-- SUMMARY -->
 
 <div class="panel">
 
@@ -688,10 +927,12 @@ onclick="logout()">
 <table class="account-table">
 
 <thead>
+
 <tr>
 <th>البند</th>
 <th>القيمة</th>
 </tr>
+
 </thead>
 
 <tbody>
@@ -717,8 +958,14 @@ onclick="logout()">
 </tr>
 
 <tr>
-<td><strong>صافي الربح</strong></td>
-<td><strong id="tNet">0 ر.س</strong></td>
+<td>
+<strong>صافي الربح</strong>
+</td>
+
+<td>
+<strong id="tNet">0 ر.س</strong>
+</td>
+
 </tr>
 
 </tbody>
@@ -738,9 +985,18 @@ onclick="logout()">
 
 <div class="panel-head">
 
-<h2>المنتجات</h2>
+<div>
 
-<button class="btn" onclick="openProduct()">
+<h2>📦 المنتجات</h2>
+
+<p class="muted">
+إدارة الأسعار والمخزون والتكلفة.
+</p>
+
+</div>
+
+<button class="btn"
+onclick="openProduct()">
 + منتج جديد
 </button>
 
@@ -760,55 +1016,83 @@ onclick="logout()">
 
 <label>
 سعر البيع
-<input id="pPrice" type="number" min="0" step=".01">
+<input id="pPrice"
+type="number"
+min="0"
+step=".01">
 </label>
 
 <label>
 تكلفة الشراء
-<input id="pCost" type="number" min="0" step=".01">
+<input id="pCost"
+type="number"
+min="0"
+step=".01">
 </label>
 
 <label>
 نوع المنتج
+
 <select id="pType">
-<option value="digital">رقمي</option>
-<option value="physical">مادي</option>
+
+<option value="digital">
+رقمي
+</option>
+
+<option value="physical">
+مادي
+</option>
+
 </select>
+
 </label>
 
 <label>
 الكمية
-<input id="pQuantity" type="number" min="0" value="0">
+<input id="pQuantity"
+type="number"
+min="0"
+value="0">
 </label>
 
 <label>
 رابط الصورة
-<input id="pImage">
+<input id="pImage"
+placeholder="https://...">
 </label>
 
 <label>
 الرابط الرقمي
-<input id="pDigitalLink">
+<input id="pDigitalLink"
+placeholder="رابط تحميل المنتج">
 </label>
 
 </div>
+
 
 <label>
 الوصف
+
 <textarea id="pDescription"></textarea>
+
 </label>
 
+
 <div class="notice">
-تكلفة الشراء تستخدم لحساب الربح تلقائيًا عند بيع المنتج.
+<strong>مهم:</strong>
+تكلفة الشراء لا تظهر للعميل، وتستخدم فقط لحساب ربح التاجر.
 </div>
+
 
 <div class="actions">
 
-<button class="btn success" onclick="saveProduct()">
-حفظ
+<button class="btn success"
+onclick="saveProduct()">
+حفظ المنتج
 </button>
 
-<button class="btn light" onclick="closeProduct()">
+<button class="btn light"
+onclick="closeProduct()">
 إلغاء
 </button>
 
@@ -819,7 +1103,8 @@ onclick="logout()">
 </div>
 
 
-<div id="productList" class="product-list"></div>
+<div id="productList"
+class="product-list"></div>
 
 </div>
 
@@ -834,9 +1119,18 @@ onclick="logout()">
 
 <div class="panel-head">
 
-<h2>الطلبات</h2>
+<div>
 
-<button class="btn light" onclick="renderOrders()">
+<h2>🛒 الطلبات</h2>
+
+<p class="muted">
+إدارة حالة الطلبات والدفع.
+</p>
+
+</div>
+
+<button class="btn light"
+onclick="renderOrders()">
 تحديث
 </button>
 
@@ -849,109 +1143,222 @@ onclick="logout()">
 </section>
 
 
+<!-- REPORTS -->
+
+<section id="reports" class="section hidden">
+
+<div class="panel">
+
+<h2>📈 التقارير</h2>
+
+<div id="reportsContent"></div>
+
+</div>
+
+</section>
+
+
 <!-- SETTINGS -->
 
 <section id="settings" class="section hidden">
 
 <div class="panel">
 
-<h2>إعدادات المتجر</h2>
+<h2>⚙️ إعدادات المتجر</h2>
+
 
 <h3>المتجر</h3>
 
 <label>
 اسم المتجر
+
 <input id="sStoreName">
+
 </label>
+
 
 <label>
 الوصف
+
 <textarea id="sDescription"></textarea>
+
 </label>
+
 
 <h3>التوصيل</h3>
 
 <label>
 رسوم التوصيل
-<input id="sDelivery" type="number" min="0">
+
+<input id="sDelivery"
+type="number"
+min="0">
+
 </label>
+
 
 <label>
 رقم الاستلام
+
 <input id="sPickupPhone">
+
 </label>
+
 
 <label>
 موقع الاستلام
+
 <input id="sPickupSite">
+
 </label>
+
 
 <h3>الخصومات</h3>
 
 <label>
 مستويات الخصم
-<input id="sWholesale" placeholder="5:5, 10:10, 20:15">
+
+<input id="sWholesale"
+placeholder="5:5, 10:10, 20:15">
+
 </label>
+
 
 <h3>حساب المدير</h3>
 
 <label>
 اسم المستخدم
+
 <input id="sAdminUser">
+
 </label>
+
 
 <label>
 كلمة المرور
+
 <input id="sAdminPass">
+
 </label>
+
 
 <h3>الدفع الإلكتروني — Moyasar</h3>
 
 <div class="notice">
-ضع هنا Publishable Key فقط. لا تضع Secret Key في HTML.
+ضع Publishable Key فقط في الواجهة.
+لا تضع Secret Key داخل HTML.
 </div>
 
 <label>
 Moyasar Publishable Key
+
 <input id="sMoyasar">
+
 </label>
+
 
 <h3>PayPal</h3>
 
 <div class="notice">
-ضع Client ID فقط هنا. الـ Client Secret يجب أن يبقى في الخادم.
+ضع Client ID فقط هنا.
+Client Secret يجب أن يبقى في الخادم.
 </div>
 
 <label>
 PayPal Client ID
+
 <input id="sPaypal">
+
 </label>
+
 
 <h3>البريد الإلكتروني — EmailJS</h3>
 
 <label>
 Public Key
+
 <input id="sEmailPublic">
+
 </label>
+
 
 <label>
 Service ID
+
 <input id="sEmailService">
+
 </label>
+
 
 <label>
 Template ID
+
 <input id="sEmailTemplate">
+
 </label>
+
 
 <label>
 إيميل صاحب المتجر
-<input id="sOwnerEmail" type="email">
+
+<input id="sOwnerEmail"
+type="email">
+
 </label>
 
-<button class="btn success" onclick="saveSettings()">
+
+<div class="actions">
+
+<button class="btn success"
+onclick="saveSettings()">
 حفظ الإعدادات
 </button>
+
+<button class="btn light"
+onclick="resetSettings()">
+إرجاع الإعدادات الافتراضية
+</button>
+
+</div>
+
+</div>
+
+
+<!-- DATA -->
+
+<div class="panel">
+
+<h2>💾 بيانات المتجر</h2>
+
+<p class="muted">
+يمكنك تصدير نسخة احتياطية من المنتجات والطلبات والمصروفات والإعدادات.
+</p>
+
+<div class="actions">
+
+<button class="btn"
+onclick="backupData()">
+⬇️ تصدير نسخة احتياطية
+</button>
+
+<label class="btn light"
+style="display:inline-block;margin:0">
+⬆️ استعادة نسخة
+
+<input
+type="file"
+accept=".json"
+style="display:none"
+onchange="restoreData(event)">
+
+</label>
+
+<button class="btn danger"
+onclick="clearStoreData()">
+مسح بيانات المتجر
+</button>
+
+</div>
 
 </div>
 
@@ -959,25 +1366,40 @@ Template ID
 
 
 </main>
+
 </div>
 
 
 <script>
 
+/* ================================
+   DATABASE KEYS
+================================ */
+
 const K={
+
 products:"nexo_products",
+
 orders:"nexo_orders",
+
 settings:"nexo_settings",
-expenses:"nexo_expenses"
+
+expenses:"nexo_expenses",
+
+visitors:"nexo_visitors"
+
 };
 
+
+/* ================================
+   DEFAULT SETTINGS
+================================ */
 
 const defaultSettings={
 
 storeName:"NEXO STORE",
 
-description:
-"متجر إلكتروني بسيط وسريع.",
+description:"متجر إلكتروني بسيط وسريع.",
 
 deliveryFee:15,
 
@@ -986,9 +1408,13 @@ pickupPhone:"",
 pickupSite:"",
 
 wholesaleTiers:[
+
 {min:5,percent:5},
+
 {min:10,percent:10},
+
 {min:20,percent:15}
+
 ],
 
 moyasarKey:"",
@@ -1010,64 +1436,112 @@ adminPass:"123456"
 };
 
 
+/* ================================
+   STORAGE
+================================ */
+
 function getSettings(){
 
+try{
+
 return{
+
 ...defaultSettings,
+
 ...(JSON.parse(
 localStorage.getItem(K.settings)||"{}"
 ))
+
 };
+
+}catch{
+
+return{...defaultSettings};
+
+}
 
 }
 
 
 function getProducts(){
 
+try{
+
 return JSON.parse(
 localStorage.getItem(K.products)||"[]"
 );
+
+}catch{
+
+return[];
+
+}
 
 }
 
 
 function getOrders(){
 
+try{
+
 return JSON.parse(
 localStorage.getItem(K.orders)||"[]"
 );
+
+}catch{
+
+return[];
+
+}
 
 }
 
 
 function getExpenses(){
 
+try{
+
 return JSON.parse(
 localStorage.getItem(K.expenses)||"[]"
 );
 
+}catch{
+
+return[];
+
+}
+
 }
 
 
-/* LOGIN */
+/* ================================
+   LOGIN
+================================ */
 
 function login(){
 
 const s=getSettings();
 
-const u=document.getElementById("loginUser").value;
-const p=document.getElementById("loginPass").value;
+const u=
+document.getElementById("loginUser").value.trim();
+
+const p=
+document.getElementById("loginPass").value;
 
 if(u===s.adminUser && p===s.adminPass){
 
-sessionStorage.setItem("nexo_admin","1");
+sessionStorage.setItem(
+"nexo_admin",
+"1"
+);
 
 showAdmin();
 
 }else{
 
 document.getElementById("loginError")
-.textContent="بيانات الدخول غير صحيحة.";
+.textContent=
+"اسم المستخدم أو كلمة المرور غير صحيحة.";
 
 }
 
@@ -1076,10 +1550,12 @@ document.getElementById("loginError")
 
 function showAdmin(){
 
-document.getElementById("loginPage")
+document
+.getElementById("loginPage")
 .classList.add("hidden");
 
-document.getElementById("adminPage")
+document
+.getElementById("adminPage")
 .classList.remove("hidden");
 
 init();
@@ -1089,19 +1565,27 @@ init();
 
 function logout(){
 
-sessionStorage.removeItem("nexo_admin");
+sessionStorage.removeItem(
+"nexo_admin"
+);
 
 location.reload();
 
 }
 
 
-if(sessionStorage.getItem("nexo_admin")==="1"){
+if(
+sessionStorage.getItem("nexo_admin")==="1"
+){
+
 showAdmin();
+
 }
 
 
-/* INIT */
+/* ================================
+   INIT
+================================ */
 
 function init(){
 
@@ -1119,16 +1603,22 @@ renderAccounting();
 
 renderExpenses();
 
+renderReports();
+
 }
 
 
-/* TABS */
+/* ================================
+   TABS
+================================ */
 
 function tab(id,button){
 
 document
 .querySelectorAll(".section")
-.forEach(x=>x.classList.add("hidden"));
+.forEach(x=>
+x.classList.add("hidden")
+);
 
 document
 .getElementById(id)
@@ -1136,87 +1626,163 @@ document
 
 document
 .querySelectorAll(".tab")
-.forEach(x=>x.classList.remove("active"));
+.forEach(x=>
+x.classList.remove("active")
+);
 
 button.classList.add("active");
 
+
 if(id==="accounting"){
+
 renderAccounting();
+
 renderExpenses();
+
+}
+
+
+if(id==="reports"){
+
+renderReports();
+
 }
 
 }
 
 
-/* DASHBOARD */
+function refreshAll(){
+
+dash();
+
+renderProducts();
+
+renderOrders();
+
+renderLatest();
+
+renderAccounting();
+
+renderExpenses();
+
+renderReports();
+
+alert("تم تحديث لوحة الإدارة.");
+
+}
+
+
+/* ================================
+   DASHBOARD
+================================ */
 
 function dash(){
 
 const orders=getOrders();
+
 const products=getProducts();
 
 const validOrders=
-orders.filter(o=>o.status!=="cancelled");
+orders.filter(o=>
+o.status!=="cancelled"
+);
 
 const sales=
 validOrders.reduce(
-(a,o)=>a+Number(o.total||0),0
+(a,o)=>
+a+Number(o.total||0),
+0
 );
 
 const out=
 products.filter(p=>
+
 p.type==="physical" &&
-Number(p.quantity??p.stock??0)<=0
+
+Number(
+p.quantity??p.stock??0
+)<=0
+
 ).length;
 
+
 const processing=
-orders.filter(o=>o.status==="processing").length;
+orders.filter(o=>
+o.status==="processing"
+).length;
+
 
 let visitors=
-Number(localStorage.getItem("nexo_visitors")||0);
+Number(
+localStorage.getItem(K.visitors)||0
+);
 
 if(!Number.isFinite(visitors))
 visitors=0;
 
-document.getElementById("sOrders").textContent=
+
+document.getElementById("sOrders")
+.textContent=
 orders.length;
 
-document.getElementById("sSales").textContent=
+
+document.getElementById("sSales")
+.textContent=
 money(sales)+" ر.س";
 
-document.getElementById("sProducts").textContent=
+
+document.getElementById("sProducts")
+.textContent=
 products.length;
 
-document.getElementById("sOut").textContent=
+
+document.getElementById("sOut")
+.textContent=
 out;
 
-document.getElementById("sProcessing").textContent=
+
+document.getElementById("sProcessing")
+.textContent=
 processing;
 
-document.getElementById("sVisitors").textContent=
+
+document.getElementById("sVisitors")
+.textContent=
 visitors.toLocaleString("ar-SA");
 
 }
 
 
-/* ACCOUNTING */
+/* ================================
+   ACCOUNTING ENGINE
+================================ */
 
 function calculateAccounting(){
 
 const products=getProducts();
 
 const orders=getOrders()
-.filter(o=>o.status!=="cancelled");
+.filter(o=>
+o.status!=="cancelled"
+);
 
 const expenses=getExpenses();
 
+
 let sales=0;
+
 let cost=0;
+
 let paid=0;
+
 let cash=0;
+
 let unpaid=0;
+
 let today=0;
+
 let month=0;
+
 
 const now=new Date();
 
@@ -1229,35 +1795,55 @@ now.toISOString().slice(0,7);
 
 orders.forEach(order=>{
 
-const total=Number(order.total||0);
+const total=
+Number(order.total||0);
 
 sales+=total;
 
+
 const paymentStatus=
-String(order.paymentStatus||"")
-.toLowerCase();
+String(
+order.paymentStatus||""
+).toLowerCase();
+
 
 if(
+
 paymentStatus==="paid" ||
+
 paymentStatus==="success" ||
+
 paymentStatus==="completed"
+
 ){
+
 paid+=total;
+
 }else{
+
 unpaid+=total;
+
 }
 
+
+const paymentMethod=
+String(
+order.paymentMethod||""
+).toLowerCase();
+
+
 if(
-String(order.paymentMethod||"")
-.includes("cash")
-||
-String(order.paymentMethod||"")
-.includes("نقد")
-||
-String(order.paymentMethod||"")
-.includes("الدفع عند")
+
+paymentMethod.includes("cash") ||
+
+paymentMethod.includes("نقد") ||
+
+paymentMethod.includes("الدفع عند")
+
 ){
+
 cash+=total;
+
 }
 
 
@@ -1267,35 +1853,61 @@ order.createdAt
 new Date(order.createdAt)
 :null;
 
-if(date && !isNaN(date)){
 
-if(date.toISOString().slice(0,10)===todayKey){
+if(
+date &&
+!isNaN(date)
+){
+
+if(
+date.toISOString().slice(0,10)
+===todayKey
+){
+
 today+=total;
+
 }
 
-if(date.toISOString().slice(0,7)===monthKey){
+
+if(
+date.toISOString().slice(0,7)
+===monthKey
+){
+
 month+=total;
-}
 
 }
 
+}
 
-(order.items||[]).forEach(item=>{
+
+(order.items||[])
+.forEach(item=>{
 
 const product=
 products.find(p=>
+
 p.id===item.id ||
+
 p.id===item.productId
+
 );
+
 
 const itemCost=
 Number(
+
 item.cost ??
+
 product?.cost ??
+
 0
+
 );
 
-cost+=itemCost*
+
+cost+=
+itemCost*
 Number(item.qty||1);
 
 });
@@ -1305,14 +1917,22 @@ Number(item.qty||1);
 
 const expenseTotal=
 expenses.reduce(
-(a,e)=>a+Number(e.amount||0),0
+
+(a,e)=>
+a+Number(e.amount||0),
+
+0
+
 );
+
 
 const grossProfit=
 sales-cost;
 
+
 const netProfit=
 grossProfit-expenseTotal;
+
 
 const average=
 orders.length
@@ -1322,100 +1942,168 @@ sales/orders.length
 
 
 return{
+
 sales,
+
 cost,
+
 grossProfit,
+
 expenses:expenseTotal,
+
 netProfit,
+
 orders:orders.length,
+
 average,
+
 paid,
+
 cash,
+
 unpaid,
+
 today,
+
 month
+
 };
 
 }
 
 
+/* ================================
+   ACCOUNTING UI
+================================ */
+
 function renderAccounting(){
 
-const a=calculateAccounting();
+const a=
+calculateAccounting();
 
-document.getElementById("aSales").textContent=
+
+document.getElementById("aSales")
+.textContent=
 money(a.sales)+" ر.س";
 
-document.getElementById("aCost").textContent=
+
+document.getElementById("aCost")
+.textContent=
 money(a.cost)+" ر.س";
 
-document.getElementById("aGrossProfit").textContent=
+
+document.getElementById("aGrossProfit")
+.textContent=
 money(a.grossProfit)+" ر.س";
 
-document.getElementById("aExpenses").textContent=
+
+document.getElementById("aExpenses")
+.textContent=
 money(a.expenses)+" ر.س";
 
-document.getElementById("aNetProfit").textContent=
+
+document.getElementById("aNetProfit")
+.textContent=
 money(a.netProfit)+" ر.س";
 
-document.getElementById("aOrders").textContent=
+
+document.getElementById("aOrders")
+.textContent=
 a.orders;
 
-document.getElementById("aAverage").textContent=
+
+document.getElementById("aAverage")
+.textContent=
 money(a.average)+" ر.س";
 
-document.getElementById("aPaid").textContent=
+
+document.getElementById("aPaid")
+.textContent=
 money(a.paid)+" ر.س";
 
-document.getElementById("aToday").textContent=
+
+document.getElementById("aToday")
+.textContent=
 money(a.today)+" ر.س";
 
-document.getElementById("aMonth").textContent=
+
+document.getElementById("aMonth")
+.textContent=
 money(a.month)+" ر.س";
 
-document.getElementById("aCash").textContent=
+
+document.getElementById("aCash")
+.textContent=
 money(a.cash)+" ر.س";
 
-document.getElementById("aUnpaid").textContent=
+
+document.getElementById("aUnpaid")
+.textContent=
 money(a.unpaid)+" ر.س";
 
-document.getElementById("tSales").textContent=
+
+document.getElementById("tSales")
+.textContent=
 money(a.sales)+" ر.س";
 
-document.getElementById("tCost").textContent=
+
+document.getElementById("tCost")
+.textContent=
 money(a.cost)+" ر.س";
 
-document.getElementById("tGross").textContent=
+
+document.getElementById("tGross")
+.textContent=
 money(a.grossProfit)+" ر.س";
 
-document.getElementById("tExpenses").textContent=
+
+document.getElementById("tExpenses")
+.textContent=
 money(a.expenses)+" ر.س";
 
-document.getElementById("tNet").textContent=
+
+document.getElementById("tNet")
+.textContent=
 money(a.netProfit)+" ر.س";
 
 
-const net=document.getElementById("aNetProfit");
+const netCard=
+document.getElementById("netCard");
 
-net.parentElement.classList.remove("profit","loss");
+netCard.classList.remove(
+"profit",
+"loss"
+);
 
-if(a.netProfit>=0)
-net.parentElement.classList.add("profit");
-else
-net.parentElement.classList.add("loss");
+if(a.netProfit>=0){
+
+netCard.classList.add("profit");
+
+}else{
+
+netCard.classList.add("loss");
+
+}
 
 }
 
 
-/* EXPENSES */
+/* ================================
+   EXPENSES
+================================ */
 
 function openExpense(){
 
-document.getElementById("expenseForm")
+document
+.getElementById("expenseForm")
 .classList.remove("hidden");
 
 document.getElementById("eName").value="";
+
 document.getElementById("eAmount").value="";
+
+document.getElementById("eCategory").value="other";
+
 document.getElementById("eNote").value="";
 
 }
@@ -1423,7 +2111,8 @@ document.getElementById("eNote").value="";
 
 function closeExpense(){
 
-document.getElementById("expenseForm")
+document
+.getElementById("expenseForm")
 .classList.add("hidden");
 
 }
@@ -1435,14 +2124,23 @@ const name=
 document.getElementById("eName")
 .value.trim();
 
+
 const amount=
 Number(
-document.getElementById("eAmount").value||0
+document.getElementById("eAmount")
+.value||0
 );
+
+
+const category=
+document.getElementById("eCategory")
+.value;
+
 
 const note=
 document.getElementById("eNote")
 .value.trim();
+
 
 if(!name){
 
@@ -1452,6 +2150,7 @@ return;
 
 }
 
+
 if(amount<=0){
 
 alert("اكتب مبلغًا صحيحًا.");
@@ -1460,7 +2159,9 @@ return;
 
 }
 
+
 const expenses=getExpenses();
+
 
 expenses.push({
 
@@ -1470,22 +2171,33 @@ name,
 
 amount,
 
+category,
+
 note,
 
-createdAt:new Date().toISOString()
+createdAt:
+new Date().toISOString()
 
 });
 
+
 localStorage.setItem(
+
 K.expenses,
+
 JSON.stringify(expenses)
+
 );
+
 
 closeExpense();
 
 renderExpenses();
 
 renderAccounting();
+
+renderReports();
+
 
 alert("تمت إضافة المصروف.");
 
@@ -1497,8 +2209,10 @@ function renderExpenses(){
 const box=
 document.getElementById("expensesList");
 
+
 const expenses=
 [...getExpenses()].reverse();
+
 
 if(!expenses.length){
 
@@ -1511,6 +2225,7 @@ return;
 
 }
 
+
 box.innerHTML=
 expenses.map(e=>`
 
@@ -1518,15 +2233,26 @@ expenses.map(e=>`
 
 <div>
 
-<strong>${safe(e.name)}</strong>
+<strong>
+${safe(e.name)}
+</strong>
 
 <div class="muted">
-${safe(e.note||"")}
+
+${categoryName(e.category)}
+
 <br>
+
+${safe(e.note||"")}
+
+<br>
+
 ${formatDate(e.createdAt)}
+
 </div>
 
 </div>
+
 
 <div style="text-align:left">
 
@@ -1540,7 +2266,9 @@ ${money(e.amount)} ر.س
 class="btn danger"
 style="margin-top:7px"
 onclick="deleteExpense('${e.id}')">
+
 حذف
+
 </button>
 
 </div>
@@ -1552,92 +2280,171 @@ onclick="deleteExpense('${e.id}')">
 }
 
 
+function categoryName(x){
+
+const map={
+
+shipping:"شحن",
+
+marketing:"تسويق وإعلانات",
+
+packaging:"تغليف",
+
+platform:"منصة",
+
+other:"أخرى"
+
+};
+
+return map[x]||"أخرى";
+
+}
+
+
 function deleteExpense(id){
 
 if(!confirm("حذف هذا المصروف؟"))
 return;
 
+
 const expenses=
 getExpenses()
-.filter(e=>e.id!==id);
+.filter(e=>
+e.id!==id
+);
+
 
 localStorage.setItem(
+
 K.expenses,
+
 JSON.stringify(expenses)
+
 );
+
 
 renderExpenses();
 
 renderAccounting();
 
+renderReports();
+
 }
 
 
-/* PRODUCTS */
+/* ================================
+   PRODUCTS
+================================ */
 
 function renderProducts(){
 
-const box=document.getElementById("productList");
+const box=
+document.getElementById("productList");
+
+
 const ps=getProducts();
+
 
 if(!ps.length){
 
 box.innerHTML=
-`<div class="empty">لا توجد منتجات.</div>`;
+`<div class="empty">
+لا توجد منتجات.
+</div>`;
 
 return;
 
 }
 
+
 box.innerHTML=
 ps.map(p=>{
 
 const quantity=
-Number(p.quantity??p.stock??0);
+Number(
+p.quantity??p.stock??0
+);
+
 
 return`
 
 <div class="product">
 
-<img
-src="${safe(p.image||"")}"
-onerror="this.style.display='none'">
+${
+p.image
+?
+`<img
+src="${safe(p.image)}"
+onerror="this.style.display='none'">`
+:
+""
+}
+
 
 <div class="product-body">
 
-<h3>${safe(p.name)}</h3>
+<h3>
+${safe(p.name)}
+</h3>
+
 
 <p class="muted">
 ${safe(p.description||"")}
 </p>
 
+
 <strong>
 ${money(p.price)} ر.س
 </strong>
+
 
 <p>
 تكلفة الشراء:
 ${money(p.cost||0)} ر.س
 </p>
 
+
 <p>
+
 ${
 p.type==="digital"
-?"منتج رقمي"
-:`المخزون: ${quantity}`
+?
+"💾 منتج رقمي"
+:
+`📦 المخزون: ${quantity}`
 }
+
 </p>
+
+
+${
+p.type==="physical" && quantity<=0
+?
+`<span class="badge cancelled">
+نفد المخزون
+</span>`
+:
+""
+}
+
 
 <div class="actions">
 
-<button class="btn light"
+<button
+class="btn light"
 onclick="editProduct('${p.id}')">
+
 تعديل
+
 </button>
 
-<button class="btn danger"
+
+<button
+class="btn danger"
 onclick="deleteProduct('${p.id}')">
+
 حذف
+
 </button>
 
 </div>
@@ -1655,7 +2462,8 @@ onclick="deleteProduct('${p.id}')">
 
 function openProduct(){
 
-document.getElementById("productForm")
+document
+.getElementById("productForm")
 .classList.remove("hidden");
 
 clearProduct();
@@ -1665,7 +2473,8 @@ clearProduct();
 
 function closeProduct(){
 
-document.getElementById("productForm")
+document
+.getElementById("productForm")
 .classList.add("hidden");
 
 }
@@ -1674,13 +2483,21 @@ document.getElementById("productForm")
 function clearProduct(){
 
 document.getElementById("pId").value="";
+
 document.getElementById("pName").value="";
+
 document.getElementById("pPrice").value="";
+
 document.getElementById("pCost").value="";
+
 document.getElementById("pType").value="digital";
+
 document.getElementById("pQuantity").value="0";
+
 document.getElementById("pImage").value="";
+
 document.getElementById("pDigitalLink").value="";
+
 document.getElementById("pDescription").value="";
 
 }
@@ -1690,75 +2507,114 @@ function saveProduct(){
 
 const ps=getProducts();
 
+
 const id=
 document.getElementById("pId").value||
+
 "p_"+Date.now();
+
 
 const p={
 
 id,
 
 name:
-document.getElementById("pName").value.trim(),
+document.getElementById("pName")
+.value.trim(),
 
 price:
 Number(
-document.getElementById("pPrice").value||0
+document.getElementById("pPrice")
+.value||0
 ),
 
 cost:
 Number(
-document.getElementById("pCost").value||0
+document.getElementById("pCost")
+.value||0
 ),
 
 type:
-document.getElementById("pType").value,
+document.getElementById("pType")
+.value,
 
 quantity:
 Number(
-document.getElementById("pQuantity").value||0
+document.getElementById("pQuantity")
+.value||0
 ),
 
 image:
-document.getElementById("pImage").value.trim(),
+document.getElementById("pImage")
+.value.trim(),
 
 digitalLink:
-document.getElementById("pDigitalLink").value.trim(),
+document.getElementById("pDigitalLink")
+.value.trim(),
 
 description:
-document.getElementById("pDescription").value.trim()
+document.getElementById("pDescription")
+.value.trim()
 
 };
+
 
 if(!p.name){
 
 alert("اكتب اسم المنتج.");
+
 return;
 
 }
+
+
+if(p.price<0 || p.cost<0){
+
+alert("السعر والتكلفة لا يمكن أن تكون سالبة.");
+
+return;
+
+}
+
 
 if(p.cost>p.price){
 
 if(!confirm(
 "تكلفة الشراء أعلى من سعر البيع. هل تريد المتابعة؟"
 )){
+
 return;
+
 }
 
 }
+
 
 const index=
-ps.findIndex(x=>x.id===id);
+ps.findIndex(x=>
+x.id===id
+);
 
-if(index>=0)
+
+if(index>=0){
+
 ps[index]=p;
-else
+
+}else{
+
 ps.push(p);
 
+}
+
+
 localStorage.setItem(
+
 K.products,
+
 JSON.stringify(ps)
+
 );
+
 
 closeProduct();
 
@@ -1768,6 +2624,8 @@ dash();
 
 renderAccounting();
 
+renderReports();
+
 }
 
 
@@ -1775,31 +2633,48 @@ function editProduct(id){
 
 const p=
 getProducts()
-.find(x=>x.id===id);
+.find(x=>
+x.id===id
+);
+
 
 if(!p)return;
 
+
 openProduct();
 
-document.getElementById("pId").value=p.id;
 
-document.getElementById("pName").value=p.name||"";
+document.getElementById("pId").value=
+p.id;
 
-document.getElementById("pPrice").value=p.price||0;
 
-document.getElementById("pCost").value=p.cost||0;
+document.getElementById("pName").value=
+p.name||"";
+
+
+document.getElementById("pPrice").value=
+p.price||0;
+
+
+document.getElementById("pCost").value=
+p.cost||0;
+
 
 document.getElementById("pType").value=
 p.type||"digital";
 
+
 document.getElementById("pQuantity").value=
 p.quantity??p.stock??0;
+
 
 document.getElementById("pImage").value=
 p.image||"";
 
+
 document.getElementById("pDigitalLink").value=
 p.digitalLink||"";
+
 
 document.getElementById("pDescription").value=
 p.description||"";
@@ -1809,17 +2684,27 @@ p.description||"";
 
 function deleteProduct(id){
 
-if(!confirm("حذف المنتج؟"))
+if(!confirm(
+"حذف المنتج؟"
+))
 return;
+
 
 const ps=
 getProducts()
-.filter(p=>p.id!==id);
+.filter(p=>
+p.id!==id
+);
+
 
 localStorage.setItem(
+
 K.products,
+
 JSON.stringify(ps)
+
 );
+
 
 renderProducts();
 
@@ -1827,45 +2712,79 @@ dash();
 
 renderAccounting();
 
+renderReports();
+
 }
 
 
-/* ORDERS */
+/* ================================
+   ORDERS
+================================ */
 
 const statusMap={
 
-new:["🟡","جديد","new"],
+new:[
+"🟡",
+"جديد",
+"new"
+],
 
-processing:["🔵","قيد التجهيز","processing"],
+processing:[
+"🔵",
+"قيد التجهيز",
+"processing"
+],
 
-out:["🟠","خرج للتوصيل","out"],
+out:[
+"🟠",
+"خرج للتوصيل",
+"out"
+],
 
-delivered:["🟢","تم التسليم","delivered"],
+delivered:[
+"🟢",
+"تم التسليم",
+"delivered"
+],
 
-cancelled:["🔴","ملغي","cancelled"]
+cancelled:[
+"🔴",
+"ملغي",
+"cancelled"
+]
 
 };
 
 
 function renderOrders(){
 
-const box=document.getElementById("ordersList");
+const box=
+document.getElementById("ordersList");
 
-const os=[...getOrders()].reverse();
+
+const os=
+[...getOrders()].reverse();
+
 
 if(!os.length){
 
 box.innerHTML=
-`<div class="empty">لا توجد طلبات.</div>`;
+`<div class="empty">
+لا توجد طلبات.
+</div>`;
 
 return;
 
 }
 
+
 box.innerHTML=
 os.map(o=>{
 
-const st=statusMap[o.status]||statusMap.new;
+const st=
+statusMap[o.status]||
+statusMap.new;
+
 
 return`
 
@@ -1875,7 +2794,9 @@ return`
 
 <div>
 
-<strong>${safe(o.orderNumber)}</strong>
+<strong>
+${safe(o.orderNumber||o.id)}
+</strong>
 
 <p class="muted">
 ${formatDate(o.createdAt)}
@@ -1883,89 +2804,152 @@ ${formatDate(o.createdAt)}
 
 </div>
 
+
 <span class="badge ${st[2]}">
-${st[0]} ${st[1]}
+
+${st[0]}
+${st[1]}
+
 </span>
 
 </div>
 
+
 <hr>
+
 
 <div class="grid">
 
 <div>
+
 <strong>العميل</strong>
-<p>${safe(o.customerName)}</p>
-</div>
-
-<div>
-<strong>الجوال</strong>
-<p>${safe(o.phone)}</p>
-</div>
-
-<div>
-<strong>البريد</strong>
-<p>${safe(o.email)}</p>
-</div>
-
-<div>
-<strong>الإجمالي</strong>
-<p>${money(o.total)} ر.س</p>
-</div>
-
-<div>
-<strong>الدفع</strong>
-<p>${safe(o.paymentMethod||"-")}</p>
-</div>
-
-<div>
-<strong>حالة الدفع</strong>
-<p>${safe(o.paymentStatus||"pending")}</p>
-</div>
-
-</div>
 
 <p>
-<strong>المنتجات:</strong>
-${(o.items||[])
-.map(x=>`${safe(x.name)} × ${x.qty}`)
-.join("، ")}
+${safe(o.customerName)}
 </p>
+
+</div>
+
+
+<div>
+
+<strong>الجوال</strong>
+
+<p>
+${safe(o.phone)}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>البريد</strong>
+
+<p>
+${safe(o.email)}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>الإجمالي</strong>
+
+<p>
+${money(o.total)} ر.س
+</p>
+
+</div>
+
+
+<div>
+
+<strong>الدفع</strong>
+
+<p>
+${safe(o.paymentMethod||"-")}
+</p>
+
+</div>
+
+
+<div>
+
+<strong>حالة الدفع</strong>
+
+<p>
+${safe(o.paymentStatus||"pending")}
+</p>
+
+</div>
+
+</div>
+
+
+<p>
+
+<strong>
+المنتجات:
+</strong>
+
+${
+(o.items||[])
+.map(x=>
+`${safe(x.name)} × ${x.qty}`
+)
+.join("، ")
+
+}
+
+</p>
+
 
 <div class="actions">
 
-<select onchange="changeStatus('${o.id}',this.value)">
+<select
+onchange="changeStatus('${o.id}',this.value)">
 
-<option value="new"
+<option
+value="new"
 ${o.status==="new"?"selected":""}>
 🟡 جديد
 </option>
 
-<option value="processing"
+<option
+value="processing"
 ${o.status==="processing"?"selected":""}>
 🔵 قيد التجهيز
 </option>
 
-<option value="out"
+<option
+value="out"
 ${o.status==="out"?"selected":""}>
 🟠 خرج للتوصيل
 </option>
 
-<option value="delivered"
+<option
+value="delivered"
 ${o.status==="delivered"?"selected":""}>
 🟢 تم التسليم
 </option>
 
-<option value="cancelled"
+<option
+value="cancelled"
 ${o.status==="cancelled"?"selected":""}>
 🔴 ملغي
 </option>
 
 </select>
 
-<button class="btn danger"
+
+<button
+class="btn danger"
 onclick="deleteOrder('${o.id}')">
+
 حذف
+
 </button>
 
 </div>
@@ -1983,74 +2967,124 @@ async function changeStatus(id,status){
 
 const os=getOrders();
 
-const o=os.find(x=>x.id===id);
+const o=
+os.find(x=>
+x.id===id
+);
+
 
 if(!o)return;
 
+
+const oldStatus=o.status;
+
 o.status=status;
 
-o.updatedAt=new Date().toISOString();
+o.updatedAt=
+new Date().toISOString();
+
 
 localStorage.setItem(
+
 K.orders,
+
 JSON.stringify(os)
+
 );
+
+
+if(oldStatus!==status){
 
 await sendStatusEmail(o);
 
+}
+
+
 renderOrders();
+
 renderLatest();
+
 dash();
+
 renderAccounting();
+
+renderReports();
 
 }
 
 
 function deleteOrder(id){
 
-if(!confirm("حذف الطلب نهائياً؟"))
+if(!confirm(
+"حذف الطلب نهائيًا؟"
+))
 return;
+
 
 const os=
 getOrders()
-.filter(o=>o.id!==id);
-
-localStorage.setItem(
-K.orders,
-JSON.stringify(os)
+.filter(o=>
+o.id!==id
 );
 
+
+localStorage.setItem(
+
+K.orders,
+
+JSON.stringify(os)
+
+);
+
+
 renderOrders();
+
 renderLatest();
+
 dash();
+
 renderAccounting();
+
+renderReports();
 
 }
 
 
-/* LATEST */
+/* ================================
+   LATEST
+================================ */
 
 function renderLatest(){
 
-const box=document.getElementById("latest");
+const box=
+document.getElementById("latest");
 
-const os=[...getOrders()]
+
+const os=
+[...getOrders()]
 .reverse()
 .slice(0,5);
+
 
 if(!os.length){
 
 box.innerHTML=
-`<div class="empty">لا توجد طلبات.</div>`;
+`<div class="empty">
+لا توجد طلبات.
+</div>`;
 
 return;
 
 }
 
+
 box.innerHTML=
 os.map(o=>{
 
-const st=statusMap[o.status]||statusMap.new;
+const st=
+statusMap[o.status]||
+statusMap.new;
+
 
 return`
 
@@ -2058,17 +3092,28 @@ return`
 
 <div class="order-top">
 
-<strong>${safe(o.orderNumber)}</strong>
+<strong>
+${safe(o.orderNumber||o.id)}
+</strong>
 
 <span class="badge ${st[2]}">
-${st[0]} ${st[1]}
+
+${st[0]}
+${st[1]}
+
 </span>
 
 </div>
 
-<p>${safe(o.customerName)}</p>
 
-<strong>${money(o.total)} ر.س</strong>
+<p>
+${safe(o.customerName)}
+</p>
+
+
+<strong>
+${money(o.total)} ر.س
+</strong>
 
 </div>
 
@@ -2079,41 +3124,348 @@ ${st[0]} ${st[1]}
 }
 
 
-/* SETTINGS */
+/* ================================
+   REPORTS
+================================ */
+
+function renderReports(){
+
+const box=
+document.getElementById("reportsContent");
+
+
+const products=getProducts();
+
+const orders=
+getOrders()
+.filter(o=>
+o.status!=="cancelled"
+);
+
+
+const sales=
+orders.reduce(
+(a,o)=>
+a+Number(o.total||0),
+0
+);
+
+
+const sold={};
+
+
+orders.forEach(o=>{
+
+(o.items||[])
+.forEach(item=>{
+
+const key=
+item.id||
+item.productId||
+item.name;
+
+
+if(!sold[key]){
+
+sold[key]={
+name:item.name||"منتج",
+qty:0,
+sales:0
+};
+
+}
+
+
+sold[key].qty+=
+Number(item.qty||1);
+
+
+sold[key].sales+=
+Number(item.price||0)*
+Number(item.qty||1);
+
+});
+
+});
+
+
+const top=
+Object.values(sold)
+.sort((a,b)=>
+b.qty-a.qty
+)
+.slice(0,10);
+
+
+const max=
+top.length
+?
+Math.max(...top.map(x=>x.qty))
+:1;
+
+
+const expenses=
+getExpenses();
+
+
+const expenseTotal=
+expenses.reduce(
+(a,e)=>
+a+Number(e.amount||0),
+0
+);
+
+
+box.innerHTML=`
+
+<div class="account-grid">
+
+<div class="account-card">
+
+<div class="title">
+إجمالي المبيعات
+</div>
+
+<div class="value">
+${money(sales)} ر.س
+</div>
+
+</div>
+
+
+<div class="account-card">
+
+<div class="title">
+عدد الطلبات
+</div>
+
+<div class="value">
+${orders.length}
+</div>
+
+</div>
+
+
+<div class="account-card">
+
+<div class="title">
+المصروفات
+</div>
+
+<div class="value">
+${money(expenseTotal)} ر.س
+</div>
+
+</div>
+
+
+<div class="account-card">
+
+<div class="title">
+صافي الربح
+</div>
+
+<div class="value">
+${money(calculateAccounting().netProfit)}
+ ر.س
+</div>
+
+</div>
+
+</div>
+
+
+<div class="report-box">
+
+<h3>
+🔥 أكثر المنتجات مبيعًا
+</h3>
+
+${
+top.length
+?
+`<div class="chart">
+
+${top.map(x=>`
+
+<div class="chart-row">
+
+<div>
+${safe(x.name)}
+</div>
+
+<div class="chart-bar">
+
+<div
+class="chart-fill"
+style="width:${Math.max(
+5,
+(x.qty/max)*100
+)}%">
+</div>
+
+</div>
+
+<div>
+${x.qty} قطعة
+</div>
+
+</div>
+
+`).join("")}
+
+</div>`
+
+:
+
+`<div class="empty">
+لا توجد مبيعات حتى الآن.
+</div>`
+
+}
+
+</div>
+
+
+<div class="report-box">
+
+<h3>
+📦 المنتجات والمخزون
+</h3>
+
+<table class="account-table">
+
+<thead>
+
+<tr>
+<th>المنتج</th>
+<th>النوع</th>
+<th>السعر</th>
+<th>المخزون</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+${
+products.map(p=>`
+
+<tr>
+
+<td>
+${safe(p.name)}
+</td>
+
+<td>
+${
+p.type==="digital"
+?
+"رقمي"
+:
+"مادي"
+}
+</td>
+
+<td>
+${money(p.price)} ر.س
+</td>
+
+<td>
+${
+p.type==="digital"
+?
+"∞"
+:
+Number(p.quantity??p.stock??0)
+}
+</td>
+
+</tr>
+
+`).join("")
+
+}
+
+</tbody>
+
+</table>
+
+</div>
+
+`;
+
+}
+
+
+/* ================================
+   SETTINGS
+================================ */
 
 function loadSettings(){
 
-const s=getSettings();
+const s=
+getSettings();
 
-document.getElementById("sStoreName").value=s.storeName;
 
-document.getElementById("sDescription").value=s.description;
+document.getElementById("sStoreName")
+.value=s.storeName;
 
-document.getElementById("sDelivery").value=s.deliveryFee;
 
-document.getElementById("sPickupPhone").value=s.pickupPhone;
+document.getElementById("sDescription")
+.value=s.description;
 
-document.getElementById("sPickupSite").value=s.pickupSite;
 
-document.getElementById("sAdminUser").value=s.adminUser;
+document.getElementById("sDelivery")
+.value=s.deliveryFee;
 
-document.getElementById("sAdminPass").value=s.adminPass;
 
-document.getElementById("sMoyasar").value=s.moyasarKey;
+document.getElementById("sPickupPhone")
+.value=s.pickupPhone;
 
-document.getElementById("sPaypal").value=s.paypalClientId;
 
-document.getElementById("sEmailPublic").value=s.emailPublic;
+document.getElementById("sPickupSite")
+.value=s.pickupSite;
 
-document.getElementById("sEmailService").value=s.emailService;
 
-document.getElementById("sEmailTemplate").value=s.emailTemplate;
+document.getElementById("sAdminUser")
+.value=s.adminUser;
 
-document.getElementById("sOwnerEmail").value=s.ownerEmail;
 
-document.getElementById("sWholesale").value=
+document.getElementById("sAdminPass")
+.value=s.adminPass;
+
+
+document.getElementById("sMoyasar")
+.value=s.moyasarKey;
+
+
+document.getElementById("sPaypal")
+.value=s.paypalClientId;
+
+
+document.getElementById("sEmailPublic")
+.value=s.emailPublic;
+
+
+document.getElementById("sEmailService")
+.value=s.emailService;
+
+
+document.getElementById("sEmailTemplate")
+.value=s.emailTemplate;
+
+
+document.getElementById("sOwnerEmail")
+.value=s.ownerEmail;
+
+
+document.getElementById("sWholesale")
+.value=
 (s.wholesaleTiers||[])
-.map(x=>`${x.min}:${x.percent}`)
+.map(x=>
+`${x.min}:${x.percent}`
+)
 .join(", ");
 
 }
@@ -2132,108 +3484,189 @@ document.getElementById("sWholesale")
 const a=x.split(":");
 
 return{
+
 min:Number(a[0]),
+
 percent:Number(a[1])
+
 };
 
 })
-.filter(x=>x.min>0&&x.percent>=0);
+.filter(x=>
+x.min>0 &&
+x.percent>=0
+);
 
 
 const s={
 
 storeName:
-document.getElementById("sStoreName").value.trim(),
+document.getElementById("sStoreName")
+.value.trim(),
 
 description:
-document.getElementById("sDescription").value.trim(),
+document.getElementById("sDescription")
+.value.trim(),
 
 deliveryFee:
 Number(
-document.getElementById("sDelivery").value||0
+document.getElementById("sDelivery")
+.value||0
 ),
 
 pickupPhone:
-document.getElementById("sPickupPhone").value.trim(),
+document.getElementById("sPickupPhone")
+.value.trim(),
 
 pickupSite:
-document.getElementById("sPickupSite").value.trim(),
+document.getElementById("sPickupSite")
+.value.trim(),
 
 wholesaleTiers:tiers,
 
 adminUser:
-document.getElementById("sAdminUser").value.trim(),
+document.getElementById("sAdminUser")
+.value.trim(),
 
 adminPass:
-document.getElementById("sAdminPass").value,
+document.getElementById("sAdminPass")
+.value,
 
 moyasarKey:
-document.getElementById("sMoyasar").value.trim(),
+document.getElementById("sMoyasar")
+.value.trim(),
 
 paypalClientId:
-document.getElementById("sPaypal").value.trim(),
+document.getElementById("sPaypal")
+.value.trim(),
 
 emailPublic:
-document.getElementById("sEmailPublic").value.trim(),
+document.getElementById("sEmailPublic")
+.value.trim(),
 
 emailService:
-document.getElementById("sEmailService").value.trim(),
+document.getElementById("sEmailService")
+.value.trim(),
 
 emailTemplate:
-document.getElementById("sEmailTemplate").value.trim(),
+document.getElementById("sEmailTemplate")
+.value.trim(),
 
 ownerEmail:
-document.getElementById("sOwnerEmail").value.trim()
+document.getElementById("sOwnerEmail")
+.value.trim()
 
 };
 
-localStorage.setItem(
-K.settings,
-JSON.stringify(s)
+
+if(!s.adminUser || !s.adminPass){
+
+alert(
+"اسم المستخدم وكلمة المرور مطلوبان."
 );
 
-alert("تم حفظ الإعدادات.");
+return;
 
 }
 
 
-/* EMAIL */
+localStorage.setItem(
+
+K.settings,
+
+JSON.stringify(s)
+
+);
+
+
+alert(
+"تم حفظ الإعدادات بنجاح."
+);
+
+}
+
+
+function resetSettings(){
+
+if(!confirm(
+"إرجاع إعدادات المتجر الافتراضية؟"
+))
+return;
+
+
+localStorage.setItem(
+
+K.settings,
+
+JSON.stringify(defaultSettings)
+
+);
+
+
+loadSettings();
+
+alert(
+"تم إرجاع الإعدادات."
+);
+
+}
+
+
+/* ================================
+   EMAIL
+================================ */
 
 async function sendStatusEmail(order){
 
-const s=getSettings();
+const s=
+getSettings();
+
 
 if(
 !s.emailPublic||
 !s.emailService||
-!s.emailTemplate
+!s.emailTemplate||
+!order.email
 )
 return;
+
 
 try{
 
 emailjs.init({
+
 publicKey:s.emailPublic
+
 });
+
 
 const status=
 statusMap[order.status]?.[1]||
 order.status;
 
+
 await emailjs.send(
+
 s.emailService,
+
 s.emailTemplate,
+
 {
 
-to_email:order.email,
+to_email:
+order.email,
 
-customer_email:order.email,
+customer_email:
+order.email,
 
-customer_name:order.customerName,
+customer_name:
+order.customerName,
 
-order_number:order.orderNumber,
+order_number:
+order.orderNumber,
 
-order_status:status,
+order_status:
+status,
 
 order_total:
 money(order.total)+" ر.س",
@@ -2248,22 +3681,287 @@ store_name:
 s.storeName
 
 }
+
 );
+
 
 }catch(e){
 
-console.error(e);
+console.error(
+"EmailJS Error:",
+e
+);
 
 }
 
 }
 
 
-/* HELPERS */
+/* ================================
+   BACKUP
+================================ */
+
+function backupData(){
+
+const data={
+
+version:1,
+
+createdAt:
+new Date().toISOString(),
+
+products:
+getProducts(),
+
+orders:
+getOrders(),
+
+expenses:
+getExpenses(),
+
+settings:
+getSettings(),
+
+visitors:
+localStorage.getItem(K.visitors)||"0"
+
+};
+
+
+const blob=
+new Blob(
+[
+JSON.stringify(
+data,
+null,
+2
+)
+],
+{
+type:"application/json"
+}
+);
+
+
+const url=
+URL.createObjectURL(blob);
+
+
+const a=
+document.createElement("a");
+
+
+a.href=url;
+
+a.download=
+"nexo-store-backup-"+
+new Date()
+.toISOString()
+.slice(0,10)+
+".json";
+
+
+a.click();
+
+
+URL.revokeObjectURL(url);
+
+}
+
+
+/* ================================
+   RESTORE
+================================ */
+
+function restoreData(event){
+
+const file=
+event.target.files[0];
+
+
+if(!file)return;
+
+
+const reader=
+new FileReader();
+
+
+reader.onload=function(){
+
+try{
+
+const data=
+JSON.parse(
+reader.result
+);
+
+
+if(!confirm(
+"سيتم استبدال بيانات المتجر الحالية. هل تريد المتابعة؟"
+)){
+
+return;
+
+}
+
+
+if(Array.isArray(data.products)){
+
+localStorage.setItem(
+
+K.products,
+
+JSON.stringify(data.products)
+
+);
+
+}
+
+
+if(Array.isArray(data.orders)){
+
+localStorage.setItem(
+
+K.orders,
+
+JSON.stringify(data.orders)
+
+);
+
+}
+
+
+if(Array.isArray(data.expenses)){
+
+localStorage.setItem(
+
+K.expenses,
+
+JSON.stringify(data.expenses)
+
+);
+
+}
+
+
+if(data.settings){
+
+localStorage.setItem(
+
+K.settings,
+
+JSON.stringify(data.settings)
+
+);
+
+}
+
+
+if(data.visitors!==undefined){
+
+localStorage.setItem(
+
+K.visitors,
+
+String(data.visitors)
+
+);
+
+}
+
+
+refreshAll();
+
+loadSettings();
+
+
+alert(
+"تمت استعادة النسخة الاحتياطية."
+);
+
+
+}catch(e){
+
+alert(
+"ملف النسخة الاحتياطية غير صالح."
+);
+
+}
+
+};
+
+
+reader.readAsText(file);
+
+}
+
+
+/* ================================
+   CLEAR DATA
+================================ */
+
+function clearStoreData(){
+
+const text=
+prompt(
+"اكتب DELETE لتأكيد حذف بيانات المتجر:"
+);
+
+
+if(text!=="DELETE")
+return;
+
+
+localStorage.removeItem(K.products);
+
+localStorage.removeItem(K.orders);
+
+localStorage.removeItem(K.expenses);
+
+localStorage.removeItem(K.visitors);
+
+
+refreshAll();
+
+
+alert(
+"تم مسح بيانات المتجر."
+);
+
+}
+
+
+/* ================================
+   OPEN STORE
+================================ */
+
+function openStore(){
+
+window.open(
+"index.html",
+"_blank"
+);
+
+}
+
+
+/* ================================
+   HELPERS
+================================ */
 
 function money(n){
 
-return Number(n||0).toFixed(2);
+const number=
+Number(n||0);
+
+
+return number.toLocaleString(
+"ar-SA",
+{
+minimumFractionDigits:2,
+maximumFractionDigits:2
+}
+);
 
 }
 
@@ -2282,10 +3980,22 @@ return String(x??"")
 
 function formatDate(x){
 
+if(!x)
+return "-";
+
+
 try{
 
-return new Date(x)
-.toLocaleString("ar-SA");
+const d=new Date(x);
+
+
+if(isNaN(d))
+return "-";
+
+
+return d.toLocaleString(
+"ar-SA"
+);
 
 }catch{
 
@@ -2299,3 +4009,7 @@ return "-";
 
 </body>
 </html>
+
+
+
+
