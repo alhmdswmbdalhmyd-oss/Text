@@ -1149,7 +1149,7 @@ async function previewProductImage(event){
 
 
 /* =========================================================
-   حفظ البيانات الأساسية
+   حفظ البيانات الأساسية (تم تعديلها لتجنب امتلاء الـ LocalStorage)
    ========================================================= */
 
 function saveAll(){
@@ -1161,12 +1161,22 @@ function saveAll(){
       JSON.stringify(settings)
     );
 
+    // حفظ الحد الأدنى فقط من بيانات المنتجات (بدون الصور أو البيانات الكبيرة) لتجنب تجاوز حد الـ Quota
     localStorage.setItem(
       "nexo_products",
       JSON.stringify(
         products.map(p=>({
-          ...p,
-          image:""
+          id: p.id,
+          name: p.name,
+          type: p.type,
+          price: p.price,
+          cost: p.cost,
+          quantity: p.quantity,
+          low: p.low,
+          digitalLink: p.digitalLink,
+          description: p.description,
+          createdAt: p.createdAt,
+          image: ""
         }))
       )
     );
@@ -3365,6 +3375,8 @@ async function migrateOldProducts(){
       }
 
     }else{
+
+      `else`
 
       try{
 
