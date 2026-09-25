@@ -18,9 +18,7 @@ color:#172033
 }
 
 button,input,textarea,select{font:inherit}
-
 button{cursor:pointer}
-
 .hidden{display:none!important}
 
 .login{
@@ -46,9 +44,7 @@ font-weight:900;
 text-align:center
 }
 
-.muted{
-color:#7b8494
-}
+.muted{color:#7b8494}
 
 input,textarea,select{
 width:100%;
@@ -85,13 +81,8 @@ background:#eef1f5;
 color:#172033
 }
 
-.btn.danger{
-background:#dc2626
-}
-
-.btn.success{
-background:#16a34a
-}
+.btn.danger{background:#dc2626}
+.btn.success{background:#16a34a}
 
 header{
 position:sticky;
@@ -202,9 +193,7 @@ object-fit:cover;
 background:#eee
 }
 
-.product-body{
-padding:15px
-}
+.product-body{padding:15px}
 
 .order{
 border:1px solid #e7ebf0;
@@ -228,25 +217,11 @@ font-size:13px;
 font-weight:bold
 }
 
-.new{
-background:#fff3bf
-}
-
-.processing{
-background:#dbeafe
-}
-
-.out{
-background:#ffedd5
-}
-
-.delivered{
-background:#dcfce7
-}
-
-.cancelled{
-background:#fee2e2
-}
+.new{background:#fff3bf}
+.processing{background:#dbeafe}
+.out{background:#ffedd5}
+.delivered{background:#dcfce7}
+.cancelled{background:#fee2e2}
 
 .notice{
 background:#fff8db;
@@ -270,9 +245,86 @@ text-align:center;
 color:#7b8494
 }
 
-@media(max-width:950px){
+/* ACCOUNTING */
+
+.account-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-bottom:20px
+}
+
+.account-card{
+background:#fff;
+border:1px solid #e7ebf0;
+border-radius:18px;
+padding:20px
+}
+
+.account-card .icon{
+font-size:25px;
+margin-bottom:8px
+}
+
+.account-card .title{
+font-size:13px;
+color:#7b8494
+}
+
+.account-card .value{
+font-size:24px;
+font-weight:900;
+margin-top:7px
+}
+
+.profit{
+background:#ecfdf5;
+border-color:#bbf7d0
+}
+
+.loss{
+background:#fef2f2;
+border-color:#fecaca
+}
+
+.expense-item{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+padding:14px 0;
+border-bottom:1px solid #edf0f4
+}
+
+.expense-item:last-child{
+border-bottom:0
+}
+
+.account-table{
+width:100%;
+border-collapse:collapse;
+margin-top:10px
+}
+
+.account-table th,
+.account-table td{
+padding:12px;
+border-bottom:1px solid #edf0f4;
+text-align:right
+}
+
+.account-table th{
+color:#7b8494;
+font-size:13px
+}
+
+@media(max-width:1100px){
 .stats{
 grid-template-columns:repeat(3,1fr)
+}
+
+.account-grid{
+grid-template-columns:repeat(2,1fr)
 }
 
 .product-list{
@@ -283,6 +335,10 @@ grid-template-columns:repeat(2,1fr)
 @media(max-width:600px){
 .stats{
 grid-template-columns:repeat(2,1fr)
+}
+
+.account-grid{
+grid-template-columns:1fr
 }
 
 .grid{
@@ -296,12 +352,19 @@ grid-template-columns:1fr
 .container{
 padding:15px
 }
+
+.nav{
+padding:12px 15px
+}
+
+.account-table{
+font-size:13px
+}
 }
 </style>
 </head>
 
 <body>
-
 
 <!-- LOGIN -->
 
@@ -309,41 +372,29 @@ padding:15px
 
 <div class="login-box">
 
-<div class="logo">
-NEXO STORE
-</div>
+<div class="logo">NEXO STORE</div>
 
-<p style="text-align:center"
-class="muted">
+<p style="text-align:center" class="muted">
 لوحة التحكم
 </p>
 
 <label>
 اسم المستخدم
-<input id="loginUser"
-value="admin">
+<input id="loginUser" value="admin">
 </label>
 
 <label>
 كلمة المرور
-<input id="loginPass"
-type="password"
-value="123456">
+<input id="loginPass" type="password" value="123456">
 </label>
 
-<button
-class="btn"
-style="width:100%"
-onclick="login()">
+<button class="btn" style="width:100%" onclick="login()">
 دخول
 </button>
 
-<p id="loginError"
-style="color:#dc2626;text-align:center">
-</p>
+<p id="loginError" style="color:#dc2626;text-align:center"></p>
 
 </div>
-
 </section>
 
 
@@ -352,7 +403,6 @@ style="color:#dc2626;text-align:center">
 <div id="adminPage" class="hidden">
 
 <header>
-
 <div class="nav">
 
 <strong style="font-size:22px">
@@ -374,7 +424,6 @@ onclick="logout()">
 </div>
 
 </div>
-
 </header>
 
 
@@ -428,23 +477,23 @@ onclick="logout()">
 
 <div class="tabs">
 
-<button class="tab active"
-onclick="tab('dashboard',this)">
+<button class="tab active" onclick="tab('dashboard',this)">
 الرئيسية
 </button>
 
-<button class="tab"
-onclick="tab('products',this)">
+<button class="tab" onclick="tab('accounting',this)">
+📊 الحسابات
+</button>
+
+<button class="tab" onclick="tab('products',this)">
 المنتجات
 </button>
 
-<button class="tab"
-onclick="tab('orders',this)">
+<button class="tab" onclick="tab('orders',this)">
 الطلبات
 </button>
 
-<button class="tab"
-onclick="tab('settings',this)">
+<button class="tab" onclick="tab('settings',this)">
 الإعدادات
 </button>
 
@@ -453,8 +502,7 @@ onclick="tab('settings',this)">
 
 <!-- DASHBOARD -->
 
-<section id="dashboard"
-class="section">
+<section id="dashboard" class="section">
 
 <div class="panel">
 
@@ -467,10 +515,224 @@ class="section">
 </section>
 
 
+<!-- ACCOUNTING -->
+
+<section id="accounting" class="section hidden">
+
+<div class="panel">
+
+<div class="panel-head">
+
+<div>
+<h2>📊 حسابات التجارة</h2>
+<p class="muted">
+ملخص مالي تلقائي للمتجر
+</p>
+</div>
+
+<button class="btn light" onclick="renderAccounting()">
+تحديث الحسابات
+</button>
+
+</div>
+
+
+<div class="account-grid">
+
+<div class="account-card">
+<div class="icon">💰</div>
+<div class="title">إجمالي المبيعات</div>
+<div id="aSales" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card">
+<div class="icon">📦</div>
+<div class="title">تكلفة المنتجات</div>
+<div id="aCost" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card profit">
+<div class="icon">📈</div>
+<div class="title">الربح قبل المصروفات</div>
+<div id="aGrossProfit" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card">
+<div class="icon">📉</div>
+<div class="title">المصروفات</div>
+<div id="aExpenses" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card profit">
+<div class="icon">💵</div>
+<div class="title">صافي الربح</div>
+<div id="aNetProfit" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card">
+<div class="icon">🧾</div>
+<div class="title">عدد الطلبات</div>
+<div id="aOrders" class="value">0</div>
+</div>
+
+<div class="account-card">
+<div class="icon">📊</div>
+<div class="title">متوسط الطلب</div>
+<div id="aAverage" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card">
+<div class="icon">💳</div>
+<div class="title">المدفوع</div>
+<div id="aPaid" class="value">0 ر.س</div>
+</div>
+
+</div>
+
+
+<div class="account-grid">
+
+<div class="account-card">
+<div class="icon">📅</div>
+<div class="title">مبيعات اليوم</div>
+<div id="aToday" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card">
+<div class="icon">🗓️</div>
+<div class="title">مبيعات هذا الشهر</div>
+<div id="aMonth" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card">
+<div class="icon">💵</div>
+<div class="title">المدفوع نقدًا</div>
+<div id="aCash" class="value">0 ر.س</div>
+</div>
+
+<div class="account-card">
+<div class="icon">⏳</div>
+<div class="title">غير المدفوع</div>
+<div id="aUnpaid" class="value">0 ر.س</div>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- EXPENSES -->
+
+<div class="panel">
+
+<div class="panel-head">
+
+<h2>📉 المصروفات</h2>
+
+<button class="btn" onclick="openExpense()">
++ إضافة مصروف
+</button>
+
+</div>
+
+
+<div id="expenseForm" class="hidden">
+
+<div class="grid">
+
+<label>
+اسم المصروف
+<input id="eName" placeholder="مثال: شحن، تغليف، إعلان">
+</label>
+
+<label>
+المبلغ
+<input id="eAmount" type="number" min="0" step=".01">
+</label>
+
+</div>
+
+<label>
+ملاحظات
+<textarea id="eNote" placeholder="اختياري"></textarea>
+</label>
+
+<div class="actions">
+
+<button class="btn success" onclick="saveExpense()">
+حفظ المصروف
+</button>
+
+<button class="btn light" onclick="closeExpense()">
+إلغاء
+</button>
+
+</div>
+
+<hr>
+
+</div>
+
+
+<div id="expensesList"></div>
+
+</div>
+
+
+<!-- ACCOUNT SUMMARY -->
+
+<div class="panel">
+
+<h2>📋 ملخص الحسابات</h2>
+
+<table class="account-table">
+
+<thead>
+<tr>
+<th>البند</th>
+<th>القيمة</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>إجمالي المبيعات</td>
+<td id="tSales">0 ر.س</td>
+</tr>
+
+<tr>
+<td>تكلفة البضاعة</td>
+<td id="tCost">0 ر.س</td>
+</tr>
+
+<tr>
+<td>الربح قبل المصروفات</td>
+<td id="tGross">0 ر.س</td>
+</tr>
+
+<tr>
+<td>المصروفات</td>
+<td id="tExpenses">0 ر.س</td>
+</tr>
+
+<tr>
+<td><strong>صافي الربح</strong></td>
+<td><strong id="tNet">0 ر.س</strong></td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
 <!-- PRODUCTS -->
 
-<section id="products"
-class="section hidden">
+<section id="products" class="section hidden">
 
 <div class="panel">
 
@@ -478,16 +740,14 @@ class="section hidden">
 
 <h2>المنتجات</h2>
 
-<button class="btn"
-onclick="openProduct()">
+<button class="btn" onclick="openProduct()">
 + منتج جديد
 </button>
 
 </div>
 
 
-<div id="productForm"
-class="hidden">
+<div id="productForm" class="hidden">
 
 <input type="hidden" id="pId">
 
@@ -499,11 +759,13 @@ class="hidden">
 </label>
 
 <label>
-السعر
-<input id="pPrice"
-type="number"
-min="0"
-step=".01">
+سعر البيع
+<input id="pPrice" type="number" min="0" step=".01">
+</label>
+
+<label>
+تكلفة الشراء
+<input id="pCost" type="number" min="0" step=".01">
 </label>
 
 <label>
@@ -516,10 +778,7 @@ step=".01">
 
 <label>
 الكمية
-<input id="pQuantity"
-type="number"
-min="0"
-value="0">
+<input id="pQuantity" type="number" min="0" value="0">
 </label>
 
 <label>
@@ -539,15 +798,17 @@ value="0">
 <textarea id="pDescription"></textarea>
 </label>
 
+<div class="notice">
+تكلفة الشراء تستخدم لحساب الربح تلقائيًا عند بيع المنتج.
+</div>
+
 <div class="actions">
 
-<button class="btn success"
-onclick="saveProduct()">
+<button class="btn success" onclick="saveProduct()">
 حفظ
 </button>
 
-<button class="btn light"
-onclick="closeProduct()">
+<button class="btn light" onclick="closeProduct()">
 إلغاء
 </button>
 
@@ -558,8 +819,7 @@ onclick="closeProduct()">
 </div>
 
 
-<div id="productList"
-class="product-list"></div>
+<div id="productList" class="product-list"></div>
 
 </div>
 
@@ -568,8 +828,7 @@ class="product-list"></div>
 
 <!-- ORDERS -->
 
-<section id="orders"
-class="section hidden">
+<section id="orders" class="section hidden">
 
 <div class="panel">
 
@@ -577,8 +836,7 @@ class="section hidden">
 
 <h2>الطلبات</h2>
 
-<button class="btn light"
-onclick="renderOrders()">
+<button class="btn light" onclick="renderOrders()">
 تحديث
 </button>
 
@@ -593,13 +851,11 @@ onclick="renderOrders()">
 
 <!-- SETTINGS -->
 
-<section id="settings"
-class="section hidden">
+<section id="settings" class="section hidden">
 
 <div class="panel">
 
 <h2>إعدادات المتجر</h2>
-
 
 <h3>المتجر</h3>
 
@@ -613,14 +869,11 @@ class="section hidden">
 <textarea id="sDescription"></textarea>
 </label>
 
-
 <h3>التوصيل</h3>
 
 <label>
 رسوم التوصيل
-<input id="sDelivery"
-type="number"
-min="0">
+<input id="sDelivery" type="number" min="0">
 </label>
 
 <label>
@@ -633,15 +886,12 @@ min="0">
 <input id="sPickupSite">
 </label>
 
-
 <h3>الخصومات</h3>
 
 <label>
 مستويات الخصم
-<input id="sWholesale"
-placeholder="5:5, 10:10, 20:15">
+<input id="sWholesale" placeholder="5:5, 10:10, 20:15">
 </label>
-
 
 <h3>حساب المدير</h3>
 
@@ -655,12 +905,10 @@ placeholder="5:5, 10:10, 20:15">
 <input id="sAdminPass">
 </label>
 
-
 <h3>الدفع الإلكتروني — Moyasar</h3>
 
 <div class="notice">
-ضع هنا Publishable Key فقط.
-لا تضع Secret Key في HTML.
+ضع هنا Publishable Key فقط. لا تضع Secret Key في HTML.
 </div>
 
 <label>
@@ -668,19 +916,16 @@ Moyasar Publishable Key
 <input id="sMoyasar">
 </label>
 
-
 <h3>PayPal</h3>
 
 <div class="notice">
-ضع Client ID فقط هنا.
-الـ Client Secret يجب أن يبقى في الخادم.
+ضع Client ID فقط هنا. الـ Client Secret يجب أن يبقى في الخادم.
 </div>
 
 <label>
 PayPal Client ID
 <input id="sPaypal">
 </label>
-
 
 <h3>البريد الإلكتروني — EmailJS</h3>
 
@@ -701,14 +946,10 @@ Template ID
 
 <label>
 إيميل صاحب المتجر
-<input id="sOwnerEmail"
-type="email">
+<input id="sOwnerEmail" type="email">
 </label>
 
-
-<button
-class="btn success"
-onclick="saveSettings()">
+<button class="btn success" onclick="saveSettings()">
 حفظ الإعدادات
 </button>
 
@@ -718,7 +959,6 @@ onclick="saveSettings()">
 
 
 </main>
-
 </div>
 
 
@@ -727,7 +967,8 @@ onclick="saveSettings()">
 const K={
 products:"nexo_products",
 orders:"nexo_orders",
-settings:"nexo_settings"
+settings:"nexo_settings",
+expenses:"nexo_expenses"
 };
 
 
@@ -780,6 +1021,7 @@ localStorage.getItem(K.settings)||"{}"
 
 }
 
+
 function getProducts(){
 
 return JSON.parse(
@@ -788,10 +1030,20 @@ localStorage.getItem(K.products)||"[]"
 
 }
 
+
 function getOrders(){
 
 return JSON.parse(
 localStorage.getItem(K.orders)||"[]"
+);
+
+}
+
+
+function getExpenses(){
+
+return JSON.parse(
+localStorage.getItem(K.expenses)||"[]"
 );
 
 }
@@ -803,29 +1055,19 @@ function login(){
 
 const s=getSettings();
 
-const u=
-document.getElementById("loginUser").value;
+const u=document.getElementById("loginUser").value;
+const p=document.getElementById("loginPass").value;
 
-const p=
-document.getElementById("loginPass").value;
+if(u===s.adminUser && p===s.adminPass){
 
-if(
-u===s.adminUser &&
-p===s.adminPass
-){
-
-sessionStorage.setItem(
-"nexo_admin",
-"1"
-);
+sessionStorage.setItem("nexo_admin","1");
 
 showAdmin();
 
 }else{
 
 document.getElementById("loginError")
-.textContent=
-"بيانات الدخول غير صحيحة.";
+.textContent="بيانات الدخول غير صحيحة.";
 
 }
 
@@ -847,21 +1089,15 @@ init();
 
 function logout(){
 
-sessionStorage.removeItem(
-"nexo_admin"
-);
+sessionStorage.removeItem("nexo_admin");
 
 location.reload();
 
 }
 
 
-if(
-sessionStorage.getItem("nexo_admin")==="1"
-){
-
+if(sessionStorage.getItem("nexo_admin")==="1"){
 showAdmin();
-
 }
 
 
@@ -879,6 +1115,10 @@ renderLatest();
 
 loadSettings();
 
+renderAccounting();
+
+renderExpenses();
+
 }
 
 
@@ -888,9 +1128,7 @@ function tab(id,button){
 
 document
 .querySelectorAll(".section")
-.forEach(x=>
-x.classList.add("hidden")
-);
+.forEach(x=>x.classList.add("hidden"));
 
 document
 .getElementById(id)
@@ -898,11 +1136,14 @@ document
 
 document
 .querySelectorAll(".tab")
-.forEach(x=>
-x.classList.remove("active")
-);
+.forEach(x=>x.classList.remove("active"));
 
 button.classList.add("active");
+
+if(id==="accounting"){
+renderAccounting();
+renderExpenses();
+}
 
 }
 
@@ -912,15 +1153,14 @@ button.classList.add("active");
 function dash(){
 
 const orders=getOrders();
-
 const products=getProducts();
 
+const validOrders=
+orders.filter(o=>o.status!=="cancelled");
+
 const sales=
-orders
-.filter(o=>o.status!=="cancelled")
-.reduce(
-(a,o)=>a+Number(o.total||0),
-0
+validOrders.reduce(
+(a,o)=>a+Number(o.total||0),0
 );
 
 const out=
@@ -930,36 +1170,405 @@ Number(p.quantity??p.stock??0)<=0
 ).length;
 
 const processing=
-orders.filter(
-o=>o.status==="processing"
-).length;
+orders.filter(o=>o.status==="processing").length;
 
 let visitors=
-Number(
-localStorage.getItem("nexo_visitors")||0
-);
+Number(localStorage.getItem("nexo_visitors")||0);
 
 if(!Number.isFinite(visitors))
 visitors=0;
 
-document.getElementById("sOrders")
-.textContent=orders.length;
+document.getElementById("sOrders").textContent=
+orders.length;
 
-document.getElementById("sSales")
-.textContent=money(sales)+" ر.س";
+document.getElementById("sSales").textContent=
+money(sales)+" ر.س";
 
-document.getElementById("sProducts")
-.textContent=products.length;
+document.getElementById("sProducts").textContent=
+products.length;
 
-document.getElementById("sOut")
-.textContent=out;
+document.getElementById("sOut").textContent=
+out;
 
-document.getElementById("sProcessing")
-.textContent=processing;
+document.getElementById("sProcessing").textContent=
+processing;
 
-document.getElementById("sVisitors")
-.textContent=
+document.getElementById("sVisitors").textContent=
 visitors.toLocaleString("ar-SA");
+
+}
+
+
+/* ACCOUNTING */
+
+function calculateAccounting(){
+
+const products=getProducts();
+
+const orders=getOrders()
+.filter(o=>o.status!=="cancelled");
+
+const expenses=getExpenses();
+
+let sales=0;
+let cost=0;
+let paid=0;
+let cash=0;
+let unpaid=0;
+let today=0;
+let month=0;
+
+const now=new Date();
+
+const todayKey=
+now.toISOString().slice(0,10);
+
+const monthKey=
+now.toISOString().slice(0,7);
+
+
+orders.forEach(order=>{
+
+const total=Number(order.total||0);
+
+sales+=total;
+
+const paymentStatus=
+String(order.paymentStatus||"")
+.toLowerCase();
+
+if(
+paymentStatus==="paid" ||
+paymentStatus==="success" ||
+paymentStatus==="completed"
+){
+paid+=total;
+}else{
+unpaid+=total;
+}
+
+if(
+String(order.paymentMethod||"")
+.includes("cash")
+||
+String(order.paymentMethod||"")
+.includes("نقد")
+||
+String(order.paymentMethod||"")
+.includes("الدفع عند")
+){
+cash+=total;
+}
+
+
+const date=
+order.createdAt
+?
+new Date(order.createdAt)
+:null;
+
+if(date && !isNaN(date)){
+
+if(date.toISOString().slice(0,10)===todayKey){
+today+=total;
+}
+
+if(date.toISOString().slice(0,7)===monthKey){
+month+=total;
+}
+
+}
+
+
+(order.items||[]).forEach(item=>{
+
+const product=
+products.find(p=>
+p.id===item.id ||
+p.id===item.productId
+);
+
+const itemCost=
+Number(
+item.cost ??
+product?.cost ??
+0
+);
+
+cost+=itemCost*
+Number(item.qty||1);
+
+});
+
+});
+
+
+const expenseTotal=
+expenses.reduce(
+(a,e)=>a+Number(e.amount||0),0
+);
+
+const grossProfit=
+sales-cost;
+
+const netProfit=
+grossProfit-expenseTotal;
+
+const average=
+orders.length
+?
+sales/orders.length
+:0;
+
+
+return{
+sales,
+cost,
+grossProfit,
+expenses:expenseTotal,
+netProfit,
+orders:orders.length,
+average,
+paid,
+cash,
+unpaid,
+today,
+month
+};
+
+}
+
+
+function renderAccounting(){
+
+const a=calculateAccounting();
+
+document.getElementById("aSales").textContent=
+money(a.sales)+" ر.س";
+
+document.getElementById("aCost").textContent=
+money(a.cost)+" ر.س";
+
+document.getElementById("aGrossProfit").textContent=
+money(a.grossProfit)+" ر.س";
+
+document.getElementById("aExpenses").textContent=
+money(a.expenses)+" ر.س";
+
+document.getElementById("aNetProfit").textContent=
+money(a.netProfit)+" ر.س";
+
+document.getElementById("aOrders").textContent=
+a.orders;
+
+document.getElementById("aAverage").textContent=
+money(a.average)+" ر.س";
+
+document.getElementById("aPaid").textContent=
+money(a.paid)+" ر.س";
+
+document.getElementById("aToday").textContent=
+money(a.today)+" ر.س";
+
+document.getElementById("aMonth").textContent=
+money(a.month)+" ر.س";
+
+document.getElementById("aCash").textContent=
+money(a.cash)+" ر.س";
+
+document.getElementById("aUnpaid").textContent=
+money(a.unpaid)+" ر.س";
+
+document.getElementById("tSales").textContent=
+money(a.sales)+" ر.س";
+
+document.getElementById("tCost").textContent=
+money(a.cost)+" ر.س";
+
+document.getElementById("tGross").textContent=
+money(a.grossProfit)+" ر.س";
+
+document.getElementById("tExpenses").textContent=
+money(a.expenses)+" ر.س";
+
+document.getElementById("tNet").textContent=
+money(a.netProfit)+" ر.س";
+
+
+const net=document.getElementById("aNetProfit");
+
+net.parentElement.classList.remove("profit","loss");
+
+if(a.netProfit>=0)
+net.parentElement.classList.add("profit");
+else
+net.parentElement.classList.add("loss");
+
+}
+
+
+/* EXPENSES */
+
+function openExpense(){
+
+document.getElementById("expenseForm")
+.classList.remove("hidden");
+
+document.getElementById("eName").value="";
+document.getElementById("eAmount").value="";
+document.getElementById("eNote").value="";
+
+}
+
+
+function closeExpense(){
+
+document.getElementById("expenseForm")
+.classList.add("hidden");
+
+}
+
+
+function saveExpense(){
+
+const name=
+document.getElementById("eName")
+.value.trim();
+
+const amount=
+Number(
+document.getElementById("eAmount").value||0
+);
+
+const note=
+document.getElementById("eNote")
+.value.trim();
+
+if(!name){
+
+alert("اكتب اسم المصروف.");
+
+return;
+
+}
+
+if(amount<=0){
+
+alert("اكتب مبلغًا صحيحًا.");
+
+return;
+
+}
+
+const expenses=getExpenses();
+
+expenses.push({
+
+id:"e_"+Date.now(),
+
+name,
+
+amount,
+
+note,
+
+createdAt:new Date().toISOString()
+
+});
+
+localStorage.setItem(
+K.expenses,
+JSON.stringify(expenses)
+);
+
+closeExpense();
+
+renderExpenses();
+
+renderAccounting();
+
+alert("تمت إضافة المصروف.");
+
+}
+
+
+function renderExpenses(){
+
+const box=
+document.getElementById("expensesList");
+
+const expenses=
+[...getExpenses()].reverse();
+
+if(!expenses.length){
+
+box.innerHTML=
+`<div class="empty">
+لا توجد مصروفات مسجلة.
+</div>`;
+
+return;
+
+}
+
+box.innerHTML=
+expenses.map(e=>`
+
+<div class="expense-item">
+
+<div>
+
+<strong>${safe(e.name)}</strong>
+
+<div class="muted">
+${safe(e.note||"")}
+<br>
+${formatDate(e.createdAt)}
+</div>
+
+</div>
+
+<div style="text-align:left">
+
+<strong>
+${money(e.amount)} ر.س
+</strong>
+
+<br>
+
+<button
+class="btn danger"
+style="margin-top:7px"
+onclick="deleteExpense('${e.id}')">
+حذف
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+
+function deleteExpense(id){
+
+if(!confirm("حذف هذا المصروف؟"))
+return;
+
+const expenses=
+getExpenses()
+.filter(e=>e.id!==id);
+
+localStorage.setItem(
+K.expenses,
+JSON.stringify(expenses)
+);
+
+renderExpenses();
+
+renderAccounting();
 
 }
 
@@ -968,17 +1577,13 @@ visitors.toLocaleString("ar-SA");
 
 function renderProducts(){
 
-const box=
-document.getElementById("productList");
-
+const box=document.getElementById("productList");
 const ps=getProducts();
 
 if(!ps.length){
 
 box.innerHTML=
-`<div class="empty">
-لا توجد منتجات.
-</div>`;
+`<div class="empty">لا توجد منتجات.</div>`;
 
 return;
 
@@ -1000,9 +1605,7 @@ onerror="this.style.display='none'">
 
 <div class="product-body">
 
-<h3>
-${safe(p.name)}
-</h3>
+<h3>${safe(p.name)}</h3>
 
 <p class="muted">
 ${safe(p.description||"")}
@@ -1011,6 +1614,11 @@ ${safe(p.description||"")}
 <strong>
 ${money(p.price)} ر.س
 </strong>
+
+<p>
+تكلفة الشراء:
+${money(p.cost||0)} ر.س
+</p>
 
 <p>
 ${
@@ -1022,14 +1630,12 @@ p.type==="digital"
 
 <div class="actions">
 
-<button
-class="btn light"
+<button class="btn light"
 onclick="editProduct('${p.id}')">
 تعديل
 </button>
 
-<button
-class="btn danger"
+<button class="btn danger"
 onclick="deleteProduct('${p.id}')">
 حذف
 </button>
@@ -1068,19 +1674,13 @@ document.getElementById("productForm")
 function clearProduct(){
 
 document.getElementById("pId").value="";
-
 document.getElementById("pName").value="";
-
 document.getElementById("pPrice").value="";
-
+document.getElementById("pCost").value="";
 document.getElementById("pType").value="digital";
-
 document.getElementById("pQuantity").value="0";
-
 document.getElementById("pImage").value="";
-
 document.getElementById("pDigitalLink").value="";
-
 document.getElementById("pDescription").value="";
 
 }
@@ -1106,6 +1706,11 @@ Number(
 document.getElementById("pPrice").value||0
 ),
 
+cost:
+Number(
+document.getElementById("pCost").value||0
+),
+
 type:
 document.getElementById("pType").value,
 
@@ -1128,8 +1733,17 @@ document.getElementById("pDescription").value.trim()
 if(!p.name){
 
 alert("اكتب اسم المنتج.");
-
 return;
+
+}
+
+if(p.cost>p.price){
+
+if(!confirm(
+"تكلفة الشراء أعلى من سعر البيع. هل تريد المتابعة؟"
+)){
+return;
+}
 
 }
 
@@ -1152,6 +1766,8 @@ renderProducts();
 
 dash();
 
+renderAccounting();
+
 }
 
 
@@ -1171,12 +1787,16 @@ document.getElementById("pName").value=p.name||"";
 
 document.getElementById("pPrice").value=p.price||0;
 
-document.getElementById("pType").value=p.type||"digital";
+document.getElementById("pCost").value=p.cost||0;
+
+document.getElementById("pType").value=
+p.type||"digital";
 
 document.getElementById("pQuantity").value=
 p.quantity??p.stock??0;
 
-document.getElementById("pImage").value=p.image||"";
+document.getElementById("pImage").value=
+p.image||"";
 
 document.getElementById("pDigitalLink").value=
 p.digitalLink||"";
@@ -1205,6 +1825,8 @@ renderProducts();
 
 dash();
 
+renderAccounting();
+
 }
 
 
@@ -1227,18 +1849,14 @@ cancelled:["🔴","ملغي","cancelled"]
 
 function renderOrders(){
 
-const box=
-document.getElementById("ordersList");
+const box=document.getElementById("ordersList");
 
-const os=
-[...getOrders()].reverse();
+const os=[...getOrders()].reverse();
 
 if(!os.length){
 
 box.innerHTML=
-`<div class="empty">
-لا توجد طلبات.
-</div>`;
+`<div class="empty">لا توجد طلبات.</div>`;
 
 return;
 
@@ -1247,8 +1865,7 @@ return;
 box.innerHTML=
 os.map(o=>{
 
-const st=
-statusMap[o.status]||statusMap.new;
+const st=statusMap[o.status]||statusMap.new;
 
 return`
 
@@ -1258,9 +1875,7 @@ return`
 
 <div>
 
-<strong>
-${safe(o.orderNumber)}
-</strong>
+<strong>${safe(o.orderNumber)}</strong>
 
 <p class="muted">
 ${formatDate(o.createdAt)}
@@ -1274,9 +1889,7 @@ ${st[0]} ${st[1]}
 
 </div>
 
-
 <hr>
-
 
 <div class="grid">
 
@@ -1302,34 +1915,26 @@ ${st[0]} ${st[1]}
 
 <div>
 <strong>الدفع</strong>
-<p>
-${safe(o.paymentMethod||"-")}
-</p>
+<p>${safe(o.paymentMethod||"-")}</p>
 </div>
 
 <div>
 <strong>حالة الدفع</strong>
-<p>
-${safe(o.paymentStatus||"pending")}
-</p>
+<p>${safe(o.paymentStatus||"pending")}</p>
 </div>
 
 </div>
-
 
 <p>
 <strong>المنتجات:</strong>
 ${(o.items||[])
-.map(x=>
-`${safe(x.name)} × ${x.qty}`
-).join("، ")}
+.map(x=>`${safe(x.name)} × ${x.qty}`)
+.join("، ")}
 </p>
-
 
 <div class="actions">
 
-<select
-onchange="changeStatus('${o.id}',this.value)">
+<select onchange="changeStatus('${o.id}',this.value)">
 
 <option value="new"
 ${o.status==="new"?"selected":""}>
@@ -1358,8 +1963,7 @@ ${o.status==="cancelled"?"selected":""}>
 
 </select>
 
-<button
-class="btn danger"
+<button class="btn danger"
 onclick="deleteOrder('${o.id}')">
 حذف
 </button>
@@ -1385,8 +1989,7 @@ if(!o)return;
 
 o.status=status;
 
-o.updatedAt=
-new Date().toISOString();
+o.updatedAt=new Date().toISOString();
 
 localStorage.setItem(
 K.orders,
@@ -1396,10 +1999,9 @@ JSON.stringify(os)
 await sendStatusEmail(o);
 
 renderOrders();
-
 renderLatest();
-
 dash();
+renderAccounting();
 
 }
 
@@ -1419,10 +2021,9 @@ JSON.stringify(os)
 );
 
 renderOrders();
-
 renderLatest();
-
 dash();
+renderAccounting();
 
 }
 
@@ -1431,20 +2032,16 @@ dash();
 
 function renderLatest(){
 
-const box=
-document.getElementById("latest");
+const box=document.getElementById("latest");
 
-const os=
-[...getOrders()]
+const os=[...getOrders()]
 .reverse()
 .slice(0,5);
 
 if(!os.length){
 
 box.innerHTML=
-`<div class="empty">
-لا توجد طلبات.
-</div>`;
+`<div class="empty">لا توجد طلبات.</div>`;
 
 return;
 
@@ -1453,8 +2050,7 @@ return;
 box.innerHTML=
 os.map(o=>{
 
-const st=
-statusMap[o.status]||statusMap.new;
+const st=statusMap[o.status]||statusMap.new;
 
 return`
 
@@ -1462,9 +2058,7 @@ return`
 
 <div class="order-top">
 
-<strong>
-${safe(o.orderNumber)}
-</strong>
+<strong>${safe(o.orderNumber)}</strong>
 
 <span class="badge ${st[2]}">
 ${st[0]} ${st[1]}
@@ -1472,13 +2066,9 @@ ${st[0]} ${st[1]}
 
 </div>
 
-<p>
-${safe(o.customerName)}
-</p>
+<p>${safe(o.customerName)}</p>
 
-<strong>
-${money(o.total)} ر.س
-</strong>
+<strong>${money(o.total)} ر.س</strong>
 
 </div>
 
@@ -1495,44 +2085,31 @@ function loadSettings(){
 
 const s=getSettings();
 
-document.getElementById("sStoreName").value=
-s.storeName;
+document.getElementById("sStoreName").value=s.storeName;
 
-document.getElementById("sDescription").value=
-s.description;
+document.getElementById("sDescription").value=s.description;
 
-document.getElementById("sDelivery").value=
-s.deliveryFee;
+document.getElementById("sDelivery").value=s.deliveryFee;
 
-document.getElementById("sPickupPhone").value=
-s.pickupPhone;
+document.getElementById("sPickupPhone").value=s.pickupPhone;
 
-document.getElementById("sPickupSite").value=
-s.pickupSite;
+document.getElementById("sPickupSite").value=s.pickupSite;
 
-document.getElementById("sAdminUser").value=
-s.adminUser;
+document.getElementById("sAdminUser").value=s.adminUser;
 
-document.getElementById("sAdminPass").value=
-s.adminPass;
+document.getElementById("sAdminPass").value=s.adminPass;
 
-document.getElementById("sMoyasar").value=
-s.moyasarKey;
+document.getElementById("sMoyasar").value=s.moyasarKey;
 
-document.getElementById("sPaypal").value=
-s.paypalClientId;
+document.getElementById("sPaypal").value=s.paypalClientId;
 
-document.getElementById("sEmailPublic").value=
-s.emailPublic;
+document.getElementById("sEmailPublic").value=s.emailPublic;
 
-document.getElementById("sEmailService").value=
-s.emailService;
+document.getElementById("sEmailService").value=s.emailService;
 
-document.getElementById("sEmailTemplate").value=
-s.emailTemplate;
+document.getElementById("sEmailTemplate").value=s.emailTemplate;
 
-document.getElementById("sOwnerEmail").value=
-s.ownerEmail;
+document.getElementById("sOwnerEmail").value=s.ownerEmail;
 
 document.getElementById("sWholesale").value=
 (s.wholesaleTiers||[])
@@ -1560,20 +2137,16 @@ percent:Number(a[1])
 };
 
 })
-.filter(x=>
-x.min>0 &&
-x.percent>=0
-);
+.filter(x=>x.min>0&&x.percent>=0);
+
 
 const s={
 
 storeName:
-document.getElementById("sStoreName")
-.value.trim(),
+document.getElementById("sStoreName").value.trim(),
 
 description:
-document.getElementById("sDescription")
-.value.trim(),
+document.getElementById("sDescription").value.trim(),
 
 deliveryFee:
 Number(
@@ -1581,46 +2154,36 @@ document.getElementById("sDelivery").value||0
 ),
 
 pickupPhone:
-document.getElementById("sPickupPhone")
-.value.trim(),
+document.getElementById("sPickupPhone").value.trim(),
 
 pickupSite:
-document.getElementById("sPickupSite")
-.value.trim(),
+document.getElementById("sPickupSite").value.trim(),
 
 wholesaleTiers:tiers,
 
 adminUser:
-document.getElementById("sAdminUser")
-.value.trim(),
+document.getElementById("sAdminUser").value.trim(),
 
 adminPass:
-document.getElementById("sAdminPass")
-.value,
+document.getElementById("sAdminPass").value,
 
 moyasarKey:
-document.getElementById("sMoyasar")
-.value.trim(),
+document.getElementById("sMoyasar").value.trim(),
 
 paypalClientId:
-document.getElementById("sPaypal")
-.value.trim(),
+document.getElementById("sPaypal").value.trim(),
 
 emailPublic:
-document.getElementById("sEmailPublic")
-.value.trim(),
+document.getElementById("sEmailPublic").value.trim(),
 
 emailService:
-document.getElementById("sEmailService")
-.value.trim(),
+document.getElementById("sEmailService").value.trim(),
 
 emailTemplate:
-document.getElementById("sEmailTemplate")
-.value.trim(),
+document.getElementById("sEmailTemplate").value.trim(),
 
 ownerEmail:
-document.getElementById("sOwnerEmail")
-.value.trim()
+document.getElementById("sOwnerEmail").value.trim()
 
 };
 
@@ -1704,6 +2267,7 @@ return Number(n||0).toFixed(2);
 
 }
 
+
 function safe(x){
 
 return String(x??"")
@@ -1714,6 +2278,7 @@ return String(x??"")
 .replaceAll("'","&#039;");
 
 }
+
 
 function formatDate(x){
 
