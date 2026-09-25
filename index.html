@@ -56,12 +56,14 @@ a{text-decoration:none;color:inherit}
 }
 
 .loader-box{text-align:center;width:90%;max-width:350px}
+
 .loader-logo{
   font-size:38px;
   font-weight:900;
   letter-spacing:2px;
   animation:logoPulse 1.5s ease-in-out infinite;
 }
+
 .loader-logo span{color:var(--accent)}
 
 .loader-line{
@@ -102,7 +104,13 @@ header{
   gap:15px;
 }
 
-.logo{font-size:25px;font-weight:900;white-space:nowrap;transition:.25s}
+.logo{
+  font-size:25px;
+  font-weight:900;
+  white-space:nowrap;
+  transition:.25s
+}
+
 .logo span{color:var(--accent)}
 .logo:hover{transform:translateY(-1px)}
 
@@ -249,7 +257,10 @@ header{
   border:1px solid rgba(255,255,255,.25);
 }
 
-.container{width:min(1200px,94%);margin:auto}
+.container{
+  width:min(1200px,94%);
+  margin:auto
+}
 
 .search-box{
   display:flex;
@@ -480,7 +491,10 @@ header{
   margin-bottom:18px;
 }
 
-.modal-title{font-size:22px;font-weight:900}
+.modal-title{
+  font-size:22px;
+  font-weight:900
+}
 
 .close-btn{
   width:40px;
@@ -627,8 +641,16 @@ header{
   min-width:0;
 }
 
-.cart-item-name{font-weight:900;font-size:14px}
-.cart-item-price{color:var(--accent);font-weight:800;font-size:13px}
+.cart-item-name{
+  font-weight:900;
+  font-size:14px
+}
+
+.cart-item-price{
+  color:var(--accent);
+  font-weight:800;
+  font-size:13px
+}
 
 .qty{
   display:flex;
@@ -773,7 +795,9 @@ header{
   margin:15px 0;
 }
 
-.checkout-total .summary-row:last-child{margin-bottom:0}
+.checkout-total .summary-row:last-child{
+  margin-bottom:0
+}
 
 .pickup-location-box{
   margin-top:12px;
@@ -860,7 +884,10 @@ header{
   to{transform:scale(1);opacity:1}
 }
 
-.success h2{font-size:24px;margin-bottom:8px}
+.success h2{
+  font-size:24px;
+  margin-bottom:8px
+}
 
 .success p{
   color:var(--muted);
@@ -892,7 +919,11 @@ footer{
   flex-wrap:wrap;
 }
 
-.footer-logo{font-size:24px;font-weight:900}
+.footer-logo{
+  font-size:24px;
+  font-weight:900
+}
+
 .footer-logo span{color:#60a5fa}
 
 .footer-text{
@@ -902,15 +933,30 @@ footer{
 }
 
 @media(max-width:950px){
-  .products-grid{grid-template-columns:repeat(3,1fr)}
-  .product-details{grid-template-columns:1fr}
-  .product-detail-image{min-height:330px}
+
+  .products-grid{
+    grid-template-columns:repeat(3,1fr)
+  }
+
+  .product-details{
+    grid-template-columns:1fr
+  }
+
+  .product-detail-image{
+    min-height:330px
+  }
+
 }
 
 @media(max-width:700px){
 
-  .header-inner{min-height:68px}
-  .logo{font-size:20px}
+  .header-inner{
+    min-height:68px
+  }
+
+  .logo{
+    font-size:20px
+  }
 
   .header-btn{
     padding:0 10px;
@@ -927,16 +973,26 @@ footer{
     padding:10px;
   }
 
-  .card-body{padding:12px}
-  .card-name{font-size:14px}
-  .card-price{font-size:17px}
+  .card-body{
+    padding:12px
+  }
+
+  .card-name{
+    font-size:14px
+  }
+
+  .card-price{
+    font-size:17px
+  }
 
   .hero{
     padding:30px 22px;
     border-radius:22px;
   }
 
-  .hero h1{font-size:30px}
+  .hero h1{
+    font-size:30px
+  }
 
   .fulfillment,
   .payment-options{
@@ -948,13 +1004,21 @@ footer{
     flex-wrap:wrap;
   }
 
-  .qty{margin-right:auto}
+  .qty{
+    margin-right:auto
+  }
+
 }
 
 @media(max-width:450px){
 
-  .products-grid{grid-template-columns:1fr 1fr}
-  .pic{height:155px}
+  .products-grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .pic{
+    height:155px
+  }
 
   .whatsapp-float{
     left:14px;
@@ -971,13 +1035,22 @@ footer{
     font-size:21px;
   }
 
-  .header-actions{gap:5px}
+  .header-actions{
+    gap:5px
+  }
 
-  .cart-btn{font-size:0}
+  .cart-btn{
+    font-size:0
+  }
 
-  .cart-btn .cart-badge{font-size:10px}
+  .cart-btn .cart-badge{
+    font-size:10px
+  }
 
-  .location-buttons{flex-direction:column}
+  .location-buttons{
+    flex-direction:column
+  }
+
 }
 </style>
 </head>
@@ -1379,506 +1452,11 @@ let currentCategory = "all";
 let fulfillment = "delivery";
 let payment = "cash";
 
-/* =========================================================
-   IMAGE FIX
-   يقرأ صور المنتجات من IndexedDB بدون تغيير تصميم المتجر
-========================================================= */
-
 let imageUrls = new Map();
 let imageObjectUrls = [];
 
-function openNexoDatabase(){
-
-  return new Promise((resolve,reject)=>{
-
-    if(!("indexedDB" in window)){
-      resolve(null);
-      return;
-    }
-
-    let request;
-
-    try{
-      request = indexedDB.open(DB_NAME,DB_VERSION);
-    }catch(error){
-      resolve(null);
-      return;
-    }
-
-    request.onerror = ()=>{
-      resolve(null);
-    };
-
-    request.onsuccess = ()=>{
-      resolve(request.result);
-    };
-
-    request.onupgradeneeded = event=>{
-
-      const db = event.target.result;
-
-      if(!db.objectStoreNames.contains("products")){
-        db.createObjectStore("products",{keyPath:"id"});
-      }
-
-      if(!db.objectStoreNames.contains("product_images")){
-        db.createObjectStore("product_images");
-      }
-
-    };
-
-  });
-
-}
-
-
-function getAllFromStore(db,storeName){
-
-  return new Promise(resolve=>{
-
-    if(!db || !db.objectStoreNames.contains(storeName)){
-      resolve([]);
-      return;
-    }
-
-    try{
-
-      const transaction =
-        db.transaction(storeName,"readonly");
-
-      const store =
-        transaction.objectStore(storeName);
-
-      const request =
-        store.getAll();
-
-      request.onsuccess = ()=>{
-        resolve(
-          Array.isArray(request.result)
-            ? request.result
-            : []
-        );
-      };
-
-      request.onerror = ()=>{
-        resolve([]);
-      };
-
-    }catch(error){
-
-      resolve([]);
-
-    }
-
-  });
-
-}
-
-
-function getIndexedDBValue(db,storeName,key){
-
-  return new Promise(resolve=>{
-
-    if(!db || !db.objectStoreNames.contains(storeName)){
-      resolve(null);
-      return;
-    }
-
-    try{
-
-      const transaction =
-        db.transaction(storeName,"readonly");
-
-      const store =
-        transaction.objectStore(storeName);
-
-      const request =
-        store.get(key);
-
-      request.onsuccess = ()=>{
-        resolve(
-          request.result ?? null
-        );
-      };
-
-      request.onerror = ()=>{
-        resolve(null);
-      };
-
-    }catch(error){
-
-      resolve(null);
-
-    }
-
-  });
-
-}
-
-
-async function findIndexedImage(db,id){
-
-  if(!db){
-    return null;
-  }
-
-  const idString = String(id ?? "");
-
-  if(!idString){
-    return null;
-  }
-
-  /* المحاولة الأولى: ID كنص */
-  let value =
-    await getIndexedDBValue(
-      db,
-      "product_images",
-      idString
-    );
-
-  if(value){
-    return value;
-  }
-
-  /* المحاولة الثانية: ID كرقم */
-  if(/^\d+$/.test(idString)){
-
-    value =
-      await getIndexedDBValue(
-        db,
-        "product_images",
-        Number(idString)
-      );
-
-    if(value){
-      return value;
-    }
-
-  }
-
-  /*
-    بعض نسخ لوحة الإدارة قد تخزن الصورة
-    داخل سجل الصورة نفسه بدل أن يكون الـID
-    هو مفتاح الـobject store.
-  */
-
-  const allImages =
-    await getAllFromStore(
-      db,
-      "product_images"
-    );
-
-  for(const item of allImages){
-
-    if(!item){
-      continue;
-    }
-
-    const possibleIds = [
-      item.id,
-      item.productId,
-      item.productID,
-      item._id,
-      item.key
-    ];
-
-    if(
-      possibleIds.some(
-        x=>String(x ?? "") === idString
-      )
-    ){
-
-      return (
-        item.blob ||
-        item.file ||
-        item.image ||
-        item.data ||
-        item.url ||
-        item.src ||
-        null
-      );
-
-    }
-
-  }
-
-  return null;
-
-}
-
-
-function revokeOldImageUrls(){
-
-  imageObjectUrls.forEach(url=>{
-
-    try{
-      URL.revokeObjectURL(url);
-    }catch(error){}
-
-  });
-
-  imageObjectUrls = [];
-  imageUrls.clear();
-
-}
-
-
-function imageValueToUrl(value){
-
-  if(!value){
-    return "";
-  }
-
-  /*
-    إذا كانت الصورة Data URL
-  */
-  if(typeof value === "string"){
-
-    if(
-      value.startsWith("data:image/") ||
-      value.startsWith("blob:") ||
-      value.startsWith("http://") ||
-      value.startsWith("https://")
-    ){
-
-      return value;
-
-    }
-
-    /*
-      أحياناً تكون قيمة الصورة Base64 فقط
-    */
-    if(
-      value.length > 100 &&
-      /^[A-Za-z0-9+/=\r\n]+$/.test(value)
-    ){
-
-      return "data:image/jpeg;base64," + value;
-
-    }
-
-    return value;
-
-  }
-
-  /*
-    Blob أو File
-  */
-  if(
-    typeof Blob !== "undefined" &&
-    value instanceof Blob
-  ){
-
-    try{
-
-      const url =
-        URL.createObjectURL(value);
-
-      imageObjectUrls.push(url);
-
-      return url;
-
-    }catch(error){
-
-      return "";
-
-    }
-
-  }
-
-  /*
-    إذا كان السجل يحتوي على Blob داخله
-  */
-  if(typeof value === "object"){
-
-    const nested =
-      value.blob ||
-      value.file ||
-      value.image ||
-      value.data ||
-      value.url ||
-      value.src ||
-      null;
-
-    if(nested && nested !== value){
-
-      return imageValueToUrl(nested);
-
-    }
-
-  }
-
-  return "";
-
-}
-
-
-async function loadIndexedDBImages(){
-
-  revokeOldImageUrls();
-
-  const db =
-    await openNexoDatabase();
-
-  if(!db){
-    return;
-  }
-
-  try{
-
-    /*
-      أولاً نقرأ المنتجات من IndexedDB.
-      إذا كانت موجودة نستخدمها أيضاً كنسخة احتياطية
-      للمنتجات الموجودة في localStorage.
-    */
-
-    const dbProducts =
-      await getAllFromStore(
-        db,
-        "products"
-      );
-
-    if(dbProducts.length){
-
-      const localById =
-        new Map(
-          products.map(product=>[
-            getProductId(product),
-            product
-          ])
-        );
-
-      dbProducts.forEach(dbProduct=>{
-
-        const id =
-          getProductId(dbProduct);
-
-        if(!id){
-          return;
-        }
-
-        const local =
-          localById.get(id);
-
-        /*
-          نحافظ على بيانات localStorage،
-          ونضيف أي بيانات ناقصة من IndexedDB.
-        */
-
-        if(local){
-
-          Object.keys(dbProduct).forEach(key=>{
-
-            if(
-              local[key] === undefined ||
-              local[key] === null ||
-              local[key] === ""
-            ){
-
-              local[key] =
-                dbProduct[key];
-
-            }
-
-          });
-
-        }else{
-
-          products.push(dbProduct);
-
-        }
-
-      });
-
-    }
-
-
-    /*
-      تحميل صورة كل منتج.
-    */
-
-    for(const product of products){
-
-      const id =
-        getProductId(product);
-
-      if(!id){
-        continue;
-      }
-
-      let value = null;
-
-      /*
-        إذا كانت الصورة موجودة أصلاً كـBlob
-        داخل بيانات المنتج.
-      */
-
-      if(
-        product.image &&
-        typeof product.image !== "string"
-      ){
-
-        value = product.image;
-
-      }
-
-      /*
-        إذا كانت الصورة عبارة عن كائن.
-      */
-
-      if(!value && product.imageBlob){
-        value = product.imageBlob;
-      }
-
-      if(!value && product.imageFile){
-        value = product.imageFile;
-      }
-
-      /*
-        البحث داخل product_images.
-      */
-
-      if(!value){
-
-        value =
-          await findIndexedImage(
-            db,
-            id
-          );
-
-      }
-
-      const url =
-        imageValueToUrl(value);
-
-      if(url){
-
-        imageUrls.set(
-          id,
-          url
-        );
-
-      }
-
-    }
-
-    /*
-      إغلاق قاعدة البيانات بعد القراءة.
-    */
-
-    try{
-      db.close();
-    }catch(error){}
-
-  }catch(error){
-
-    try{
-      db.close();
-    }catch(closeError){}
-
-  }
-
-}
+const PLACEHOLDER =
+  "https://via.placeholder.com/700x500?text=NEXO+STORE";
 
 
 function getData(key,fallback){
@@ -1915,9 +1493,7 @@ function saveData(key,data){
 
   }catch(error){
 
-    showSmallMessage(
-      "تعذر حفظ البيانات في الجهاز."
-    );
+    showSmallMessage("تعذر حفظ البيانات في الجهاز.");
 
     return false;
 
@@ -1926,9 +1502,763 @@ function saveData(key,data){
 }
 
 
+function getProductId(product){
+
+  if(!product){
+    return "";
+  }
+
+  const id =
+    product.id ??
+    product._id ??
+    product.productId ??
+    product.productID ??
+    product.key ??
+    "";
+
+  return String(id);
+
+}
+
+
+function normalizeProduct(product){
+
+  if(!product || typeof product !== "object"){
+    return null;
+  }
+
+  const id = getProductId(product);
+
+  if(!id){
+    return null;
+  }
+
+  return {
+    ...product,
+    id
+  };
+
+}
+
+
+function mergeProducts(localProducts,dbProducts){
+
+  const map = new Map();
+
+  localProducts.forEach(product=>{
+
+    const normalized =
+      normalizeProduct(product);
+
+    if(normalized){
+      map.set(
+        getProductId(normalized),
+        normalized
+      );
+    }
+
+  });
+
+  dbProducts.forEach(product=>{
+
+    const normalized =
+      normalizeProduct(product);
+
+    if(!normalized){
+      return;
+    }
+
+    const id =
+      getProductId(normalized);
+
+    if(map.has(id)){
+
+      const old =
+        map.get(id);
+
+      map.set(
+        id,
+        {
+          ...normalized,
+          ...old
+        }
+      );
+
+    }else{
+
+      map.set(id,normalized);
+
+    }
+
+  });
+
+  return Array.from(map.values());
+
+}
+
+
+function openNexoDatabase(){
+
+  return new Promise(resolve=>{
+
+    if(!window.indexedDB){
+
+      resolve(null);
+      return;
+
+    }
+
+    let request;
+
+    try{
+
+      request =
+        indexedDB.open(
+          DB_NAME,
+          DB_VERSION
+        );
+
+    }catch(error){
+
+      resolve(null);
+      return;
+
+    }
+
+
+    request.onerror = ()=>{
+      resolve(null);
+    };
+
+
+    request.onblocked = ()=>{
+      resolve(null);
+    };
+
+
+    request.onupgradeneeded = event=>{
+
+      const db =
+        event.target.result;
+
+      try{
+
+        if(
+          !db.objectStoreNames.contains("products")
+        ){
+
+          db.createObjectStore(
+            "products",
+            {keyPath:"id"}
+          );
+
+        }
+
+        if(
+          !db.objectStoreNames.contains("product_images")
+        ){
+
+          db.createObjectStore(
+            "product_images"
+          );
+
+        }
+
+      }catch(error){}
+
+    };
+
+
+    request.onsuccess = ()=>{
+
+      const db =
+        request.result;
+
+      db.onversionchange = ()=>{
+        try{
+          db.close();
+        }catch(error){}
+      };
+
+      resolve(db);
+
+    };
+
+  });
+
+}
+
+
+function getAllFromStore(db,storeName){
+
+  return new Promise(resolve=>{
+
+    if(
+      !db ||
+      !db.objectStoreNames.contains(storeName)
+    ){
+
+      resolve([]);
+      return;
+
+    }
+
+    try{
+
+      const transaction =
+        db.transaction(
+          storeName,
+          "readonly"
+        );
+
+      const store =
+        transaction.objectStore(storeName);
+
+      const request =
+        store.getAll();
+
+      request.onsuccess = ()=>{
+
+        resolve(
+          Array.isArray(request.result)
+            ? request.result
+            : []
+        );
+
+      };
+
+      request.onerror = ()=>{
+        resolve([]);
+      };
+
+    }catch(error){
+
+      resolve([]);
+
+    }
+
+  });
+
+}
+
+
+function getIndexedDBValue(db,storeName,key){
+
+  return new Promise(resolve=>{
+
+    if(
+      !db ||
+      !db.objectStoreNames.contains(storeName)
+    ){
+
+      resolve(null);
+      return;
+
+    }
+
+    try{
+
+      const transaction =
+        db.transaction(
+          storeName,
+          "readonly"
+        );
+
+      const store =
+        transaction.objectStore(storeName);
+
+      const request =
+        store.get(key);
+
+      request.onsuccess = ()=>{
+        resolve(
+          request.result ?? null
+        );
+      };
+
+      request.onerror = ()=>{
+        resolve(null);
+      };
+
+    }catch(error){
+
+      resolve(null);
+
+    }
+
+  });
+
+}
+
+
+async function findIndexedImage(db,id){
+
+  if(!db){
+    return null;
+  }
+
+  const wanted =
+    String(id ?? "");
+
+  if(!wanted){
+    return null;
+  }
+
+
+  let value =
+    await getIndexedDBValue(
+      db,
+      "product_images",
+      wanted
+    );
+
+  if(value){
+    return extractImageValue(value);
+  }
+
+
+  if(/^-?\d+(?:\.\d+)?$/.test(wanted)){
+
+    value =
+      await getIndexedDBValue(
+        db,
+        "product_images",
+        Number(wanted)
+      );
+
+    if(value){
+      return extractImageValue(value);
+    }
+
+  }
+
+
+  const all =
+    await getAllFromStore(
+      db,
+      "product_images"
+    );
+
+
+  for(const item of all){
+
+    if(!item){
+      continue;
+    }
+
+
+    if(
+      typeof Blob !== "undefined" &&
+      item instanceof Blob
+    ){
+
+      continue;
+
+    }
+
+
+    if(typeof item === "object"){
+
+      const ids = [
+        item.id,
+        item.productId,
+        item.productID,
+        item.product_id,
+        item._id,
+        item.key,
+        item.imageId,
+        item.imageID
+      ];
+
+
+      if(
+        ids.some(
+          value=>
+            String(value ?? "") === wanted
+        )
+      ){
+
+        return extractImageValue(item);
+
+      }
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+function extractImageValue(value){
+
+  if(!value){
+    return null;
+  }
+
+
+  if(
+    typeof Blob !== "undefined" &&
+    value instanceof Blob
+  ){
+
+    return value;
+
+  }
+
+
+  if(typeof File !== "undefined" &&
+     value instanceof File){
+
+    return value;
+
+  }
+
+
+  if(typeof value === "string"){
+    return value;
+  }
+
+
+  if(
+    value instanceof ArrayBuffer ||
+    ArrayBuffer.isView(value)
+  ){
+
+    try{
+
+      const bytes =
+        value instanceof ArrayBuffer
+          ? new Uint8Array(value)
+          : new Uint8Array(
+              value.buffer,
+              value.byteOffset,
+              value.byteLength
+            );
+
+      return new Blob(
+        [bytes],
+        {type:"image/jpeg"}
+      );
+
+    }catch(error){
+
+      return null;
+
+    }
+
+  }
+
+
+  if(typeof value === "object"){
+
+    const candidates = [
+      value.blob,
+      value.file,
+      value.image,
+      value.imageBlob,
+      value.imageFile,
+      value.data,
+      value.src,
+      value.url,
+      value.imageUrl,
+      value.downloadURL
+    ];
+
+
+    for(const candidate of candidates){
+
+      if(
+        candidate &&
+        candidate !== value
+      ){
+
+        const result =
+          extractImageValue(candidate);
+
+        if(result){
+          return result;
+        }
+
+      }
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+function revokeOldImageUrls(){
+
+  for(const url of imageObjectUrls){
+
+    try{
+      URL.revokeObjectURL(url);
+    }catch(error){}
+
+  }
+
+  imageObjectUrls = [];
+  imageUrls.clear();
+
+}
+
+
+function imageValueToUrl(value){
+
+  if(!value){
+    return "";
+  }
+
+
+  if(typeof value === "string"){
+
+    const clean =
+      value.trim();
+
+    if(!clean){
+      return "";
+    }
+
+
+    if(
+      clean.startsWith("data:image/") ||
+      clean.startsWith("blob:") ||
+      clean.startsWith("http://") ||
+      clean.startsWith("https://")
+    ){
+
+      return clean;
+
+    }
+
+
+    if(
+      clean.length > 100 &&
+      /^[A-Za-z0-9+/=\r\n]+$/.test(clean)
+    ){
+
+      return "data:image/jpeg;base64," + clean;
+
+    }
+
+    return "";
+
+  }
+
+
+  const extracted =
+    extractImageValue(value);
+
+
+  if(
+    extracted &&
+    extracted !== value
+  ){
+
+    return imageValueToUrl(extracted);
+
+  }
+
+
+  if(
+    typeof Blob !== "undefined" &&
+    value instanceof Blob
+  ){
+
+    try{
+
+      const url =
+        URL.createObjectURL(value);
+
+      imageObjectUrls.push(url);
+
+      return url;
+
+    }catch(error){
+
+      return "";
+
+    }
+
+  }
+
+
+  return "";
+
+}
+
+
+async function loadIndexedDBData(){
+
+  revokeOldImageUrls();
+
+  const db =
+    await openNexoDatabase();
+
+  if(!db){
+    return;
+  }
+
+
+  try{
+
+    const dbProducts =
+      await getAllFromStore(
+        db,
+        "products"
+      );
+
+
+    products =
+      mergeProducts(
+        products,
+        dbProducts
+      );
+
+
+    for(const product of products){
+
+      const id =
+        getProductId(product);
+
+      if(!id){
+        continue;
+      }
+
+
+      let imageValue = null;
+
+
+      /*
+        1. الصورة داخل product نفسه
+      */
+
+      const possibleDirectImages = [
+        product.imageBlob,
+        product.imageFile,
+        product.photoBlob,
+        product.photoFile,
+        product.thumbnailBlob,
+        product.file
+      ];
+
+
+      for(
+        const candidate
+        of possibleDirectImages
+      ){
+
+        if(candidate){
+
+          imageValue =
+            candidate;
+
+          break;
+
+        }
+
+      }
+
+
+      /*
+        2. الصورة مخزنة كـ Blob مباشرة في product.image
+      */
+
+      if(
+        !imageValue &&
+        product.image &&
+        typeof product.image !== "string"
+      ){
+
+        imageValue =
+          product.image;
+
+      }
+
+
+      /*
+        3. البحث داخل product_images
+      */
+
+      if(!imageValue){
+
+        imageValue =
+          await findIndexedImage(
+            db,
+            id
+          );
+
+      }
+
+
+      /*
+        4. إذا كان image = indexeddb:ID
+           نبحث بالـID الموجود بعد النقطتين.
+      */
+
+      if(
+        !imageValue &&
+        typeof product.image === "string" &&
+        product.image.startsWith("indexeddb:")
+      ){
+
+        const imageId =
+          product.image
+            .substring("indexeddb:".length)
+            .trim();
+
+        if(imageId){
+
+          imageValue =
+            await findIndexedImage(
+              db,
+              imageId
+            );
+
+        }
+
+      }
+
+
+      const imageUrl =
+        imageValueToUrl(
+          imageValue
+        );
+
+
+      if(imageUrl){
+
+        imageUrls.set(
+          id,
+          imageUrl
+        );
+
+      }
+
+    }
+
+  }catch(error){
+
+  }finally{
+
+    try{
+      db.close();
+    }catch(error){}
+
+  }
+
+}
+
+
 function money(value){
 
-  const number = Number(value || 0);
+  const number =
+    Number(value || 0);
 
   return number
     .toFixed(2)
@@ -1965,17 +2295,14 @@ function productType(product){
 }
 
 
-/* =========================================================
-   الصورة الآن تبحث أولاً في IndexedDB
-========================================================= */
-
 function productImage(product){
 
   const id =
     getProductId(product);
 
+
   /*
-    الصورة التي تم تحميلها من IndexedDB
+    الأولوية لصورة IndexedDB
   */
 
   const indexedImage =
@@ -1985,94 +2312,138 @@ function productImage(product){
     return indexedImage;
   }
 
+
   /*
-    دعم الصور الموجودة مباشرة في بيانات المنتج
+    دعم indexeddb:ID مباشرة
   */
 
-  const direct =
-    product.image ||
-    product.imageUrl ||
-    product.img ||
-    product.photo ||
-    product.picture ||
-    product.thumbnail ||
-    "";
+  if(
+    typeof product.image === "string" &&
+    product.image.startsWith("indexeddb:")
+  ){
 
-  if(direct){
+    return PLACEHOLDER;
 
-    const directUrl =
+  }
+
+
+  /*
+    الصور العادية
+  */
+
+  const directImages = [
+    product.image,
+    product.imageUrl,
+    product.img,
+    product.photo,
+    product.picture,
+    product.thumbnail
+  ];
+
+
+  for(const direct of directImages){
+
+    if(!direct){
+      continue;
+    }
+
+    const url =
       imageValueToUrl(direct);
 
-    if(directUrl){
-      return directUrl;
+    if(url){
+      return url;
     }
 
   }
 
-  return "https://via.placeholder.com/700x500?text=NEXO+STORE";
 
-}
-
-
-function getProductId(product){
-
-  return String(
-    product.id ??
-    product._id ??
-    product.productId ??
-    ""
-  );
+  return PLACEHOLDER;
 
 }
 
 
 function findProduct(id){
 
+  const wanted =
+    String(id);
+
   return products.find(product=>
-    getProductId(product) === String(id)
+    getProductId(product) === wanted
   );
 
 }
 
 
-/* =========================
-   INIT
-========================= */
-
 async function init(){
 
-  products = getData(K.products,[]);
-  orders = getData(K.orders,[]);
-  settings = getData(K.settings,{});
-  cart = getData(K.cart,[]);
+  products =
+    getData(
+      K.products,
+      []
+    );
+
+
+  orders =
+    getData(
+      K.orders,
+      []
+    );
+
+
+  settings =
+    getData(
+      K.settings,
+      {}
+    );
+
+
+  cart =
+    getData(
+      K.cart,
+      []
+    );
+
 
   if(!Array.isArray(products)){
     products = [];
   }
 
+
   if(!Array.isArray(orders)){
     orders = [];
   }
+
 
   if(!Array.isArray(cart)){
     cart = [];
   }
 
+
   /*
-    هنا الإصلاح الأساسي:
-    ننتظر تحميل الصور من IndexedDB
-    قبل عرض المنتجات.
+    تحميل المنتجات والصور من IndexedDB
+    قبل رسم الصفحة.
   */
 
-  await loadIndexedDBImages();
+  await loadIndexedDBData();
+
 
   applySettings();
+
   renderProducts();
+
   updateCartCount();
+
   updateCheckoutSummary();
 
-  document.getElementById("footerYear").textContent =
-    new Date().getFullYear();
+
+  const year =
+    document.getElementById("footerYear");
+
+  if(year){
+    year.textContent =
+      new Date().getFullYear();
+  }
+
 
   setTimeout(()=>{
 
@@ -2084,7 +2455,9 @@ async function init(){
       loader.style.opacity = "0";
 
       setTimeout(()=>{
+
         loader.style.display = "none";
+
       },400);
 
     }
@@ -2094,10 +2467,6 @@ async function init(){
 }
 
 
-/* =========================
-   SETTINGS
-========================= */
-
 function applySettings(){
 
   const storeName =
@@ -2105,21 +2474,28 @@ function applySettings(){
     settings.name ||
     "NEXO STORE";
 
+
   const description =
     settings.storeDescription ||
     settings.description ||
     "متجرك الإلكتروني للمنتجات الرقمية والمنتجات المتنوعة.";
 
-  document.title = storeName;
+
+  document.title =
+    storeName;
+
 
   document.getElementById("headerLogo").textContent =
     storeName;
 
+
   document.getElementById("heroTitle").textContent =
     storeName;
 
+
   document.getElementById("heroDescription").textContent =
     description;
+
 
   document.getElementById("footerDescription").textContent =
     description;
@@ -2127,13 +2503,11 @@ function applySettings(){
 }
 
 
-/* =========================
-   CATEGORY
-========================= */
-
 function setCategory(category,button){
 
-  currentCategory = category;
+  currentCategory =
+    category;
+
 
   document
     .querySelectorAll(".category-btn")
@@ -2141,30 +2515,41 @@ function setCategory(category,button){
       btn.classList.remove("active");
     });
 
+
   if(button){
     button.classList.add("active");
   }
+
 
   renderProducts();
 
 }
 
 
-/* =========================
-   PRODUCTS
-========================= */
-
 function renderProducts(){
 
   const grid =
-    document.getElementById("productsGrid");
+    document.getElementById(
+      "productsGrid"
+    );
+
+
+  if(!grid){
+    return;
+  }
+
+
+  const searchInput =
+    document.getElementById(
+      "searchInput"
+    );
+
 
   const search =
-    document
-      .getElementById("searchInput")
-      .value
-      .trim()
-      .toLowerCase();
+    searchInput
+      ? searchInput.value.trim().toLowerCase()
+      : "";
+
 
   const filtered =
     products.filter(product=>{
@@ -2176,33 +2561,49 @@ function renderProducts(){
           ""
         ).toLowerCase();
 
+
       const description =
         String(
           product.description ||
           ""
         ).toLowerCase();
 
+
       const type =
         product.type ||
         product.category ||
         "";
 
+
       let categoryMatch = true;
 
+
       if(currentCategory === "digital"){
-        categoryMatch = type === "digital";
+
+        categoryMatch =
+          type === "digital";
+
       }
 
+
       if(currentCategory === "physical"){
-        categoryMatch = type !== "digital";
+
+        categoryMatch =
+          type !== "digital";
+
       }
+
 
       const searchMatch =
         !search ||
         name.includes(search) ||
         description.includes(search);
 
-      return categoryMatch && searchMatch;
+
+      return (
+        categoryMatch &&
+        searchMatch
+      );
 
     });
 
@@ -2223,12 +2624,15 @@ function renderProducts(){
   grid.innerHTML =
     filtered.map(product=>{
 
-      const id = getProductId(product);
+      const id =
+        getProductId(product);
+
 
       const name =
         product.name ||
         product.title ||
         "منتج";
+
 
       const price =
         Number(
@@ -2238,8 +2642,14 @@ function renderProducts(){
           0
         );
 
-      const image = productImage(product);
-      const type = productType(product);
+
+      const image =
+        productImage(product);
+
+
+      const type =
+        productType(product);
+
 
       return `
 
@@ -2254,7 +2664,7 @@ function renderProducts(){
               src="${escapeHtml(image)}"
               alt="${escapeHtml(name)}"
               loading="lazy"
-              onerror="this.onerror=null;this.src='https://via.placeholder.com/700x500?text=NEXO+STORE';"
+              onerror="this.onerror=null;this.src='${PLACEHOLDER}';"
             >
 
           </div>
@@ -2284,7 +2694,7 @@ function renderProducts(){
             <button
               class="add-btn"
               type="button"
-              onclick='event.stopPropagation(); addToCart(${JSON.stringify(id)});'
+              onclick='event.stopPropagation();addToCart(${JSON.stringify(id)});'
             >
               🛒 أضف للسلة
             </button>
@@ -2300,22 +2710,22 @@ function renderProducts(){
 }
 
 
-/* =========================
-   PRODUCT DETAILS
-========================= */
-
 function openProduct(id){
 
-  const product = findProduct(id);
+  const product =
+    findProduct(id);
+
 
   if(!product){
     return;
   }
 
+
   const name =
     product.name ||
     product.title ||
     "منتج";
+
 
   const price =
     Number(
@@ -2325,15 +2735,23 @@ function openProduct(id){
       0
     );
 
+
   const description =
     product.description ||
     "لا يوجد وصف لهذا المنتج.";
 
-  const type = productType(product);
-  const image = productImage(product);
+
+  const type =
+    productType(product);
 
 
-  document.getElementById("productDetails").innerHTML = `
+  const image =
+    productImage(product);
+
+
+  document.getElementById(
+    "productDetails"
+  ).innerHTML = `
 
     <div class="product-details">
 
@@ -2342,7 +2760,7 @@ function openProduct(id){
         <img
           src="${escapeHtml(image)}"
           alt="${escapeHtml(name)}"
-          onerror="this.onerror=null;this.src='https://via.placeholder.com/700x500?text=NEXO+STORE';"
+          onerror="this.onerror=null;this.src='${PLACEHOLDER}';"
         >
 
       </div>
@@ -2411,7 +2829,7 @@ function openProduct(id){
         <button
           class="detail-add"
           type="button"
-          onclick='addToCart(${JSON.stringify(String(id))}); closeProduct();'
+          onclick='addToCart(${JSON.stringify(String(id))});closeProduct();'
         >
           🛒 أضف المنتج إلى السلة
         </button>
@@ -2439,13 +2857,11 @@ function closeProduct(){
 }
 
 
-/* =========================
-   CART
-========================= */
-
 function addToCart(id){
 
-  const product = findProduct(id);
+  const product =
+    findProduct(id);
+
 
   if(!product){
 
@@ -2483,7 +2899,9 @@ function addToCart(id){
     return;
   }
 
+
   updateCartCount();
+
 
   showSmallMessage(
     "تمت إضافة المنتج إلى السلة"
@@ -2499,13 +2917,16 @@ function changeQty(id,difference){
       String(item.id) === String(id)
     );
 
+
   if(!item){
     return;
   }
 
+
   item.quantity =
     Number(item.quantity || 0) +
     Number(difference);
+
 
   if(item.quantity <= 0){
 
@@ -2516,10 +2937,13 @@ function changeQty(id,difference){
 
   }
 
+
   saveData(K.cart,cart);
 
   updateCartCount();
+
   renderCart();
+
   updateCheckoutSummary();
 
 }
@@ -2532,10 +2956,13 @@ function removeFromCart(id){
       String(item.id) !== String(id)
     );
 
+
   saveData(K.cart,cart);
 
   updateCartCount();
+
   renderCart();
+
   updateCheckoutSummary();
 
 }
@@ -2551,7 +2978,10 @@ function updateCartCount(){
       0
     );
 
-  document.getElementById("cartCount").textContent =
+
+  document.getElementById(
+    "cartCount"
+  ).textContent =
     count;
 
 }
@@ -2560,6 +2990,7 @@ function updateCartCount(){
 function openCart(){
 
   renderCart();
+
 
   document
     .getElementById("cartModal")
@@ -2577,14 +3008,13 @@ function closeCart(){
 }
 
 
-/* =========================
-   RENDER CART
-========================= */
-
 function renderCart(){
 
   const box =
-    document.getElementById("cartItems");
+    document.getElementById(
+      "cartItems"
+    );
+
 
   if(!cart.length){
 
@@ -2598,16 +3028,21 @@ function renderCart(){
 
   }
 
+
   let subtotal = 0;
+
 
   const html =
     cart.map(item=>{
 
-      const product = findProduct(item.id);
+      const product =
+        findProduct(item.id);
+
 
       if(!product){
         return "";
       }
+
 
       const price =
         Number(
@@ -2617,10 +3052,13 @@ function renderCart(){
           0
         );
 
+
       const quantity =
         Number(item.quantity || 1);
 
-      subtotal += price * quantity;
+
+      subtotal +=
+        price * quantity;
 
 
       return `
@@ -2632,7 +3070,7 @@ function renderCart(){
             <img
               src="${escapeHtml(productImage(product))}"
               alt="${escapeHtml(product.name || "منتج")}"
-              onerror="this.onerror=null;this.src='https://via.placeholder.com/700x500?text=NEXO+STORE';"
+              onerror="this.onerror=null;this.src='${PLACEHOLDER}';"
             >
 
           </div>
@@ -2693,10 +3131,12 @@ function renderCart(){
   const discount =
     calculateDiscount(subtotal);
 
+
   const delivery =
     fulfillment === "delivery"
       ? Number(settings.deliveryFee || 0)
       : 0;
+
 
   const total =
     Math.max(
@@ -2758,18 +3198,16 @@ function renderCart(){
 }
 
 
-/* =========================
-   DISCOUNT
-========================= */
-
 function calculateDiscount(subtotal){
 
   let percentage = 0;
+
 
   const tiers =
     settings.wholesaleTiers ||
     settings.wholesale ||
     {};
+
 
   const totalQuantity =
     cart.reduce(
@@ -2780,19 +3218,31 @@ function calculateDiscount(subtotal){
     );
 
 
-  if(tiers["20"] !== undefined && totalQuantity >= 20){
+  if(
+    tiers["20"] !== undefined &&
+    totalQuantity >= 20
+  ){
 
-    percentage = Number(tiers["20"]);
+    percentage =
+      Number(tiers["20"]);
 
   }
-  else if(tiers["10"] !== undefined && totalQuantity >= 10){
+  else if(
+    tiers["10"] !== undefined &&
+    totalQuantity >= 10
+  ){
 
-    percentage = Number(tiers["10"]);
+    percentage =
+      Number(tiers["10"]);
 
   }
-  else if(tiers["5"] !== undefined && totalQuantity >= 5){
+  else if(
+    tiers["5"] !== undefined &&
+    totalQuantity >= 5
+  ){
 
-    percentage = Number(tiers["5"]);
+    percentage =
+      Number(tiers["5"]);
 
   }
   else{
@@ -2810,29 +3260,40 @@ function calculateDiscount(subtotal){
   }
 
 
-  return subtotal * percentage / 100;
+  return (
+    subtotal *
+    percentage /
+    100
+  );
 
 }
 
-
-/* =========================
-   CHECKOUT
-========================= */
 
 function openCheckout(){
 
   if(!cart.length){
 
-    showSmallMessage("السلة فارغة");
+    showSmallMessage(
+      "السلة فارغة"
+    );
+
     return;
 
   }
 
+
   closeCart();
 
-  selectFulfillment(fulfillment);
-  selectPayment(payment);
+  selectFulfillment(
+    fulfillment
+  );
+
+  selectPayment(
+    payment
+  );
+
   updateCheckoutSummary();
+
 
   document
     .getElementById("checkoutModal")
@@ -2850,10 +3311,6 @@ function closeCheckout(){
 }
 
 
-/* =========================
-   PICKUP LOCATION
-========================= */
-
 function getStoreMapUrl(){
 
   const direct =
@@ -2861,6 +3318,7 @@ function getStoreMapUrl(){
     settings.storeMapUrl ||
     settings.mapUrl ||
     "";
+
 
   if(direct){
     return direct;
@@ -2871,6 +3329,7 @@ function getStoreMapUrl(){
     settings.pickupLatitude ||
     settings.storeLatitude ||
     settings.latitude;
+
 
   const lng =
     settings.pickupLongitude ||
@@ -2931,7 +3390,9 @@ function openStoreLocation(){
 
 function selectFulfillment(type){
 
-  fulfillment = type;
+  fulfillment =
+    type;
+
 
   document
     .getElementById("deliveryOption")
@@ -2940,12 +3401,14 @@ function selectFulfillment(type){
       type === "delivery"
     );
 
+
   document
     .getElementById("pickupOption")
     .classList.toggle(
       "active",
       type === "pickup"
     );
+
 
   document
     .getElementById("deliveryFields")
@@ -2956,7 +3419,9 @@ function selectFulfillment(type){
 
 
   const pickupInfo =
-    document.getElementById("pickupInfo");
+    document.getElementById(
+      "pickupInfo"
+    );
 
 
   if(type === "pickup"){
@@ -2967,10 +3432,14 @@ function selectFulfillment(type){
       settings.phone ||
       "0501203710";
 
+
     const mapUrl =
       getStoreMapUrl();
 
-    pickupInfo.style.display = "block";
+
+    pickupInfo.style.display =
+      "block";
+
 
     pickupInfo.innerHTML = `
 
@@ -3039,7 +3508,8 @@ function selectFulfillment(type){
 
   }else{
 
-    pickupInfo.style.display = "none";
+    pickupInfo.style.display =
+      "none";
 
   }
 
@@ -3051,7 +3521,9 @@ function selectFulfillment(type){
 
 function selectPayment(type){
 
-  payment = type;
+  payment =
+    type;
+
 
   document
     .getElementById("cashPayment")
@@ -3060,12 +3532,14 @@ function selectPayment(type){
       type === "cash"
     );
 
+
   document
     .getElementById("moyasarPayment")
     .classList.toggle(
       "active",
       type === "moyasar"
     );
+
 
   document
     .getElementById("paypalPayment")
@@ -3077,21 +3551,21 @@ function selectPayment(type){
 }
 
 
-/* =========================
-   CALCULATE
-========================= */
-
 function calculateCart(){
 
   let subtotal = 0;
 
+
   cart.forEach(item=>{
 
-    const product = findProduct(item.id);
+    const product =
+      findProduct(item.id);
+
 
     if(!product){
       return;
     }
+
 
     const price =
       Number(
@@ -3100,6 +3574,7 @@ function calculateCart(){
         product.sellingPrice ??
         0
       );
+
 
     subtotal +=
       price *
@@ -3111,10 +3586,12 @@ function calculateCart(){
   const discount =
     calculateDiscount(subtotal);
 
+
   const delivery =
     fulfillment === "delivery"
       ? Number(settings.deliveryFee || 0)
       : 0;
+
 
   const total =
     Math.max(
@@ -3135,21 +3612,22 @@ function calculateCart(){
 }
 
 
-/* =========================
-   SUMMARY
-========================= */
-
 function updateCheckoutSummary(){
 
   const box =
-    document.getElementById("checkoutSummary");
+    document.getElementById(
+      "checkoutSummary"
+    );
+
 
   if(!box){
     return;
   }
 
+
   const data =
     calculateCart();
+
 
   box.innerHTML = `
 
@@ -3206,10 +3684,6 @@ function updateCheckoutSummary(){
 }
 
 
-/* =========================
-   ORDER NUMBER
-========================= */
-
 function generateOrderNumber(){
 
   const random =
@@ -3219,14 +3693,11 @@ function generateOrderNumber(){
       90000000
     );
 
+
   return `NEXO-${random}`;
 
 }
 
-
-/* =========================
-   BUILD ORDER
-========================= */
 
 function buildOrder(){
 
@@ -3237,11 +3708,14 @@ function buildOrder(){
   const items =
     cart.map(item=>{
 
-      const product = findProduct(item.id);
+      const product =
+        findProduct(item.id);
+
 
       if(!product){
         return null;
       }
+
 
       const price =
         Number(
@@ -3250,6 +3724,7 @@ function buildOrder(){
           product.sellingPrice ??
           0
         );
+
 
       return {
 
@@ -3353,28 +3828,29 @@ function buildOrder(){
 }
 
 
-/* =========================
-   SAVE ORDER
-========================= */
-
 function saveCompletedOrder(order){
 
   orders.push(order);
 
-  saveData(K.orders,orders);
+  saveData(
+    K.orders,
+    orders
+  );
+
 
   cart = [];
 
-  saveData(K.cart,cart);
+
+  saveData(
+    K.cart,
+    cart
+  );
+
 
   updateCartCount();
 
 }
 
-
-/* =========================
-   FORM SUBMIT
-========================= */
 
 document
   .getElementById("checkoutForm")
@@ -3438,11 +3914,15 @@ document
 
       if(payment === "cash"){
 
-        saveCompletedOrder(order);
+        saveCompletedOrder(
+          order
+        );
 
         closeCheckout();
 
-        showOrderSuccess(order);
+        showOrderSuccess(
+          order
+        );
 
         return;
 
@@ -3453,7 +3933,9 @@ document
 
         if(settings.moyasarPublishableKey){
 
-          saveCompletedOrder(order);
+          saveCompletedOrder(
+            order
+          );
 
           closeCheckout();
 
@@ -3481,7 +3963,9 @@ document
 
         if(settings.paypalClientId){
 
-          saveCompletedOrder(order);
+          saveCompletedOrder(
+            order
+          );
 
           closeCheckout();
 
@@ -3508,14 +3992,15 @@ document
   );
 
 
-/* =========================
-   SUCCESS
-========================= */
+function showOrderSuccess(
+  order,
+  message
+){
 
-function showOrderSuccess(order,message){
-
-  document.getElementById("successOrderNumber").textContent =
-    order.orderNumber;
+  document
+    .getElementById("successOrderNumber")
+    .textContent =
+      order.orderNumber;
 
 
   const pickupPhone =
@@ -3616,8 +4101,10 @@ function showOrderSuccess(order,message){
   }
 
 
-  document.getElementById("successDetails").innerHTML =
-    extra;
+  document
+    .getElementById("successDetails")
+    .innerHTML =
+      extra;
 
 
   document
@@ -3636,15 +4123,12 @@ function closeSuccess(){
 }
 
 
-/* =========================
-   TRACK
-========================= */
-
 function openTrack(){
 
   document
     .getElementById("trackModal")
     .classList.add("open");
+
 
   document
     .getElementById("trackNumber")
@@ -3673,7 +4157,9 @@ function trackOrder(){
 
 
   const result =
-    document.getElementById("trackResult");
+    document.getElementById(
+      "trackResult"
+    );
 
 
   if(!number){
@@ -3784,10 +4270,6 @@ function trackOrder(){
 }
 
 
-/* =========================
-   UI
-========================= */
-
 function scrollToProducts(){
 
   document
@@ -3815,7 +4297,10 @@ function modalOutside(event,id){
 function showSmallMessage(message){
 
   const old =
-    document.getElementById("smallMessage");
+    document.getElementById(
+      "smallMessage"
+    );
+
 
   if(old){
     old.remove();
@@ -3825,29 +4310,63 @@ function showSmallMessage(message){
   const box =
     document.createElement("div");
 
-  box.id = "smallMessage";
 
-  box.textContent = message;
-
-  box.style.position = "fixed";
-  box.style.bottom = "85px";
-  box.style.left = "50%";
-  box.style.transform = "translateX(-50%)";
-  box.style.background = "#111827";
-  box.style.color = "#fff";
-  box.style.padding = "13px 20px";
-  box.style.borderRadius = "13px";
-  box.style.zIndex = "9999";
-  box.style.fontWeight = "800";
-  box.style.boxShadow = "0 10px 30px rgba(0,0,0,.2)";
-  box.style.animation = "modalIn .2s ease";
+  box.id =
+    "smallMessage";
 
 
-  document.body.appendChild(box);
+  box.textContent =
+    message;
+
+
+  box.style.position =
+    "fixed";
+
+  box.style.bottom =
+    "85px";
+
+  box.style.left =
+    "50%";
+
+  box.style.transform =
+    "translateX(-50%)";
+
+  box.style.background =
+    "#111827";
+
+  box.style.color =
+    "#fff";
+
+  box.style.padding =
+    "13px 20px";
+
+  box.style.borderRadius =
+    "13px";
+
+  box.style.zIndex =
+    "9999";
+
+  box.style.fontWeight =
+    "800";
+
+  box.style.boxShadow =
+    "0 10px 30px rgba(0,0,0,.2)";
+
+  box.style.animation =
+    "modalIn .2s ease";
+
+
+  document.body.appendChild(
+    box
+  );
 
 
   setTimeout(()=>{
-    box.remove();
+
+    if(box){
+      box.remove();
+    }
+
   },2200);
 
 }
@@ -3861,6 +4380,7 @@ document.addEventListener(
       return;
     }
 
+
     document
       .querySelectorAll(".modal.open")
       .forEach(modal=>{
@@ -3871,27 +4391,15 @@ document.addEventListener(
 );
 
 
-/* =========================================================
-   تحرير روابط الصور عند إغلاق الصفحة
-========================================================= */
-
 window.addEventListener(
   "beforeunload",
   function(){
 
-    imageObjectUrls.forEach(url=>{
-
-      try{
-        URL.revokeObjectURL(url);
-      }catch(error){}
-
-    });
+    revokeOldImageUrls();
 
   }
 );
 
-
-/* START */
 
 init();
 
@@ -3899,4 +4407,3 @@ init();
 
 </body>
 </html>
-```0
