@@ -5,6 +5,27 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NEXO STORE — لوحة الإدارة</title>
 
+<!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, get, push, remove, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAdu...",
+    authDomain: "nexo-store-484a1.firebaseapp.com",
+    databaseURL: "https://nexo-store-484a1-default-rtdb.firebaseio.com",
+    projectId: "nexo-store-484a1",
+    storageBucket: "nexo-store-484a1.firebasestorage.app",
+    messagingSenderId: "371233660861",
+    appId: "1:371233660861:web:5a89c086fc4bber9986a34",
+    measurementId: "G-FNGFYN3VQ3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  window.firebaseDB = { db, ref, set, get, push, remove, update, onValue };
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -1383,170 +1404,125 @@ let productOptions = [];
 
 
 /* =========================
-   STORAGE
+   STORAGE & FIREBASE SYNC
 ========================= */
 
 function getJSON(key, fallback){
   try{
     const value = localStorage.getItem(key);
     if(!value) return fallback;
-
     const parsed = JSON.parse(value);
-
     return parsed ?? fallback;
-
   }catch(error){
     console.error("Storage read error:",key,error);
     return fallback;
   }
 }
 
-
 function normalizeProduct(product){
-
   if(!product || typeof product !== "object"){
     return null;
   }
-
-  const oldOptions =
-    Array.isArray(product.options)
-      ? product.options
-      : [];
-
-  const normalizedOptions = oldOptions
-    .map(option=>{
-
-      if(!option || typeof option !== "object"){
-        return null;
-      }
-
-      let values = [];
-
-      if(Array.isArray(option.values)){
-        values = option.values
-          .map(v=>String(v ?? "").trim())
-          .filter(Boolean);
-      }
-
-      return {
-        name:String(option.name || "").trim(),
-        values
-      };
-
-    })
-    .filter(option =>
-      option &&
-      option.name &&
-      option.values.length
-    );
-
+  const oldOptions = Array.isArray(product.options) ? product.options : [];
+  const normalizedOptions = oldOptions.map(option=>{
+    if(!option || typeof option !== "object") return null;
+    let values = [];
+    if(Array.isArray(option.values)){
+      values = option.values.map(v=>String(v ?? "").trim()).filter(Boolean);
+    }
+    return { name:String(option.name || "").trim(), values };
+  }).filter(option => option && option.name && option.values.length);
 
   return {
     ...product,
-
-    id:
-      product.id ||
-      ("NEXO-" +
-       Date.now() +
-       "-" +
-       Math.random().toString(36).slice(2,8)),
-
-    name:String(product.name || "").trim(),
-
-    type:
-      product.type === "digital"
-        ? "digital"
-        : "physical",
-
-    price:Number(product.price || 0),
-
-    cost:Number(product.cost || 0),
-
-    quantity:Number(product.quantity || 0),
-
-    low:Number(product.low || 0),
-
-    digitalLink:String(product.digitalLink || ""),
-
-    description:String(product.description || ""),
-
-    image:
-      typeof product.image === "string"
-        ? product.image
-        : (
-          typeof product.imageUrl === "string"
-            ? product.imageUrl
-            : ""
-        ),
-
-    options:normalizedOptions,
-
-    createdAt:
-      product.createdAt ||
-      new Date().toISOString()
+    id: product.id || ("NEXO-" + Date.now() + "-" + Math.random().toString(36).slice(2,8)),
+    name: String(product.name || "").trim(),
+    type: product.type === "digital" ? "digital" : "physical",
+    price: Number(product.price || 0),
+    cost: Number(product.cost || 0),
+    quantity: Number(product.quantity || 0),
+    low: Number(product.low || 0),
+    digitalLink: String(product.digitalLink || ""),
+    description: String(product.description || ""),
+    image: typeof product.image === "string" ? product.image : (typeof product.imageUrl === "string" ? product.imageUrl : ""),
+    options: normalizedOptions,
+    createdAt: product.createdAt || new Date().toISOString()
   };
 }
 
-
 function loadData(){
+  products = getJSON("nexo_products",[]);
+  orders = getJSON("nexo_orders",[]);
+  expenses = getJSON("nexo_expenses",[]);
+  settings = getJSON("nexo_settings",{});
+  bank = getJSON("nexo_bank",settings.bank || {});
 
-  const rawProducts =
-    getJSON("nexo_products",[]);
+  // ربط Firebase المباشر للاستماع الفوري
+  const checkFB = setInterval(() => {
+    if(window.firebaseDB){
+      clearInterval(checkFB);
+      const { db, ref, onValue } = window.firebaseDB;
+      
+      onValue(ref(db, 'nexo_store/products'), (snapshot) => {
+        const val = snapshot.val();
+        if(val){
+          products = Object.values(val).map(normalizeProduct).filter(Boolean);
+          localStorage.setItem("nexo_products", JSON.stringify(products));
+          renderProducts();
+          calculateAccounting();
+        }
+      });
 
-  products =
-    Array.isArray(rawProducts)
-      ? rawProducts
-          .map(normalizeProduct)
-          .filter(Boolean)
-      : [];
+      onValue(ref(db, 'nexo_store/orders'), (snapshot) => {
+        const val = snapshot.val();
+        if(val){
+          orders = Object.values(val);
+          localStorage.setItem("nexo_orders", JSON.stringify(orders));
+          renderOrders();
+          calculateAccounting();
+        }
+      });
 
-  orders =
-    getJSON("nexo_orders",[]);
+      onValue(ref(db, 'nexo_store/expenses'), (snapshot) => {
+        const val = snapshot.val();
+        if(val){
+          expenses = Object.values(val);
+          localStorage.setItem("nexo_expenses", JSON.stringify(expenses));
+          renderExpenses();
+          calculateAccounting();
+        }
+      });
 
-  expenses =
-    getJSON("nexo_expenses",[]);
-
-  settings =
-    getJSON("nexo_settings",{});
-
-  bank =
-    getJSON("nexo_bank",settings.bank || {});
-
+      onValue(ref(db, 'nexo_store/settings'), (snapshot) => {
+        const val = snapshot.val();
+        if(val){
+          settings = val;
+          bank = val.bank || bank;
+          localStorage.setItem("nexo_settings", JSON.stringify(settings));
+          renderSettings();
+          renderBank();
+        }
+      });
+    }
+  }, 200);
 }
 
 
 function saveAll(){
+  localStorage.setItem("nexo_products", JSON.stringify(products));
+  localStorage.setItem("nexo_orders", JSON.stringify(orders));
+  localStorage.setItem("nexo_expenses", JSON.stringify(expenses));
+  localStorage.setItem("nexo_settings", JSON.stringify(settings));
+  localStorage.setItem("nexo_bank", JSON.stringify(bank));
 
-  /*
-    مهم:
-    نحفظ المنتجات كما هي بالكامل.
-    لا نعيد بناء المنتج ولا نحذف أي حقول قديمة.
-  */
-
-  localStorage.setItem(
-    "nexo_products",
-    JSON.stringify(products)
-  );
-
-  localStorage.setItem(
-    "nexo_orders",
-    JSON.stringify(orders)
-  );
-
-  localStorage.setItem(
-    "nexo_expenses",
-    JSON.stringify(expenses)
-  );
-
-  localStorage.setItem(
-    "nexo_settings",
-    JSON.stringify(settings)
-  );
-
-  localStorage.setItem(
-    "nexo_bank",
-    JSON.stringify(bank)
-  );
+  if(window.firebaseDB){
+    const { db, ref, set } = window.firebaseDB;
+    set(ref(db, 'nexo_store/products'), products);
+    set(ref(db, 'nexo_store/orders'), orders);
+    set(ref(db, 'nexo_store/expenses'), expenses);
+    settings.bank = bank;
+    set(ref(db, 'nexo_store/settings'), settings);
+  }
 }
 
 
@@ -2425,11 +2401,6 @@ async function updateProduct(id){
       "";
 
 
-    /*
-      لا نحذف الصورة القديمة.
-      يتم استبدالها فقط إذا اختار المستخدم صورة جديدة.
-    */
-
     if(
       imageInput.files &&
       imageInput.files[0]
@@ -2449,11 +2420,6 @@ async function updateProduct(id){
 
 
     products[index] = {
-
-      /*
-        أهم نقطة:
-        الاحتفاظ بجميع بيانات المنتج القديمة.
-      */
 
       ...existingProduct,
 
@@ -3662,11 +3628,6 @@ function renderSettings(){
 
 function saveSettings(){
 
-  /*
-    نحافظ على جميع الإعدادات القديمة
-    ولا نستبدل الكائن بالكامل.
-  */
-
   settings = {
 
     ...settings,
@@ -4142,11 +4103,6 @@ function importBackup(event){
       }
 
 
-      /*
-        نحافظ على جميع بيانات المنتجات
-        الموجودة داخل النسخة الاحتياطية.
-      */
-
       if(Array.isArray(backup.products)){
 
         products =
@@ -4449,6 +4405,7 @@ document.addEventListener(
 
 </body>
 </html>
+
 
 
 
