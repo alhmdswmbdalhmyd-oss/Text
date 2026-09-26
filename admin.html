@@ -598,7 +598,6 @@ th{
 
 </div>
 
-
 <div id="app" class="hidden">
 
 <header class="topbar">
@@ -620,7 +619,6 @@ th{
   </button>
 
 </header>
-
 
 <div class="layout">
 
@@ -668,9 +666,7 @@ th{
 
 </aside>
 
-
 <main class="content">
-
 
 <section id="dashboard" class="page active">
 
@@ -702,7 +698,6 @@ th{
 
 </div>
 
-
 <div class="grid">
 
 <div class="card">
@@ -721,14 +716,11 @@ th{
 
 </section>
 
-
-
 <section id="products" class="page">
 
 <h1 class="page-title">
   المنتجات
 </h1>
-
 
 <div class="card">
 
@@ -741,9 +733,7 @@ th{
   id="editingProductId"
   value="">
 
-
 <div class="form-grid">
-
 
 <div class="field">
 
@@ -756,7 +746,6 @@ th{
   placeholder="اسم المنتج">
 
 </div>
-
 
 <div class="field">
 
@@ -780,7 +769,6 @@ th{
 
 </div>
 
-
 <div class="field">
 
 <label>
@@ -794,7 +782,6 @@ th{
   placeholder="0">
 
 </div>
-
 
 <div id="costField" class="field">
 
@@ -810,7 +797,6 @@ th{
 
 </div>
 
-
 <div id="quantityField" class="field">
 
 <label>
@@ -824,7 +810,6 @@ th{
   placeholder="0">
 
 </div>
-
 
 <div id="lowField" class="field">
 
@@ -840,7 +825,6 @@ th{
 
 </div>
 
-
 <div id="digitalLinkField" class="field hidden">
 
 <label>
@@ -852,7 +836,6 @@ th{
   placeholder="رابط التحميل أو المنتج">
 
 </div>
-
 
 <div class="field">
 
@@ -878,7 +861,6 @@ th{
 
 </div>
 
-
 <div class="field full">
 
 <label>
@@ -890,11 +872,6 @@ th{
   placeholder="اكتب وصف المنتج"></textarea>
 
 </div>
-
-
-<!-- ==============================
-     PRODUCT OPTIONS
-============================== -->
 
 <div class="field full">
 
@@ -942,7 +919,6 @@ th{
 
 </div>
 
-
 <div class="actions">
 
 <button
@@ -964,8 +940,6 @@ th{
 </div>
 
 </div>
-
-
 
 <div class="card">
 
@@ -1000,8 +974,6 @@ th{
 </div>
 
 </section>
-
-
 
 <section id="orders" class="page">
 
@@ -1038,8 +1010,6 @@ th{
 </div>
 
 </section>
-
-
 
 <section id="accounting" class="page">
 
@@ -1085,8 +1055,6 @@ th{
 
 </section>
 
-
-
 <section id="expenses" class="page">
 
 <h1 class="page-title">
@@ -1121,7 +1089,6 @@ th{
 
 </div>
 
-
 <div class="card">
 
 <h3>
@@ -1152,8 +1119,6 @@ th{
 </div>
 
 </section>
-
-
 
 <section id="bank" class="page">
 
@@ -1192,7 +1157,6 @@ th{
 </label>
 
 </div>
-
 
 <div class="form-grid">
 
@@ -1235,7 +1199,6 @@ th{
 
 </div>
 
-
 <div class="card">
 
 <h3>
@@ -1251,14 +1214,11 @@ th{
 
 </section>
 
-
-
 <section id="settings" class="page">
 
 <h1 class="page-title">
   إعدادات المتجر
 </h1>
-
 
 <div class="card">
 
@@ -1333,7 +1293,6 @@ th{
 
 </div>
 
-
 <div class="card">
 
 <h3>
@@ -1363,8 +1322,6 @@ th{
 </div>
 
 </section>
-
-
 
 <section id="backup" class="page">
 
@@ -1420,8 +1377,6 @@ th{
 
 </div>
 
-
-
 <div id="receiptModal" class="modal hidden">
 
 <div class="modal-box">
@@ -1464,8 +1419,6 @@ th{
 </div>
 
 </div>
-
-
 
 <script>
 
@@ -1526,24 +1479,38 @@ const DEFAULT_SETTINGS = {
 };
 
 
+/* ==============================
+   LOAD DATA
+============================== */
+
 let settings =
-  JSON.parse(localStorage.getItem("nexo_settings"))
+  JSON.parse(
+    localStorage.getItem("nexo_settings")
+  )
   ||
-  JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+  JSON.parse(
+    JSON.stringify(DEFAULT_SETTINGS)
+  );
 
 
 let products =
-  JSON.parse(localStorage.getItem("nexo_products"))
+  JSON.parse(
+    localStorage.getItem("nexo_products")
+  )
   || [];
 
 
 let orders =
-  JSON.parse(localStorage.getItem("nexo_orders"))
+  JSON.parse(
+    localStorage.getItem("nexo_orders")
+  )
   || [];
 
 
 let expenses =
-  JSON.parse(localStorage.getItem("nexo_expenses"))
+  JSON.parse(
+    localStorage.getItem("nexo_expenses")
+  )
   || [];
 
 
@@ -1551,13 +1518,228 @@ let selectedProductImage = null;
 
 let currentReceiptOrderId = null;
 
+let productOptions = [];
+
+
+/* ==============================
+   SAFE STORAGE
+============================== */
+
+function saveAll(){
+
+  try{
+
+    localStorage.setItem(
+      "nexo_settings",
+      JSON.stringify(settings)
+    );
+
+
+    /*
+      مهم جداً:
+      نحفظ المنتجات كما هي بدون إعادة
+      بناء الكائنات وحذف أي حقول قديمة.
+    */
+
+    localStorage.setItem(
+      "nexo_products",
+      JSON.stringify(products)
+    );
+
+
+    localStorage.setItem(
+      "nexo_orders",
+      JSON.stringify(orders)
+    );
+
+
+    localStorage.setItem(
+      "nexo_expenses",
+      JSON.stringify(expenses)
+    );
+
+
+    return true;
+
+  }catch(error){
+
+    console.error(
+      "saveAll error:",
+      error
+    );
+
+
+    return false;
+
+  }
+
+}
+
+
+/* ==============================
+   NORMALIZE PRODUCT
+============================== */
+
+function normalizeProduct(product){
+
+  if(
+    !product
+    ||
+    typeof product !== "object"
+  ){
+
+    return null;
+
+  }
+
+
+  const oldOptions =
+    Array.isArray(product.options)
+    ?
+    product.options
+    :
+    [];
+
+
+  const normalizedOptions =
+    oldOptions
+      .map(option=>{
+
+        if(
+          !option
+          ||
+          typeof option !== "object"
+        ){
+
+          return null;
+
+        }
+
+
+        return {
+
+          name:
+            String(
+              option.name || ""
+            ).trim(),
+
+          values:
+            Array.isArray(option.values)
+            ?
+            option.values
+              .map(
+                value=>
+                  String(value ?? "").trim()
+              )
+              .filter(Boolean)
+            :
+            []
+
+        };
+
+      })
+      .filter(
+        option=>
+          option
+          &&
+          option.name
+          &&
+          option.values.length
+      );
+
+
+  return {
+
+    /*
+      ...product أولاً يحافظ على أي بيانات
+      إضافية كانت موجودة في المنتج القديم.
+    */
+
+    ...product,
+
+    id:
+      product.id
+      ||
+      (
+        "NEXO-"
+        + Date.now()
+        + "-"
+        + Math.random()
+            .toString(36)
+            .slice(2,8)
+      ),
+
+    name:
+      String(
+        product.name || ""
+      ).trim(),
+
+    type:
+      product.type === "digital"
+      ?
+      "digital"
+      :
+      "physical",
+
+    price:
+      Number(
+        product.price || 0
+      ),
+
+    cost:
+      Number(
+        product.cost || 0
+      ),
+
+    quantity:
+      Number(
+        product.quantity || 0
+      ),
+
+    low:
+      Number(
+        product.low || 0
+      ),
+
+    digitalLink:
+      String(
+        product.digitalLink || ""
+      ),
+
+    description:
+      String(
+        product.description || ""
+      ),
+
+    image:
+      typeof product.image === "string"
+      ?
+      product.image
+      :
+      (
+        typeof product.imageUrl === "string"
+        ?
+        product.imageUrl
+        :
+        ""
+      ),
+
+    options:
+      normalizedOptions,
+
+    createdAt:
+      product.createdAt
+      ||
+      new Date().toISOString()
+
+  };
+
+}
+
 
 /* ==============================
    PRODUCT OPTIONS
 ============================== */
-
-let productOptions = [];
-
 
 function addProductOption(
   name = "",
@@ -1576,9 +1758,12 @@ function addProductOption(
 
     name:name,
 
-    values:Array.isArray(values)
-      ? [...values]
-      : []
+    values:
+      Array.isArray(values)
+      ?
+      [...values]
+      :
+      []
 
   });
 
@@ -1607,7 +1792,9 @@ function updateProductOptionName(
 ){
 
   if(!productOptions[index]){
+
     return;
+
   }
 
 
@@ -1623,12 +1810,16 @@ function updateProductOptionValues(
 ){
 
   if(!productOptions[index]){
+
     return;
+
   }
 
 
   productOptions[index].values =
-    String(value || "")
+    String(
+      value || ""
+    )
       .split(",")
       .map(
         v=>v.trim()
@@ -1647,7 +1838,9 @@ function renderProductOptions(){
 
 
   if(!box){
+
     return;
+
   }
 
 
@@ -1693,7 +1886,6 @@ function renderProductOptions(){
 
             </div>
 
-
             <div>
 
               <label class="product-option-label">
@@ -1715,7 +1907,6 @@ function renderProductOptions(){
               >
 
             </div>
-
 
             <button
               type="button"
@@ -1756,7 +1947,9 @@ function getProductOptions(){
         option.values
           .map(
             value=>
-              String(value || "").trim()
+              String(
+                value || ""
+              ).trim()
           )
           .filter(Boolean)
         :
@@ -1774,35 +1967,64 @@ function getProductOptions(){
 }
 
 
-
 /* ==============================
    HELPERS
 ============================== */
 
 function safe(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
 
 function money(value){
 
-  return Number(value || 0).toLocaleString("ar-SA")
-    + " "
-    + (settings.currency || "ر.س");
+  return Number(
+    value || 0
+  ).toLocaleString(
+    "ar-SA"
+  )
+  + " "
+  +
+  (
+    settings.currency
+    ||
+    "ر.س"
+  );
 
 }
 
 
 function ensureBank(){
 
-  if(!settings.bank){
+  if(
+    !settings.bank
+    ||
+    typeof settings.bank !== "object"
+  ){
 
     settings.bank = {
 
@@ -1821,10 +2043,35 @@ function ensureBank(){
 
     };
 
+  }else{
+
+    settings.bank = {
+
+      enabled:
+        !!settings.bank.enabled,
+
+      bankName:
+        settings.bank.bankName || "",
+
+      owner:
+        settings.bank.owner || "",
+
+      account:
+        settings.bank.account || "",
+
+      iban:
+        settings.bank.iban || "",
+
+      instructions:
+        settings.bank.instructions
+        ||
+        "يرجى تحويل قيمة الطلب كاملة ثم رفع إثبات التحويل."
+
+    };
+
   }
 
 }
-
 
 
 /* ==============================
@@ -1835,9 +2082,12 @@ async function uploadImageToCloudinary(blob){
 
   if(!blob){
 
-    throw new Error("لم يتم اختيار صورة.");
+    throw new Error(
+      "لم يتم اختيار صورة."
+    );
 
   }
+
 
   const url =
     "https://api.cloudinary.com/v1_1/"
@@ -1845,7 +2095,8 @@ async function uploadImageToCloudinary(blob){
     + "/image/upload";
 
 
-  const formData = new FormData();
+  const formData =
+    new FormData();
 
 
   formData.append(
@@ -1874,10 +2125,13 @@ async function uploadImageToCloudinary(blob){
 
 
   const response =
-    await fetch(url,{
-      method:"POST",
-      body:formData
-    });
+    await fetch(
+      url,
+      {
+        method:"POST",
+        body:formData
+      }
+    );
 
 
   if(!response.ok){
@@ -1885,13 +2139,16 @@ async function uploadImageToCloudinary(blob){
     let message =
       "فشل رفع الصورة إلى Cloudinary.";
 
+
     try{
 
       const errorData =
         await response.json();
 
+
       if(
-        errorData.error &&
+        errorData.error
+        &&
         errorData.error.message
       ){
 
@@ -1902,7 +2159,10 @@ async function uploadImageToCloudinary(blob){
 
     }catch(e){}
 
-    throw new Error(message);
+
+    throw new Error(
+      message
+    );
 
   }
 
@@ -1925,7 +2185,6 @@ async function uploadImageToCloudinary(blob){
 }
 
 
-
 /* ==============================
    IMAGE COMPRESSION
 ============================== */
@@ -1936,128 +2195,139 @@ function compressImage(
   quality=0.8
 ){
 
-  return new Promise((resolve,reject)=>{
+  return new Promise(
+    (resolve,reject)=>{
 
-    if(!file){
+      if(!file){
 
-      resolve(null);
+        resolve(null);
 
-      return;
+        return;
 
-    }
-
-
-    const reader =
-      new FileReader();
+      }
 
 
-    reader.onload =
-      function(event){
-
-        const image =
-          new Image();
+      const reader =
+        new FileReader();
 
 
-        image.onload =
-          function(){
+      reader.onload =
+        function(event){
 
-            let width =
-              image.width;
-
-            let height =
-              image.height;
+          const image =
+            new Image();
 
 
-            if(width > maxWidth){
+          image.onload =
+            function(){
 
-              height =
-                Math.round(
-                  height * maxWidth / width
+              let width =
+                image.width;
+
+              let height =
+                image.height;
+
+
+              if(width > maxWidth){
+
+                height =
+                  Math.round(
+                    height
+                    *
+                    maxWidth
+                    /
+                    width
+                  );
+
+                width =
+                  maxWidth;
+
+              }
+
+
+              const canvas =
+                document.createElement(
+                  "canvas"
                 );
 
-              width =
-                maxWidth;
 
-            }
+              canvas.width =
+                width;
 
-
-            const canvas =
-              document.createElement("canvas");
+              canvas.height =
+                height;
 
 
-            canvas.width =
-              width;
-
-            canvas.height =
-              height;
-
-
-            const ctx =
-              canvas.getContext("2d");
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
 
 
-            ctx.fillStyle =
-              "#ffffff";
+              ctx.fillStyle =
+                "#ffffff";
 
 
-            ctx.fillRect(
-              0,
-              0,
-              width,
-              height
-            );
+              ctx.fillRect(
+                0,
+                0,
+                width,
+                height
+              );
 
 
-            ctx.drawImage(
-              image,
-              0,
-              0,
-              width,
-              height
-            );
+              ctx.drawImage(
+                image,
+                0,
+                0,
+                width,
+                height
+              );
 
 
-            canvas.toBlob(
+              canvas.toBlob(
+                blob=>resolve(blob),
+                "image/webp",
+                quality
+              );
 
-              blob=>resolve(blob),
-
-              "image/webp",
-
-              quality
-
-            );
-
-          };
+            };
 
 
-        image.onerror =
-          ()=>{
-            reject(
-              new Error("تعذر قراءة الصورة.")
-            );
-          };
+          image.onerror =
+            ()=>{
+              reject(
+                new Error(
+                  "تعذر قراءة الصورة."
+                )
+              );
+            };
 
 
-        image.src =
-          event.target.result;
+          image.src =
+            event.target.result;
 
-      };
-
-
-    reader.onerror =
-      ()=>{
-        reject(
-          new Error("تعذر قراءة ملف الصورة.")
-        );
-      };
+        };
 
 
-    reader.readAsDataURL(file);
+      reader.onerror =
+        ()=>{
+          reject(
+            new Error(
+              "تعذر قراءة ملف الصورة."
+            )
+          );
+        };
 
-  });
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
 
 }
-
 
 
 /* ==============================
@@ -2072,7 +2342,8 @@ async function previewProductImage(event){
 
   if(!file){
 
-    selectedProductImage = null;
+    selectedProductImage =
+      null;
 
     return;
 
@@ -2081,7 +2352,11 @@ async function previewProductImage(event){
 
   try{
 
-    if(!file.type.startsWith("image/")){
+    if(
+      !file.type.startsWith(
+        "image/"
+      )
+    ){
 
       throw new Error(
         "الملف المختار ليس صورة."
@@ -2129,20 +2404,24 @@ async function previewProductImage(event){
     selectedProductImage =
       null;
 
+
     event.target.value =
       "";
+
 
     document.getElementById(
       "uploadStatus"
     ).textContent =
       "تعذر تجهيز الصورة.";
 
-    alert(error.message);
+
+    alert(
+      error.message
+    );
 
   }
 
 }
-
 
 
 /* ==============================
@@ -2177,12 +2456,16 @@ function login(){
 
     document.getElementById(
       "loginPage"
-    ).classList.add("hidden");
+    ).classList.add(
+      "hidden"
+    );
 
 
     document.getElementById(
       "app"
-    ).classList.remove("hidden");
+    ).classList.remove(
+      "hidden"
+    );
 
 
     refreshAll();
@@ -2205,10 +2488,10 @@ function logout(){
     "nexo_admin_logged"
   );
 
+
   location.reload();
 
 }
-
 
 
 /* ==============================
@@ -2218,46 +2501,78 @@ function logout(){
 function toggleSidebar(){
 
   document
-    .getElementById("sidebar")
-    .classList.toggle("open");
+    .getElementById(
+      "sidebar"
+    )
+    .classList.toggle(
+      "open"
+    );
 
 }
 
 
-function showPage(id,button){
+function showPage(
+  id,
+  button
+){
 
   document
-    .querySelectorAll(".page")
+    .querySelectorAll(
+      ".page"
+    )
     .forEach(
-      p=>p.classList.remove("active")
+      p=>
+        p.classList.remove(
+          "active"
+        )
     );
 
 
-  document
-    .getElementById(id)
-    .classList.add("active");
-
-
-  document
-    .querySelectorAll(".nav-btn")
-    .forEach(
-      b=>b.classList.remove("active")
+  const page =
+    document.getElementById(
+      id
     );
 
 
-  if(button){
+  if(page){
 
-    button.classList.add("active");
+    page.classList.add(
+      "active"
+    );
 
   }
 
 
   document
-    .getElementById("sidebar")
-    .classList.remove("open");
+    .querySelectorAll(
+      ".nav-btn"
+    )
+    .forEach(
+      b=>
+        b.classList.remove(
+          "active"
+        )
+    );
+
+
+  if(button){
+
+    button.classList.add(
+      "active"
+    );
+
+  }
+
+
+  document
+    .getElementById(
+      "sidebar"
+    )
+    .classList.remove(
+      "open"
+    );
 
 }
-
 
 
 /* ==============================
@@ -2277,36 +2592,40 @@ function toggleProductType(){
 
 
   document
-    .getElementById("costField")
-    .classList
-    .toggle(
+    .getElementById(
+      "costField"
+    )
+    .classList.toggle(
       "hidden",
       !physical
     );
 
 
   document
-    .getElementById("quantityField")
-    .classList
-    .toggle(
+    .getElementById(
+      "quantityField"
+    )
+    .classList.toggle(
       "hidden",
       !physical
     );
 
 
   document
-    .getElementById("lowField")
-    .classList
-    .toggle(
+    .getElementById(
+      "lowField"
+    )
+    .classList.toggle(
       "hidden",
       !physical
     );
 
 
   document
-    .getElementById("digitalLinkField")
-    .classList
-    .toggle(
+    .getElementById(
+      "digitalLinkField"
+    )
+    .classList.toggle(
       "hidden",
       physical
     );
@@ -2314,9 +2633,8 @@ function toggleProductType(){
 }
 
 
-
 /* ==============================
-   SAVE PRODUCT
+   SAVE PRODUCT DATA
 ============================== */
 
 async function saveProductData(){
@@ -2324,12 +2642,14 @@ async function saveProductData(){
   const editingId =
     document.getElementById(
       "editingProductId"
-    ).value;
+    ).value.trim();
 
 
   if(editingId){
 
-    await updateProduct(editingId);
+    await updateProduct(
+      editingId
+    );
 
   }else{
 
@@ -2338,7 +2658,6 @@ async function saveProductData(){
   }
 
 }
-
 
 
 /* ==============================
@@ -2446,7 +2765,8 @@ async function addProduct(){
           .slice(2,9);
 
 
-    let imageUrl = "";
+    let imageUrl =
+      "";
 
 
     if(selectedProductImage){
@@ -2477,29 +2797,42 @@ async function addProduct(){
 
       name:name,
 
-      type:type,
+      type:
+        type === "digital"
+        ?
+        "digital"
+        :
+        "physical",
 
       price:price,
 
       cost:
         type === "physical"
-        ? cost
-        : 0,
+        ?
+        cost
+        :
+        0,
 
       quantity:
         type === "physical"
-        ? quantity
-        : 0,
+        ?
+        quantity
+        :
+        0,
 
       low:
         type === "physical"
-        ? low
-        : 0,
+        ?
+        low
+        :
+        0,
 
       digitalLink:
         type === "digital"
-        ? digitalLink
-        : "",
+        ?
+        digitalLink
+        :
+        "",
 
       image:imageUrl,
 
@@ -2513,10 +2846,23 @@ async function addProduct(){
     };
 
 
-    products.push(product);
+    products.push(
+      product
+    );
 
 
     if(!saveAll()){
+
+      /*
+        نحذف المنتج الجديد فقط إذا فشل الحفظ.
+        المنتجات القديمة لا تتأثر.
+      */
+
+      products =
+        products.filter(
+          p=>p.id !== id
+        );
+
 
       throw new Error(
         "تعذر حفظ بيانات المنتج."
@@ -2544,11 +2890,20 @@ async function addProduct(){
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "addProduct error:",
+      error
+    );
+
 
     alert(
       "❌ تعذر حفظ المنتج:\n"
-      + error.message
+      +
+      (
+        error.message
+        ||
+        "حدث خطأ غير معروف."
+      )
     );
 
 
@@ -2569,7 +2924,6 @@ async function addProduct(){
 }
 
 
-
 /* ==============================
    EDIT PRODUCT
 ============================== */
@@ -2578,11 +2932,22 @@ async function editProduct(id){
 
   const product =
     products.find(
-      p=>p.id === id
+      p=>
+        String(p.id)
+        ===
+        String(id)
     );
 
 
-  if(!product) return;
+  if(!product){
+
+    alert(
+      "لم يتم العثور على المنتج."
+    );
+
+    return;
+
+  }
 
 
   document.getElementById(
@@ -2609,25 +2974,25 @@ async function editProduct(id){
   document.getElementById(
     "productPrice"
   ).value =
-    product.price || 0;
+    product.price ?? 0;
 
 
   document.getElementById(
     "productCost"
   ).value =
-    product.cost || 0;
+    product.cost ?? 0;
 
 
   document.getElementById(
     "productQuantity"
   ).value =
-    product.quantity || 0;
+    product.quantity ?? 0;
 
 
   document.getElementById(
     "productLow"
   ).value =
-    product.low || 0;
+    product.low ?? 0;
 
 
   document.getElementById(
@@ -2643,7 +3008,9 @@ async function editProduct(id){
 
 
   productOptions =
-    Array.isArray(product.options)
+    Array.isArray(
+      product.options
+    )
     ?
     product.options.map(
       (option,index)=>({
@@ -2655,12 +3022,26 @@ async function editProduct(id){
           + index,
 
         name:
-          option.name || "",
+          option
+          &&
+          option.name
+          ?
+          String(
+            option.name
+          )
+          :
+          "",
 
         values:
-          Array.isArray(option.values)
+          option
+          &&
+          Array.isArray(
+            option.values
+          )
           ?
-          [...option.values]
+          option.values.map(
+            v=>String(v)
+          )
           :
           []
 
@@ -2679,10 +3060,18 @@ async function editProduct(id){
     );
 
 
-  if(product.image){
+  const currentImage =
+    product.image
+    ||
+    product.imageUrl
+    ||
+    "";
+
+
+  if(currentImage){
 
     preview.src =
-      product.image;
+      currentImage;
 
     preview.classList.remove(
       "hidden"
@@ -2702,9 +3091,11 @@ async function editProduct(id){
   document.getElementById(
     "uploadStatus"
   ).textContent =
-    product.image
-    ? "الصورة الحالية محفوظة في Cloudinary. اختر صورة جديدة لاستبدالها."
-    : "لا توجد صورة حالية.";
+    currentImage
+    ?
+    "الصورة الحالية محفوظة في Cloudinary. اختر صورة جديدة لاستبدالها."
+    :
+    "لا توجد صورة حالية.";
 
 
   selectedProductImage =
@@ -2715,7 +3106,12 @@ async function editProduct(id){
     "productFormTitle"
   ).textContent =
     "تعديل المنتج: "
-    + product.name;
+    +
+    (
+      product.name
+      ||
+      ""
+    );
 
 
   document.getElementById(
@@ -2739,9 +3135,9 @@ async function editProduct(id){
 }
 
 
-
 /* ==============================
    UPDATE PRODUCT
+   الإصلاح الأساسي
 ============================== */
 
 async function updateProduct(id){
@@ -2752,19 +3148,67 @@ async function updateProduct(id){
     );
 
 
+  /*
+    نحفظ نسخة احتياطية من المنتجات
+    قبل التعديل.
+  */
+
+  const productsBeforeUpdate =
+    products.map(
+      product=>({
+
+        ...product,
+
+        options:
+          Array.isArray(
+            product.options
+          )
+          ?
+          product.options.map(
+            option=>({
+
+              ...option,
+
+              values:
+                Array.isArray(
+                  option.values
+                )
+                ?
+                [...option.values]
+                :
+                []
+
+            })
+          )
+          :
+          []
+
+      })
+    );
+
+
   try{
 
     const index =
       products.findIndex(
-        p=>p.id === id
+        p=>
+          String(p.id)
+          ===
+          String(id)
       );
 
 
     if(index === -1){
 
-      return;
+      throw new Error(
+        "لم يتم العثور على المنتج."
+      );
 
     }
+
+
+    const existingProduct =
+      products[index];
 
 
     const name =
@@ -2849,13 +3293,22 @@ async function updateProduct(id){
     }
 
 
-    const existingProduct =
-      products[index];
-
+    /*
+      الاحتفاظ بالصورة القديمة.
+    */
 
     let imageUrl =
-      existingProduct.image || "";
+      existingProduct.image
+      ||
+      existingProduct.imageUrl
+      ||
+      "";
 
+
+    /*
+      رفع صورة جديدة فقط إذا اختار المستخدم
+      صورة جديدة.
+    */
 
     if(selectedProductImage){
 
@@ -2879,41 +3332,71 @@ async function updateProduct(id){
     }
 
 
+    /*
+      نستخدم ...existingProduct
+      حتى لا نحذف أي بيانات قديمة
+      غير موجودة في النموذج الحالي.
+    */
+
     const updatedProduct = {
 
       ...existingProduct,
 
-      name:name,
+      id:
+        existingProduct.id,
 
-      type:type,
+      name:
+        name,
 
-      price:price,
+      type:
+        type === "digital"
+        ?
+        "digital"
+        :
+        "physical",
+
+      price:
+        price,
 
       cost:
         type === "physical"
-        ? cost
-        : 0,
+        ?
+        cost
+        :
+        0,
 
       quantity:
         type === "physical"
-        ? quantity
-        : 0,
+        ?
+        quantity
+        :
+        0,
 
       low:
         type === "physical"
-        ? low
-        : 0,
+        ?
+        low
+        :
+        0,
 
       digitalLink:
         type === "digital"
-        ? digitalLink
-        : "",
+        ?
+        digitalLink
+        :
+        "",
 
-      image:imageUrl,
+      image:
+        imageUrl,
 
-      description:description,
+      description:
+        description,
 
-      options:options
+      options:
+        options,
+
+      updatedAt:
+        new Date().toISOString()
 
     };
 
@@ -2922,16 +3405,65 @@ async function updateProduct(id){
       updatedProduct;
 
 
+    /*
+      نحاول الحفظ.
+    */
+
     if(!saveAll()){
 
+      /*
+        إذا فشل localStorage نرجع كل المنتجات
+        إلى الحالة السابقة.
+      */
+
+      products =
+        productsBeforeUpdate;
+
+
       throw new Error(
-        "تعذر حفظ التعديلات."
+        "تعذر حفظ التعديلات في التخزين المحلي."
       );
 
     }
 
 
-    cancelEditProduct();
+    /*
+      التأكد أن المنتج تم حفظه فعلاً.
+    */
+
+    const savedProducts =
+      JSON.parse(
+        localStorage.getItem(
+          "nexo_products"
+        )
+        ||
+        "[]"
+      );
+
+
+    const savedProduct =
+      savedProducts.find(
+        p=>
+          String(p.id)
+          ===
+          String(id)
+      );
+
+
+    if(!savedProduct){
+
+      products =
+        productsBeforeUpdate;
+
+
+      saveAll();
+
+
+      throw new Error(
+        "تعذر العثور على المنتج بعد الحفظ."
+      );
+
+    }
 
 
     await renderProducts();
@@ -2943,6 +3475,13 @@ async function updateProduct(id){
     calculateAccounting();
 
 
+    /*
+      ننظف النموذج بعد نجاح الحفظ فقط.
+    */
+
+    cancelEditProduct();
+
+
     alert(
       "✅ تم تعديل المنتج بنجاح."
     );
@@ -2950,11 +3489,38 @@ async function updateProduct(id){
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "updateProduct error:",
+      error
+    );
+
+
+    /*
+      نضمن عدم فقدان المنتجات إذا حدث خطأ.
+    */
+
+    if(
+      !Array.isArray(products)
+      ||
+      products.length === 0
+    ){
+
+      products =
+        productsBeforeUpdate;
+
+      saveAll();
+
+    }
+
 
     alert(
       "❌ تعذر تحديث المنتج:\n"
-      + error.message
+      +
+      (
+        error.message
+        ||
+        "حدث خطأ غير معروف."
+      )
     );
 
 
@@ -2965,15 +3531,25 @@ async function updateProduct(id){
       button.disabled =
         false;
 
+
+      const editing =
+        document.getElementById(
+          "editingProductId"
+        ).value;
+
+
       button.textContent =
-        "حفظ التعديلات";
+        editing
+        ?
+        "حفظ التعديلات"
+        :
+        "إضافة المنتج";
 
     }
 
   }
 
 }
-
 
 
 /* ==============================
@@ -3009,8 +3585,8 @@ function cancelEditProduct(){
     "hidden"
   );
 
-}
 
+}
 
 
 /* ==============================
@@ -3035,18 +3611,23 @@ function clearProductForm(){
 
     "productDescription"
 
-  ].forEach(id=>{
+  ].forEach(
+    id=>{
 
-    const el =
-      document.getElementById(id);
+      const el =
+        document.getElementById(
+          id
+        );
 
-    if(el){
 
-      el.value = "";
+      if(el){
+
+        el.value = "";
+
+      }
 
     }
-
-  });
+  );
 
 
   const fileInput =
@@ -3057,7 +3638,8 @@ function clearProductForm(){
 
   if(fileInput){
 
-    fileInput.value = "";
+    fileInput.value =
+      "";
 
   }
 
@@ -3068,11 +3650,16 @@ function clearProductForm(){
     );
 
 
-  preview.src = "";
+  if(preview){
 
-  preview.classList.add(
-    "hidden"
-  );
+    preview.src =
+      "";
+
+    preview.classList.add(
+      "hidden"
+    );
+
+  }
 
 
   selectedProductImage =
@@ -3091,8 +3678,27 @@ function clearProductForm(){
   ).textContent =
     "الصورة سترفع إلى Cloudinary عند حفظ المنتج.";
 
-}
 
+  /*
+    نعيد نوع المنتج للوضع الافتراضي.
+  */
+
+  const type =
+    document.getElementById(
+      "productType"
+    );
+
+
+  if(type){
+
+    type.value =
+      "physical";
+
+    toggleProductType();
+
+  }
+
+}
 
 
 /* ==============================
@@ -3107,6 +3713,13 @@ async function renderProducts(){
     );
 
 
+  if(!tbody){
+
+    return;
+
+  }
+
+
   if(!products.length){
 
     tbody.innerHTML =
@@ -3115,6 +3728,7 @@ async function renderProducts(){
           لا توجد منتجات مضافة حتى الآن.
         </td>
       </tr>`;
+
 
     return;
 
@@ -3174,13 +3788,21 @@ async function renderProducts(){
     }
 
 
-    const imageHTML =
+    const currentImage =
       p.image
+      ||
+      p.imageUrl
+      ||
+      "";
+
+
+    const imageHTML =
+      currentImage
 
       ?
 
       `<img
-        src="${safe(p.image)}"
+        src="${safe(currentImage)}"
         style="
           width:55px;
           height:55px;
@@ -3197,7 +3819,9 @@ async function renderProducts(){
 
 
     const optionsCount =
-      Array.isArray(p.options)
+      Array.isArray(
+        p.options
+      )
       ?
       p.options.length
       :
@@ -3234,8 +3858,10 @@ async function renderProducts(){
         <td>
           ${
             p.type === "digital"
-            ? "رقمي"
-            : "عادي"
+            ?
+            "رقمي"
+            :
+            "عادي"
           }
         </td>
 
@@ -3246,8 +3872,12 @@ async function renderProducts(){
         <td>
           ${
             p.type === "digital"
-            ? "غير محدود"
-            : p.quantity
+            ?
+            "غير محدود"
+            :
+            Number(
+              p.quantity || 0
+            )
           }
         </td>
 
@@ -3288,7 +3918,6 @@ async function renderProducts(){
 }
 
 
-
 /* ==============================
    DELETE PRODUCT
 ============================== */
@@ -3308,11 +3937,22 @@ function deleteProduct(id){
 
   products =
     products.filter(
-      p=>p.id !== id
+      p=>
+        String(p.id)
+        !==
+        String(id)
     );
 
 
-  saveAll();
+  if(!saveAll()){
+
+    alert(
+      "تعذر حفظ عملية الحذف."
+    );
+
+    return;
+
+  }
 
 
   renderProducts();
@@ -3324,7 +3964,6 @@ function deleteProduct(id){
   calculateAccounting();
 
 }
-
 
 
 /* ==============================
@@ -3339,6 +3978,13 @@ function renderOrders(){
     );
 
 
+  if(!tbody){
+
+    return;
+
+  }
+
+
   if(!orders.length){
 
     tbody.innerHTML =
@@ -3348,162 +3994,186 @@ function renderOrders(){
         </td>
       </tr>`;
 
+
     return;
 
   }
 
 
   tbody.innerHTML =
-    orders.map(order=>{
+    orders.map(
+      order=>{
 
-      let paymentText =
-        "مدفوع";
-
-      let paymentClass =
-        "badge-success";
+        let paymentText =
+          "مدفوع";
 
 
-      if(
-        order.paymentMethod === "bank"
-        &&
-        order.paymentStatus !== "paid"
-      ){
-
-        paymentText =
-          "تحويل بنكي — بانتظار التحقق";
-
-        paymentClass =
-          "badge-warning";
-
-      }
+        let paymentClass =
+          "badge-success";
 
 
-      let receiptButton =
-        (
+        if(
           order.paymentMethod === "bank"
           &&
-          order.receipt
-        )
+          order.paymentStatus !== "paid"
+        ){
 
-        ?
-
-        `<button
-          class="btn btn-primary"
-          onclick='viewReceipt(${JSON.stringify(order.id)})'>
-          إثبات التحويل
-        </button>`
-
-        :
-
-        "";
+          paymentText =
+            "تحويل بنكي — بانتظار التحقق";
 
 
-      return `
+          paymentClass =
+            "badge-warning";
 
-      <tr>
+        }
 
-        <td>
-          ${safe(order.id)}
-        </td>
 
-        <td>
-          ${safe(
-            order.customerName
-            ||
-            order.customer
-            ||
-            "عميل"
-          )}
-        </td>
+        if(
+          order.paymentMethod === "bank"
+          &&
+          order.paymentStatus === "rejected"
+        ){
 
-        <td>
-          ${money(order.total)}
-        </td>
+          paymentText =
+            "تحويل بنكي — مرفوض";
 
-        <td>
 
-          <span class="badge ${paymentClass}">
-            ${paymentText}
-          </span>
+          paymentClass =
+            "badge-danger";
 
-        </td>
+        }
 
-        <td>
 
-          <select
-            onchange='changeOrderStatus(${JSON.stringify(order.id)},this.value)'>
+        let receiptButton =
+          (
+            order.paymentMethod === "bank"
+            &&
+            order.receipt
+          )
 
-            <option
-              value="pending"
-              ${order.status==="pending"?"selected":""}>
-              قيد الانتظار
-            </option>
+          ?
 
-            <option
-              value="processing"
-              ${order.status==="processing"?"selected":""}>
-              قيد التجهيز
-            </option>
+          `<button
+            class="btn btn-primary"
+            onclick='viewReceipt(${JSON.stringify(order.id)})'>
+            إثبات التحويل
+          </button>`
 
-            <option
-              value="completed"
-              ${order.status==="completed"?"selected":""}>
-              مكتمل
-            </option>
+          :
 
-            <option
-              value="cancelled"
-              ${order.status==="cancelled"?"selected":""}>
-              ملغي
-            </option>
+          "";
 
-          </select>
 
-        </td>
+        return `
 
-        <td>
+        <tr>
 
-          ${
-            order.date
-            ?
-            new Date(order.date)
-              .toLocaleString("ar-SA")
-            :
-            "—"
-          }
+          <td>
+            ${safe(order.id)}
+          </td>
 
-        </td>
+          <td>
+            ${safe(
+              order.customerName
+              ||
+              order.customer
+              ||
+              "عميل"
+            )}
+          </td>
 
-        <td>
+          <td>
+            ${money(order.total)}
+          </td>
 
-          <div class="actions">
+          <td>
 
-            ${receiptButton}
+            <span class="badge ${paymentClass}">
+              ${paymentText}
+            </span>
 
-            <button
-              class="btn btn-dark"
-              onclick='printInvoice(${JSON.stringify(order.id)})'>
-              فاتورة
-            </button>
+          </td>
 
-            <button
-              class="btn btn-danger"
-              onclick='deleteOrder(${JSON.stringify(order.id)})'>
-              حذف
-            </button>
+          <td>
 
-          </div>
+            <select
+              onchange='changeOrderStatus(${JSON.stringify(order.id)},this.value)'>
 
-        </td>
+              <option
+                value="pending"
+                ${order.status==="pending"?"selected":""}>
+                قيد الانتظار
+              </option>
 
-      </tr>
+              <option
+                value="processing"
+                ${order.status==="processing"?"selected":""}>
+                قيد التجهيز
+              </option>
 
-      `;
+              <option
+                value="completed"
+                ${order.status==="completed"?"selected":""}>
+                مكتمل
+              </option>
 
-    }).join("");
+              <option
+                value="cancelled"
+                ${order.status==="cancelled"?"selected":""}>
+                ملغي
+              </option>
+
+            </select>
+
+          </td>
+
+          <td>
+
+            ${
+              order.date
+              ?
+              new Date(
+                order.date
+              ).toLocaleString(
+                "ar-SA"
+              )
+              :
+              "—"
+            }
+
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              ${receiptButton}
+
+              <button
+                class="btn btn-dark"
+                onclick='printInvoice(${JSON.stringify(order.id)})'>
+                فاتورة
+              </button>
+
+              <button
+                class="btn btn-danger"
+                onclick='deleteOrder(${JSON.stringify(order.id)})'>
+                حذف
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+
+        `;
+
+      }
+    )
+    .join("");
 
 }
-
 
 
 function changeOrderStatus(
@@ -3513,11 +4183,18 @@ function changeOrderStatus(
 
   const order =
     orders.find(
-      o=>o.id === id
+      o=>
+        String(o.id)
+        ===
+        String(id)
     );
 
 
-  if(!order) return;
+  if(!order){
+
+    return;
+
+  }
 
 
   order.status =
@@ -3526,8 +4203,16 @@ function changeOrderStatus(
 
   saveAll();
 
-}
 
+  renderOrders();
+
+
+  calculateAccounting();
+
+
+  updateDashboard();
+
+}
 
 
 function deleteOrder(id){
@@ -3545,7 +4230,10 @@ function deleteOrder(id){
 
   orders =
     orders.filter(
-      o=>o.id !== id
+      o=>
+        String(o.id)
+        !==
+        String(id)
     );
 
 
@@ -3563,7 +4251,6 @@ function deleteOrder(id){
 }
 
 
-
 /* ==============================
    RECEIPTS
 ============================== */
@@ -3572,11 +4259,18 @@ function viewReceipt(orderId){
 
   const order =
     orders.find(
-      o=>o.id === orderId
+      o=>
+        String(o.id)
+        ===
+        String(orderId)
     );
 
 
-  if(!order) return;
+  if(!order){
+
+    return;
+
+  }
 
 
   currentReceiptOrderId =
@@ -3617,11 +4311,16 @@ function viewReceipt(orderId){
     image.src =
       order.receipt;
 
+
     image.classList.remove(
       "hidden"
     );
 
   }else{
+
+    image.src =
+      "";
+
 
     image.classList.add(
       "hidden"
@@ -3641,7 +4340,6 @@ function viewReceipt(orderId){
 }
 
 
-
 function closeReceipt(){
 
   currentReceiptOrderId =
@@ -3659,16 +4357,24 @@ function closeReceipt(){
 }
 
 
-
 function verifyPayment(){
 
   const order =
     orders.find(
-      o=>o.id === currentReceiptOrderId
+      o=>
+        String(o.id)
+        ===
+        String(
+          currentReceiptOrderId
+        )
     );
 
 
-  if(!order) return;
+  if(!order){
+
+    return;
+
+  }
 
 
   order.paymentStatus =
@@ -3698,16 +4404,24 @@ function verifyPayment(){
 }
 
 
-
 function rejectPayment(){
 
   const order =
     orders.find(
-      o=>o.id === currentReceiptOrderId
+      o=>
+        String(o.id)
+        ===
+        String(
+          currentReceiptOrderId
+        )
     );
 
 
-  if(!order) return;
+  if(!order){
+
+    return;
+
+  }
 
 
   order.paymentStatus =
@@ -3735,7 +4449,6 @@ function rejectPayment(){
   );
 
 }
-
 
 
 /* ==============================
@@ -3786,7 +4499,6 @@ function loadBankSettings(){
   renderBankPreview();
 
 }
-
 
 
 function saveBankSettings(){
@@ -3842,7 +4554,6 @@ function saveBankSettings(){
 }
 
 
-
 function renderBankPreview(){
 
   ensureBank();
@@ -3858,12 +4569,20 @@ function renderBankPreview(){
     );
 
 
+  if(!box){
+
+    return;
+
+  }
+
+
   if(!b.enabled){
 
     box.innerHTML =
       `<div style="text-align:center">
         🔴 التحويل البنكي غير مفعل حالياً
       </div>`;
+
 
     return;
 
@@ -3896,7 +4615,6 @@ function renderBankPreview(){
 }
 
 
-
 /* ==============================
    EXPENSES
 ============================== */
@@ -3927,6 +4645,7 @@ function addExpense(){
       "يرجى إدخال اسم المصروف ومبلغ صحيح."
     );
 
+
     return;
 
   }
@@ -3947,17 +4666,27 @@ function addExpense(){
   });
 
 
-  saveAll();
+  if(!saveAll()){
+
+    alert(
+      "تعذر حفظ المصروف."
+    );
+
+    return;
+
+  }
 
 
   document.getElementById(
     "expenseName"
-  ).value = "";
+  ).value =
+    "";
 
 
   document.getElementById(
     "expenseAmount"
-  ).value = "";
+  ).value =
+    "";
 
 
   renderExpenses();
@@ -3968,13 +4697,19 @@ function addExpense(){
 }
 
 
-
 function renderExpenses(){
 
   const tbody =
     document.getElementById(
       "expensesTable"
     );
+
+
+  if(!tbody){
+
+    return;
+
+  }
 
 
   if(!expenses.length){
@@ -3985,6 +4720,7 @@ function renderExpenses(){
           لا توجد مصروفات مسجلة.
         </td>
       </tr>`;
+
 
     return;
 
@@ -4007,8 +4743,15 @@ function renderExpenses(){
 
         <td>
           ${
-            new Date(e.date)
-            .toLocaleDateString("ar-SA")
+            e.date
+            ?
+            new Date(
+              e.date
+            ).toLocaleDateString(
+              "ar-SA"
+            )
+            :
+            "—"
           }
         </td>
 
@@ -4025,17 +4768,20 @@ function renderExpenses(){
       </tr>
 
       `
-    ).join("");
+    )
+    .join("");
 
 }
-
 
 
 function deleteExpense(id){
 
   expenses =
     expenses.filter(
-      e=>e.id !== id
+      e=>
+        String(e.id)
+        !==
+        String(id)
     );
 
 
@@ -4048,7 +4794,6 @@ function deleteExpense(id){
   calculateAccounting();
 
 }
-
 
 
 /* ==============================
@@ -4092,7 +4837,9 @@ function calculateAccounting(){
 
 
       if(
-        Array.isArray(order.items)
+        Array.isArray(
+          order.items
+        )
       ){
 
         order.items.forEach(
@@ -4101,9 +4848,13 @@ function calculateAccounting(){
             const product =
               products.find(
                 p=>
-                  p.id === item.productId
-                  ||
-                  p.id === item.id
+                  String(p.id)
+                  ===
+                  String(
+                    item.productId
+                    ||
+                    item.id
+                  )
               );
 
 
@@ -4124,7 +4875,9 @@ function calculateAccounting(){
 
 
             costs +=
-              cost * qty;
+              cost
+              *
+              qty;
 
           }
         );
@@ -4137,10 +4890,15 @@ function calculateAccounting(){
 
   const expenseTotal =
     expenses.reduce(
-      (sum,e)=>
+      (
+        sum,
+        e
+      )=>
         sum
         +
-        Number(e.amount || 0),
+        Number(
+          e.amount || 0
+        ),
       0
     );
 
@@ -4191,7 +4949,6 @@ function calculateAccounting(){
 }
 
 
-
 /* ==============================
    DASHBOARD
 ============================== */
@@ -4213,41 +4970,64 @@ function updateDashboard(){
     ).length;
 
 
-  document.getElementById(
-    "statLow"
-  ).textContent =
-    low;
+  const lowElement =
+    document.getElementById(
+      "statLow"
+    );
 
 
-  document.getElementById(
-    "statOrders"
-  ).textContent =
-    orders.length;
+  if(lowElement){
+
+    lowElement.textContent =
+      low;
+
+  }
+
+
+  const ordersElement =
+    document.getElementById(
+      "statOrders"
+    );
+
+
+  if(ordersElement){
+
+    ordersElement.textContent =
+      orders.length;
+
+  }
 
 
   ensureBank();
 
 
-  document.getElementById(
-    "bankStatusDashboard"
-  ).innerHTML =
+  const bankStatus =
+    document.getElementById(
+      "bankStatusDashboard"
+    );
 
-    settings.bank.enabled
 
-    ?
+  if(bankStatus){
 
-    `<span class="badge badge-success">
-      🟢 مفعل
-    </span>`
+    bankStatus.innerHTML =
 
-    :
+      settings.bank.enabled
 
-    `<span class="badge badge-danger">
-      🔴 غير مفعل
-    </span>`;
+      ?
+
+      `<span class="badge badge-success">
+        🟢 مفعل
+      </span>`
+
+      :
+
+      `<span class="badge badge-danger">
+        🔴 غير مفعل
+      </span>`;
+
+  }
 
 }
-
 
 
 /* ==============================
@@ -4327,10 +5107,11 @@ function loadSettings(){
   document.getElementById(
     "setAdminUser"
   ).value =
-    settings.adminUser || "admin";
+    settings.adminUser
+    ||
+    "admin";
 
 }
-
 
 
 function saveSettings(){
@@ -4416,7 +5197,6 @@ function saveSettings(){
 }
 
 
-
 function saveAdminLogin(){
 
   const user =
@@ -4431,11 +5211,16 @@ function saveAdminLogin(){
     ).value;
 
 
-  if(!user || !pass){
+  if(
+    !user
+    ||
+    !pass
+  ){
 
     alert(
       "أدخل اسم المستخدم وكلمة المرور الجديدة."
     );
+
 
     return;
 
@@ -4455,7 +5240,8 @@ function saveAdminLogin(){
 
   document.getElementById(
     "setAdminPass"
-  ).value = "";
+  ).value =
+    "";
 
 
   alert(
@@ -4463,7 +5249,6 @@ function saveAdminLogin(){
   );
 
 }
-
 
 
 /* ==============================
@@ -4474,81 +5259,100 @@ function printInvoice(orderId){
 
   const order =
     orders.find(
-      o=>o.id === orderId
+      o=>
+        String(o.id)
+        ===
+        String(orderId)
     );
 
 
-  if(!order) return;
+  if(!order){
+
+    return;
+
+  }
 
 
-  let itemsHTML = "";
+  let itemsHTML =
+    "";
 
 
   if(
-    Array.isArray(order.items)
+    Array.isArray(
+      order.items
+    )
   ){
 
     itemsHTML =
       order.items
-      .map(
-        item=>`
+        .map(
+          item=>`
 
-        <tr>
+          <tr>
 
-          <td>
-            ${safe(item.name)}
+            <td>
+              ${safe(item.name)}
 
-            ${
-              Array.isArray(item.options)
-              &&
-              item.options.length
-              ?
-              `
-              <div style="
-                font-size:12px;
-                color:#666;
-                margin-top:5px;
-              ">
-                ${
+              ${
+                Array.isArray(
                   item.options
-                    .map(
-                      option=>
-                        safe(option.name)
-                        + ": "
-                        + safe(option.value)
-                    )
-                    .join(" | ")
-                }
-              </div>
-              `
-              :
-              ""
-            }
+                )
+                &&
+                item.options.length
+                ?
+                `
+                <div style="
+                  font-size:12px;
+                  color:#666;
+                  margin-top:5px;
+                ">
+                  ${
+                    item.options
+                      .map(
+                        option=>
+                          safe(option.name)
+                          + ": "
+                          + safe(option.value)
+                      )
+                      .join(" | ")
+                  }
+                </div>
+                `
+                :
+                ""
+              }
 
-          </td>
+            </td>
 
-          <td>
-            ${Number(item.quantity || 1)}
-          </td>
+            <td>
+              ${Number(
+                item.quantity || 1
+              )}
+            </td>
 
-          <td>
-            ${money(item.price)}
-          </td>
+            <td>
+              ${money(item.price)}
+            </td>
 
-          <td>
-            ${
-              money(
-                Number(item.price || 0) *
-                Number(item.quantity || 1)
-              )
-            }
-          </td>
+            <td>
+              ${
+                money(
+                  Number(
+                    item.price || 0
+                  )
+                  *
+                  Number(
+                    item.quantity || 1
+                  )
+                )
+              }
+            </td>
 
-        </tr>
+          </tr>
 
-        `
-      )
-      .join("");
+          `
+        )
+        .join("");
 
   }
 
@@ -4559,6 +5363,17 @@ function printInvoice(orderId){
       "_blank",
       "width=900,height=700"
     );
+
+
+  if(!win){
+
+    alert(
+      "تعذر فتح الفاتورة. اسمح بالنوافذ المنبثقة في المتصفح."
+    );
+
+    return;
+
+  }
 
 
   win.document.write(`
@@ -4648,7 +5463,6 @@ window.onload=()=>window.print();
 }
 
 
-
 /* ==============================
    BACKUP
 ============================== */
@@ -4657,13 +5471,20 @@ async function exportBackup(){
 
   const data = {
 
-    products:products,
+    version:
+      "NEXO-STORE-2",
 
-    orders:orders,
+    products:
+      products,
 
-    expenses:expenses,
+    orders:
+      orders,
 
-    settings:settings
+    expenses:
+      expenses,
+
+    settings:
+      settings
 
   };
 
@@ -4678,7 +5499,8 @@ async function exportBackup(){
         )
       ],
       {
-        type:"application/json"
+        type:
+          "application/json"
       }
     );
 
@@ -4703,18 +5525,27 @@ async function exportBackup(){
     "nexo-store-backup.json";
 
 
+  document.body.appendChild(
+    a
+  );
+
+
   a.click();
+
+
+  a.remove();
 
 
   setTimeout(
     ()=>{
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(
+        url
+      );
     },
     1000
   );
 
 }
-
 
 
 /* ==============================
@@ -4727,7 +5558,11 @@ async function importBackup(event){
     event.target.files[0];
 
 
-  if(!file) return;
+  if(!file){
+
+    return;
+
+  }
 
 
   const reader =
@@ -4752,37 +5587,11 @@ async function importBackup(event){
         ){
 
           products =
-            data.products.map(
-              p=>({
-
-                ...p,
-
-                image:
-                  typeof p.image === "string"
-                  ? p.image
-                  : "",
-
-                options:
-                  Array.isArray(p.options)
-                  ?
-                  p.options.map(option=>({
-
-                    name:
-                      option.name || "",
-
-                    values:
-                      Array.isArray(option.values)
-                      ?
-                      option.values
-                      :
-                      []
-
-                  }))
-                  :
-                  []
-
-              })
-            );
+            data.products
+              .map(
+                normalizeProduct
+              )
+              .filter(Boolean);
 
         }
 
@@ -4811,10 +5620,30 @@ async function importBackup(event){
         }
 
 
-        if(data.settings){
+        if(
+          data.settings
+          &&
+          typeof data.settings === "object"
+        ){
 
-          settings =
-            data.settings;
+          settings = {
+
+            ...DEFAULT_SETTINGS,
+
+            ...settings,
+
+            ...data.settings,
+
+            bank:{
+              ...DEFAULT_SETTINGS.bank,
+
+              ...(settings.bank || {}),
+
+              ...(data.settings.bank || {})
+
+            }
+
+          };
 
         }
 
@@ -4822,132 +5651,53 @@ async function importBackup(event){
         ensureBank();
 
 
-        saveAll();
+        if(!saveAll()){
+
+          throw new Error(
+            "تعذر حفظ النسخة المستوردة."
+          );
+
+        }
 
 
         await refreshAll();
 
 
         alert(
-          "تم الاستيراد بنجاح."
+          "✅ تم الاستيراد بنجاح والمحافظة على المنتجات والبيانات."
         );
 
 
       }catch(err){
 
-        console.error(err);
+        console.error(
+          "importBackup error:",
+          err
+        );
+
 
         alert(
-          "الملف غير صالح."
+          "❌ الملف غير صالح أو تعذر حفظ البيانات."
         );
 
       }
 
+
+      /*
+        السماح باستيراد نفس الملف مرة أخرى.
+      */
+
+      event.target.value =
+        "";
+
     };
 
 
-  reader.readAsText(file);
+  reader.readAsText(
+    file
+  );
 
 }
-
-
-
-/* ==============================
-   SAVE ALL
-============================== */
-
-function saveAll(){
-
-  try{
-
-    localStorage.setItem(
-      "nexo_settings",
-      JSON.stringify(settings)
-    );
-
-
-    localStorage.setItem(
-      "nexo_products",
-      JSON.stringify(
-        products.map(
-          p=>({
-
-            id:p.id,
-
-            name:p.name,
-
-            type:p.type,
-
-            price:p.price,
-
-            cost:p.cost,
-
-            quantity:p.quantity,
-
-            low:p.low,
-
-            digitalLink:p.digitalLink,
-
-            description:p.description,
-
-            options:
-              Array.isArray(p.options)
-              ?
-              p.options.map(option=>({
-
-                name:
-                  option.name || "",
-
-                values:
-                  Array.isArray(option.values)
-                  ?
-                  option.values
-                  :
-                  []
-
-              }))
-              :
-              [],
-
-            createdAt:p.createdAt,
-
-            image:p.image || ""
-
-          })
-        )
-      )
-    );
-
-
-    localStorage.setItem(
-      "nexo_orders",
-      JSON.stringify(orders)
-    );
-
-
-    localStorage.setItem(
-      "nexo_expenses",
-      JSON.stringify(expenses)
-    );
-
-
-    return true;
-
-
-  }catch(error){
-
-    console.error(
-      "saveAll error:",
-      error
-    );
-
-
-    return false;
-
-  }
-
-}
-
 
 
 /* ==============================
@@ -4975,35 +5725,56 @@ function deleteAllData(){
 }
 
 
-
 /* ==============================
-   REFRESH
+   REFRESH ALL
 ============================== */
 
 async function refreshAll(){
 
   ensureBank();
 
+
   loadSettings();
+
 
   loadBankSettings();
 
-  productOptions = [];
+
+  /*
+    تطبيع البيانات القديمة في الذاكرة
+    بدون حذف المنتجات.
+  */
+
+  products =
+    products
+      .map(
+        normalizeProduct
+      )
+      .filter(Boolean);
+
+
+  productOptions =
+    [];
+
 
   renderProductOptions();
 
+
   await renderProducts();
+
 
   renderOrders();
 
+
   renderExpenses();
 
+
   calculateAccounting();
+
 
   updateDashboard();
 
 }
-
 
 
 /* ==============================
@@ -5014,13 +5785,24 @@ async function refreshAll(){
 
   ensureBank();
 
+
+  /*
+    لا نعيد كتابة المنتجات هنا.
+    فقط نقرأها ونجهز الواجهة.
+  */
+
   renderProductOptions();
+
+
+  toggleProductType();
 
 
   if(
     localStorage.getItem(
       "nexo_admin_logged"
-    ) === "1"
+    )
+    ===
+    "1"
   ){
 
     document.getElementById(
