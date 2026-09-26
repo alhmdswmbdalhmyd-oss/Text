@@ -420,12 +420,14 @@ header{
 .product-detail-image img{width:100%;height:100%;object-fit:contain}
 
 .detail-price{color:var(--accent);font-size:27px;font-weight:900;margin:12px 0}
-.detail-row{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:12px 0;font-size:14px}
-.detail-label{color:var(--muted)}
-.detail-value{font-weight:800}
+.variants-container{margin:15px 0;}
+.variants-label{font-weight:800;font-size:14px;margin-bottom:8px;display:block;}
+.variants-options{display:flex;gap:10px;}
+.variant-btn{flex:1;border:1px solid var(--line);background:#fff;padding:10px;border-radius:12px;font-weight:800;transition:.2s;}
+.variant-btn.active{border-color:var(--accent);background:#eff6ff;color:var(--accent);}
 
 .description-box{
-  margin-top:20px;
+  margin-top:15px;
   padding:15px;
   background:#f8fafc;
   border-radius:15px;
@@ -450,8 +452,7 @@ header{
 .cart-item-info{flex:1}
 .cart-item-name{font-weight:900;font-size:14px}
 .cart-item-price{color:var(--accent);font-weight:800;font-size:13px}
-.qty{display:flex;align-items:center;gap:6px}
-.qty button{width:32px;height:32px;border:1px solid var(--line);background:#fff;border-radius:9px;font-weight:900}
+.cart-item-variant{font-size:12px;color:var(--muted);font-weight:700;}
 .remove-btn{color:var(--red);border:0;background:transparent;font-size:12px;font-weight:800}
 
 .form-group{margin-bottom:14px}
@@ -474,9 +475,16 @@ footer{background:#111827;color:#fff;margin-top:40px;padding:35px 0}
 
 <body>
 
+<div class="loader-screen" id="loader">
+  <div class="loader-box">
+    <div class="loader-logo">NEXO <span>STORE</span></div>
+    <div class="loader-line"><div></div></div>
+  </div>
+</div>
+
 <header>
   <div class="header-inner">
-    <a href="#" class="logo" id="headerLogo">NEXO <span>STORE</span></a>
+    <a href="#" class="logo">NEXO <span>STORE</span></a>
     <div class="header-actions">
       <button class="header-btn" onclick="openTrack()">🔎 استعلام الطلب</button>
       <button class="header-btn cart-btn" onclick="openCart()">🛒 السلة <span class="cart-badge" id="cartCount">0</span></button>
@@ -488,8 +496,8 @@ footer{background:#111827;color:#fff;margin-top:40px;padding:35px 0}
 
 <section class="hero">
   <div class="container">
-    <h1 id="heroTitle">NEXO STORE</h1>
-    <p id="heroDescription">متجرك الإلكتروني للمنتجات الرقمية والمنتجات المتنوعة.</p>
+    <h1>NEXO STORE</h1>
+    <p>متجرك الإلكتروني للمنتجات المتنوعة والإكسسوارات.</p>
     <div class="hero-actions">
       <button class="hero-btn" onclick="scrollToProducts()">🛍️ تصفح المنتجات</button>
       <button class="hero-btn secondary" onclick="openTrack()">📦 تتبع طلبك</button>
@@ -563,7 +571,6 @@ footer{background:#111827;color:#fff;margin-top:40px;padding:35px 0}
         <div class="form-group"><label>المدينة</label><input id="customerCity" placeholder="مكة المكرمة"></div>
         <div class="form-group"><label>العنوان</label><textarea id="customerAddress" placeholder="اكتب عنوان التوصيل"></textarea></div>
       </div>
-      <div id="pickupInfo" style="display:none;background:#eff6ff;color:#1e40af;padding:14px;border-radius:13px;margin-bottom:15px;"></div>
       <div class="form-group"><label>ملاحظات</label><textarea id="customerNote" placeholder="ملاحظات إضافية..."></textarea></div>
       <div class="form-group">
         <label>طريقة الدفع</label>
@@ -573,7 +580,6 @@ footer{background:#111827;color:#fff;margin-top:40px;padding:35px 0}
           <div class="option" id="paypalPayment" onclick="selectPayment('paypal')">🅿️ PayPal</div>
         </div>
       </div>
-      <div class="checkout-total" id="checkoutSummary"></div>
       <button class="checkout-btn" type="submit">تأكيد الطلب</button>
     </form>
   </div>
@@ -587,7 +593,7 @@ footer{background:#111827;color:#fff;margin-top:40px;padding:35px 0}
     </div>
     <div class="form-group"><label>رقم الطلب</label><input id="trackNumber" placeholder="مثال: NEXO-12345678"></div>
     <button class="checkout-btn" type="button" onclick="trackOrder()">استعلام</button>
-    <div id="trackResult" class="track-result"></div>
+    <div id="trackResult"></div>
   </div>
 </div>
 
@@ -596,38 +602,36 @@ footer{background:#111827;color:#fff;margin-top:40px;padding:35px 0}
     <div style="text-align:center;padding:15px;">
       <h2>تم استلام طلبك بنجاح</h2>
       <div class="order-code" id="successOrderNumber" style="margin:15px 0;background:#f3f4f6;padding:10px;font-weight:900;border-radius:8px;"></div>
-      <div id="successDetails"></div>
       <button class="checkout-btn" onclick="closeSuccess()">تم</button>
     </div>
   </div>
 </div>
 
 <script>
-// قائمة المنتجات الأصلية مدمجة مع منتجات لوحة التحكم الخاصة بك
 let products = [
-  { id: "1", name: "شاحن جداري بمنفذين USB 2.4A مع الكابل - FASTER FT-71", price: 18, image: "faster-ft71.jpg", type: "physical", description: "شاحن جداري عالي الأداء مع كابل مرفق." },
-  { id: "2", name: "كيبل Type-C للايفون - LDNIO LS543 Toughness", price: 23, image: "ldnio-ls543.jpg", type: "physical", description: "كيبل متين وقوي مصمم لتحمل الاستخدام الشاق." },
-  { id: "3", name: "كيبل Type-C شحن سريع 3.1A - OVAST OT-15 (ضمان سنة)", price: 16, image: "ovast-ot15.jpg", type: "physical", description: "شحن سريع وآمن مع ضمان لمدة سنة كاملة." },
-  { id: "4", name: "ساعة سلكية مع مايكروفون - NITO N-100", price: 35, image: "nito-n100.jpg", type: "physical", description: "صوت نقي وواضح مع مايكروفون مدمج." },
-  { id: "5", name: "ساعة أيفون Lightning مع نافذة منبثقة - IPlus I-18", price: 4, image: "iplus-i18.jpg", type: "physical", description: "سماعة أيفون عملية." },
-  { id: "6", name: "ستاند سيارة GLOW GLH-32 مغناطيسي - دوران 360 درجة", price: 4, image: "glow-glh32.jpg", type: "physical", description: "ستاند سيارة قوي وثابت مع إمكانية الدوران." },
-  { id: "7", name: "ساعة سلكية Type-C للايفون - NITO N-H673 STEREO", price: 19, image: "nito-nh673.jpg", type: "physical", description: "صوت ستيريو عالي النقاء." },
-  { id: "8", name: "كيبل Type-C قماش 1200mm - 3.4A - KUMS", price: 12, image: "kums-34a.jpg", type: "physical", description: "كيبل قماشي بطول 1.2 متر وشحن سريع 3.4A." },
-  { id: "9", name: "لمبة LED تانش + شاحن جوال - 2 في 1 - WINMFIX", price: 2, image: "winmfix-led.jpg", type: "physical", description: "إضاءة ليد ذكية مع منفذ شحن جوال." },
-  { id: "10", name: "كيبل X.LOOD X-73 - تايپ سي - 3.1A", price: 9, image: "xlood-x73.jpg", type: "physical", description: "كيبل تايپ سي ممتاز وسريع." },
-  { id: "11", name: "حامل جوال للسيارة يركب على المراية - UNIVERSAL CLIP", price: 4, image: "universal-clip.jpg", type: "physical", description: "حامل عملي يركب بسهولة على مراية السيارة." },
-  { id: "12", name: "ستاند سيارة GLOW GLH-29 مغناطيسي مسطرة", price: 15, image: "glow-glh29.jpg", type: "physical", description: "تصميم مسطرة أنيق وثبات مغناطيسي قوي." },
-  { id: "13", name: "راس شاحن NITO CH-512 مخرجين", price: 42, image: "nito-ch512.jpg", type: "physical", description: "راس شاحن بمخرجين لشحن جهازين معاً." },
-  { id: "14", name: "راس شاحن PROMASS PM-8509 سريع PD+QC مجموع 30W", price: 12, image: "promass-pm8509.jpg", type: "physical", description: "شحن سريع بقدرة 30 واط." },
-  { id: "15", name: "ستاند سيارة GLOW GLH-26 مغناطيسي صغير ميني", price: 9, image: "glow-glh26.jpg", type: "physical", description: "حجم صغير ومميز لا يغطي الرؤية." }
+  { id: "1", name: "شاحن جداري بمنفذين USB 2.4A مع الكابل - FASTER FT-71", price: 25, image: "faster-ft71.jpg", type: "physical", description: "شاحن جداري عالي الأداء مع كابل مرفق.", hasVariants: true },
+  { id: "2", name: "كيبل Type-C للايفون - LDNIO LS543 Toughness", price: 18, image: "ldnio-ls543.jpg", type: "physical", description: "كيبل متين وقوي مصمم لتحمل الاستخدام الشاق.", hasVariants: true },
+  { id: "3", name: "كيبل Type-C شحن سريع 3.1A - OVAST OT-15 (ضمان سنة)", price: 15, image: "ovast-ot15.jpg", type: "physical", description: "شحن سريع وآمن مع ضمان لمدة سنة كاملة.", hasVariants: true },
+  { id: "4", name: "ساعة سلكية مع مايكروفون - NITO N-100", price: 20, image: "nito-n100.jpg", type: "physical", description: "صوت نقي وواضح مع مايكروفون مدمج.", hasVariants: true },
+  { id: "5", name: "ساعة أيفون Lightning مع نافذة منبثقة - IPlus I-18", price: 30, image: "iplus-i18.jpg", type: "physical", description: "سماعة أيفون أصلية.", hasVariants: false },
+  { id: "6", name: "ستاند سيارة GLOW GLH-32 مغناطيسي - دوران 360 درجة", price: 35, image: "glow-glh32.jpg", type: "physical", description: "ستاند سيارة قوي وثابت مع إمكانية الدوران.", hasVariants: false },
+  { id: "7", name: "ساعة سلكية Type-C للايفون - NITO N-H673 STEREO", price: 20, image: "nito-nh673.jpg", type: "physical", description: "صوت ستيريو عالي النقاء.", hasVariants: true },
+  { id: "8", name: "كيبل Type-C قماش 1200mm - 3.4A - KUMS", price: 12, image: "kums-34a.jpg", type: "physical", description: "كيبل قماشي بطول 1.2 متر وشحن سريع 3.4A.", hasVariants: true },
+  { id: "9", name: "لمبة LED تانش + شاحن جوال - 2 في 1 - WINMFIX", price: 45, image: "winmfix-led.jpg", type: "physical", description: "إضاءة ليد ذكية مع منفذ شحن جوال.", hasVariants: false },
+  { id: "10", name: "كيبل X.LOOD X-73 - تايپ سي - 3.1A", price: 12, image: "xlood-x73.jpg", type: "physical", description: "كيبل تايپ سي ممتاز وسريع.", hasVariants: true },
+  { id: "11", name: "حامل جوال للسيارة يركب على المراية - UNIVERSAL CLIP", price: 25, image: "universal-clip.jpg", type: "physical", description: "حامل عملي يركب بسهولة على مراية السيارة.", hasVariants: false },
+  { id: "12", name: "ستاند سيارة GLOW GLH-29 مغناطيسي مسطرة", price: 30, image: "glow-glh29.jpg", type: "physical", description: "تصميم مسطرة أنيق وثبات مغناطيسي قوي.", hasVariants: false },
+  { id: "13", name: "راس شاحن NITO CH-512 مخرجين", price: 25, image: "nito-ch512.jpg", type: "physical", description: "راس شاحن بمخرجين لشحن جهازين معاً.", hasVariants: false },
+  { id: "14", name: "راس شاحن PROMASS PM-8509 سريع PD+QC مجموع 30W", price: 45, image: "promass-pm8509.jpg", type: "physical", description: "شحن سريع بقدرة 30 واط.", hasVariants: false },
+  { id: "15", name: "ستاند سيارة GLOW GLH-26 مغناطيسي صغير ميني", price: 25, image: "glow-glh26.jpg", type: "physical", description: "حجم صغير ومميز لا يغطي الرؤية.", hasVariants: false }
 ];
 
 let orders = JSON.parse(localStorage.getItem("nexo_orders") || "[]");
 let cart = JSON.parse(localStorage.getItem("nexo_cart") || "[]");
-let settings = {};
 let currentCategory = "all";
 let fulfillment = "delivery";
 let payment = "cash";
+let selectedVariant = "أيفون (Lightning)";
 const PLACEHOLDER = "https://via.placeholder.com/700x500?text=NEXO+STORE";
 
 function money(val) { return Number(val || 0).toFixed(2); }
@@ -650,7 +654,6 @@ function setCategory(cat, btn) {
 function renderProducts() {
   const grid = document.getElementById("productsGrid");
   const search = document.getElementById("searchInput").value.trim().toLowerCase();
-  
   const filtered = products.filter(p => p.name.toLowerCase().includes(search));
 
   if (!filtered.length) {
@@ -667,10 +670,10 @@ function renderProducts() {
         <div class="card-name">${escapeHtml(p.name)}</div>
         <div class="card-price">${money(p.price)} ر.س</div>
         <div class="card-meta">
-          <span class="type-badge">منتج متنوع</span>
+          <span class="type-badge">متنوع</span>
           <span class="available">متوفر</span>
         </div>
-        <button class="add-btn" onclick="event.stopPropagation();addToCart('${p.id}')">🛒 أضف للسلة</button>
+        <button class="add-btn" onclick="event.stopPropagation();openProduct('${p.id}')">🛒 اختر ونوع</button>
       </div>
     </article>
   `).join("");
@@ -679,26 +682,55 @@ function renderProducts() {
 function openProduct(id) {
   const p = products.find(x => x.id === id);
   if(!p) return;
+  selectedVariant = "أيفون (Lightning)";
+  
+  let variantHtml = "";
+  if(p.hasVariants) {
+    variantHtml = `
+      <div class="variants-container">
+        <span class="variants-label">اختر النوع / الوصلة:</span>
+        <div class="variants-options">
+          <button class="variant-btn active" id="varIphone" onclick="selectVariant('أيفون (Lightning)')">أيفون</button>
+          <button class="variant-btn" id="varTypeC" onclick="selectVariant('تايب سي / يو إس بي (Type-C)')">تايب سي / USB</button>
+        </div>
+      </div>
+    `;
+  }
+
   document.getElementById("productDetails").innerHTML = `
     <div class="product-details">
       <div class="product-detail-image"><img src="${p.image}" onerror="this.src='${PLACEHOLDER}'"></div>
       <div class="product-detail-info">
         <h2>${escapeHtml(p.name)}</h2>
         <div class="detail-price">${money(p.price)} ر.س</div>
+        ${variantHtml}
         <div class="description-box"><h3>وصف المنتج</h3><p>${escapeHtml(p.description)}</p></div>
-        <button class="detail-add" onclick="addToCart('${p.id}');closeProduct();">🛒 أضف للسلة</button>
+        <button class="detail-add" onclick="addToCartWithVariant('${p.id}');closeProduct();">🛒 أضف للسلة</button>
       </div>
     </div>
   `;
   document.getElementById("productModal").classList.add("open");
 }
 
+function selectVariant(v) {
+  selectedVariant = v;
+  document.getElementById("varIphone").classList.toggle("active", v.includes('أيفون'));
+  document.getElementById("varTypeC").classList.toggle("active", v.includes('تايب سي'));
+}
+
 function closeProduct() { document.getElementById("productModal").classList.remove("open"); }
 
-function addToCart(id) {
-  const item = cart.find(x => x.id === id);
-  if(item) item.quantity++;
-  else cart.push({id, quantity:1});
+function addToCartWithVariant(id) {
+  const p = products.find(x => x.id === id);
+  const variantText = p.hasVariants ? selectedVariant : "قياسي";
+  
+  const item = cart.find(x => x.id === id && x.variant === variantText);
+  if(item) {
+    item.quantity++;
+  } else {
+    cart.push({ id, quantity: 1, variant: variantText });
+  }
+  
   localStorage.setItem("nexo_cart", JSON.stringify(cart));
   updateCartCount();
   alert("تمت إضافة المنتج إلى السلة بنجاح");
@@ -715,7 +747,7 @@ function openCart() {
     box.innerHTML = `<div class="empty">السلة فارغة حالياً.</div>`;
   } else {
     let subtotal = 0;
-    box.innerHTML = `<div class="cart-items">` + cart.map(item => {
+    box.innerHTML = `<div class="cart-items">` + cart.map((item, index) => {
       const p = products.find(x => x.id === item.id);
       if(!p) return "";
       subtotal += p.price * item.quantity;
@@ -724,9 +756,10 @@ function openCart() {
           <div class="cart-item-img"><img src="${p.image}"></div>
           <div class="cart-item-info">
             <div class="cart-item-name">${escapeHtml(p.name)}</div>
+            <div class="cart-item-variant">النوع: ${item.variant}</div>
             <div class="cart-item-price">${money(p.price)} ر.س (الكمية: ${item.quantity})</div>
           </div>
-          <button class="remove-btn" onclick="removeFromCart('${item.id}')">حذف</button>
+          <button class="remove-btn" onclick="removeFromCart(${index})">حذف</button>
         </div>
       `;
     }).join("") + `</div>
@@ -738,8 +771,8 @@ function openCart() {
 
 function closeCart() { document.getElementById("cartModal").classList.remove("open"); }
 
-function removeFromCart(id) {
-  cart = cart.filter(x => x.id !== id);
+function removeFromCart(index) {
+  cart.splice(index, 1);
   localStorage.setItem("nexo_cart", JSON.stringify(cart));
   updateCartCount();
   openCart();
@@ -804,6 +837,7 @@ init();
 
 </body>
 </html>
+
 
 
 
