@@ -456,6 +456,57 @@ th{
   border-radius:15px
 }
 
+/* ==============================
+   PRODUCT OPTIONS
+============================== */
+
+.product-options-box{
+  background:#fafafa;
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:15px
+}
+
+.product-option-row{
+  background:#fff;
+  border:1px solid #e5e5e5;
+  border-radius:14px;
+  padding:15px;
+  margin-bottom:12px
+}
+
+.product-option-grid{
+  display:grid;
+  grid-template-columns:1fr 2fr auto;
+  gap:10px;
+  align-items:end
+}
+
+.product-option-row input{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px;
+  outline:none
+}
+
+.product-option-row input:focus{
+  border-color:var(--primary)
+}
+
+.product-option-label{
+  font-size:13px;
+  color:#777;
+  margin-bottom:6px;
+  display:block
+}
+
+.options-empty{
+  color:#777;
+  font-size:14px;
+  padding:10px 0
+}
+
 @media(max-width:900px){
 
   .stats{
@@ -481,6 +532,10 @@ th{
 
   .menu-btn{
     display:block
+  }
+
+  .product-option-grid{
+    grid-template-columns:1fr
   }
 }
 
@@ -833,6 +888,55 @@ th{
 <textarea
   id="productDescription"
   placeholder="اكتب وصف المنتج"></textarea>
+
+</div>
+
+
+<!-- ==============================
+     PRODUCT OPTIONS
+============================== -->
+
+<div class="field full">
+
+<label>
+  خيارات المنتج
+</label>
+
+<div class="product-options-box">
+
+  <div
+    style="
+      color:#666;
+      font-size:14px;
+      margin-bottom:12px;
+      line-height:1.8
+    ">
+
+    أضف خيارات خاصة بهذا المنتج فقط.
+    مثال:
+    <strong>نوع الجهاز</strong>
+    → آيفون، سامسونج، Type-C، عادي
+
+  </div>
+
+  <div id="productOptionsList">
+
+    <div class="options-empty">
+      لا توجد خيارات لهذا المنتج.
+    </div>
+
+  </div>
+
+  <button
+    type="button"
+    class="btn btn-light"
+    onclick="addProductOption()">
+
+    + إضافة خيار
+
+  </button>
+
+</div>
 
 </div>
 
@@ -1275,7 +1379,7 @@ th{
 </h3>
 
 <p style="color:#777;margin-bottom:15px">
-  سيتم حفظ المنتجات والطلبات والمصروفات والإعدادات وبيانات التحويل البنكي.
+  سيتم حفظ المنتجات والطلبات والمصروفات والإعدادات وبيانات التحويل البنكي وخيارات المنتجات.
 </p>
 
 <div class="actions">
@@ -1448,6 +1552,232 @@ let selectedProductImage = null;
 let currentReceiptOrderId = null;
 
 
+/* ==============================
+   PRODUCT OPTIONS
+============================== */
+
+let productOptions = [];
+
+
+function addProductOption(
+  name = "",
+  values = []
+){
+
+  productOptions.push({
+
+    id:
+      "OPTION-"
+      + Date.now()
+      + "-"
+      + Math.random()
+          .toString(36)
+          .slice(2,8),
+
+    name:name,
+
+    values:Array.isArray(values)
+      ? [...values]
+      : []
+
+  });
+
+
+  renderProductOptions();
+
+}
+
+
+function removeProductOption(index){
+
+  productOptions.splice(
+    index,
+    1
+  );
+
+
+  renderProductOptions();
+
+}
+
+
+function updateProductOptionName(
+  index,
+  value
+){
+
+  if(!productOptions[index]){
+    return;
+  }
+
+
+  productOptions[index].name =
+    value;
+
+}
+
+
+function updateProductOptionValues(
+  index,
+  value
+){
+
+  if(!productOptions[index]){
+    return;
+  }
+
+
+  productOptions[index].values =
+    String(value || "")
+      .split(",")
+      .map(
+        v=>v.trim()
+      )
+      .filter(Boolean);
+
+}
+
+
+function renderProductOptions(){
+
+  const box =
+    document.getElementById(
+      "productOptionsList"
+    );
+
+
+  if(!box){
+    return;
+  }
+
+
+  if(!productOptions.length){
+
+    box.innerHTML = `
+      <div class="options-empty">
+        لا توجد خيارات لهذا المنتج.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    productOptions
+      .map(
+        (option,index)=>`
+
+        <div class="product-option-row">
+
+          <div class="product-option-grid">
+
+            <div>
+
+              <label class="product-option-label">
+                اسم الخيار
+              </label>
+
+              <input
+                type="text"
+                value="${safe(option.name)}"
+                placeholder="مثال: اللون"
+                oninput="
+                  updateProductOptionName(
+                    ${index},
+                    this.value
+                  )
+                "
+              >
+
+            </div>
+
+
+            <div>
+
+              <label class="product-option-label">
+                الخيارات
+              </label>
+
+              <input
+                type="text"
+                value="${safe(
+                  (option.values || []).join(", ")
+                )}"
+                placeholder="مثال: أسود، أبيض، أزرق"
+                oninput="
+                  updateProductOptionValues(
+                    ${index},
+                    this.value
+                  )
+                "
+              >
+
+            </div>
+
+
+            <button
+              type="button"
+              class="btn btn-danger"
+              onclick="
+                removeProductOption(${index})
+              ">
+
+              حذف
+
+            </button>
+
+          </div>
+
+        </div>
+
+      `
+      )
+      .join("");
+
+}
+
+
+function getProductOptions(){
+
+  return productOptions
+
+    .map(option=>({
+
+      name:
+        String(
+          option.name || ""
+        ).trim(),
+
+      values:
+        Array.isArray(option.values)
+        ?
+        option.values
+          .map(
+            value=>
+              String(value || "").trim()
+          )
+          .filter(Boolean)
+        :
+        []
+
+    }))
+
+    .filter(
+      option=>
+        option.name
+        &&
+        option.values.length
+    );
+
+}
+
+
+
+/* ==============================
+   HELPERS
+============================== */
 
 function safe(value){
 
@@ -1461,7 +1791,6 @@ function safe(value){
 }
 
 
-
 function money(value){
 
   return Number(value || 0).toLocaleString("ar-SA")
@@ -1469,7 +1798,6 @@ function money(value){
     + (settings.currency || "ر.س");
 
 }
-
 
 
 function ensureBank(){
@@ -1519,15 +1847,29 @@ async function uploadImageToCloudinary(blob){
 
   const formData = new FormData();
 
+
   formData.append(
     "file",
     blob,
-    "nexo-product.webp"
+    "nexo-product-" + Date.now() + ".webp"
   );
+
 
   formData.append(
     "upload_preset",
     CLOUDINARY_UPLOAD_PRESET
+  );
+
+
+  formData.append(
+    "use_filename",
+    "false"
+  );
+
+
+  formData.append(
+    "unique_filename",
+    "true"
   );
 
 
@@ -1548,8 +1890,10 @@ async function uploadImageToCloudinary(blob){
       const errorData =
         await response.json();
 
-      if(errorData.error &&
-         errorData.error.message){
+      if(
+        errorData.error &&
+        errorData.error.message
+      ){
 
         message =
           errorData.error.message;
@@ -1855,7 +2199,6 @@ function login(){
 }
 
 
-
 function logout(){
 
   localStorage.removeItem(
@@ -1879,7 +2222,6 @@ function toggleSidebar(){
     .classList.toggle("open");
 
 }
-
 
 
 function showPage(id,button){
@@ -2069,6 +2411,10 @@ async function addProduct(){
       ).value.trim();
 
 
+    const options =
+      getProductOptions();
+
+
     if(!name){
 
       alert(
@@ -2102,10 +2448,6 @@ async function addProduct(){
 
     let imageUrl = "";
 
-
-    /*
-      رفع الصورة إلى Cloudinary
-    */
 
     if(selectedProductImage){
 
@@ -2159,14 +2501,11 @@ async function addProduct(){
         ? digitalLink
         : "",
 
-      /*
-        هنا نحفظ رابط Cloudinary
-        بدل IndexedDB
-      */
-
       image:imageUrl,
 
       description:description,
+
+      options:options,
 
       createdAt:
         new Date().toISOString()
@@ -2301,6 +2640,37 @@ async function editProduct(id){
     "productDescription"
   ).value =
     product.description || "";
+
+
+  productOptions =
+    Array.isArray(product.options)
+    ?
+    product.options.map(
+      (option,index)=>({
+
+        id:
+          "EDIT-"
+          + Date.now()
+          + "-"
+          + index,
+
+        name:
+          option.name || "",
+
+        values:
+          Array.isArray(option.values)
+          ?
+          [...option.values]
+          :
+          []
+
+      })
+    )
+    :
+    [];
+
+
+  renderProductOptions();
 
 
   const preview =
@@ -2453,6 +2823,10 @@ async function updateProduct(id){
       ).value.trim();
 
 
+    const options =
+      getProductOptions();
+
+
     if(!name){
 
       alert(
@@ -2482,11 +2856,6 @@ async function updateProduct(id){
     let imageUrl =
       existingProduct.image || "";
 
-
-    /*
-      إذا اختار المستخدم صورة جديدة،
-      نرفعها إلى Cloudinary
-    */
 
     if(selectedProductImage){
 
@@ -2542,7 +2911,9 @@ async function updateProduct(id){
 
       image:imageUrl,
 
-      description:description
+      description:description,
+
+      options:options
 
     };
 
@@ -2708,6 +3079,13 @@ function clearProductForm(){
     null;
 
 
+  productOptions =
+    [];
+
+
+  renderProductOptions();
+
+
   document.getElementById(
     "uploadStatus"
   ).textContent =
@@ -2818,6 +3196,14 @@ async function renderProducts(){
       "—";
 
 
+    const optionsCount =
+      Array.isArray(p.options)
+      ?
+      p.options.length
+      :
+      0;
+
+
     rows.push(`
 
       <tr>
@@ -2828,6 +3214,21 @@ async function renderProducts(){
 
         <td>
           ${safe(p.name)}
+
+          ${
+            optionsCount
+            ?
+            `<div style="
+              margin-top:5px;
+              font-size:12px;
+              color:#6c4cff;
+            ">
+              ⚙️ ${optionsCount} خيار
+            </div>`
+            :
+            ""
+          }
+
         </td>
 
         <td>
@@ -4096,6 +4497,34 @@ function printInvoice(orderId){
 
           <td>
             ${safe(item.name)}
+
+            ${
+              Array.isArray(item.options)
+              &&
+              item.options.length
+              ?
+              `
+              <div style="
+                font-size:12px;
+                color:#666;
+                margin-top:5px;
+              ">
+                ${
+                  item.options
+                    .map(
+                      option=>
+                        safe(option.name)
+                        + ": "
+                        + safe(option.value)
+                    )
+                    .join(" | ")
+                }
+              </div>
+              `
+              :
+              ""
+            }
+
           </td>
 
           <td>
@@ -4109,8 +4538,8 @@ function printInvoice(orderId){
           <td>
             ${
               money(
-                item.price *
-                item.quantity
+                Number(item.price || 0) *
+                Number(item.quantity || 1)
               )
             }
           </td>
@@ -4182,7 +4611,7 @@ ${safe(settings.storeName)}
 <thead>
 
 <tr>
-<th>المنتج</th>
+<th>المنتج والخيارات</th>
 <th>الكمية</th>
 <th>السعر</th>
 <th>الإجمالي</th>
@@ -4225,12 +4654,6 @@ window.onload=()=>window.print();
 ============================== */
 
 async function exportBackup(){
-
-  /*
-    الآن رابط Cloudinary محفوظ
-    داخل product.image مباشرة،
-    لذلك النسخة الاحتياطية تحفظ الرابط.
-  */
 
   const data = {
 
@@ -4337,7 +4760,26 @@ async function importBackup(event){
                 image:
                   typeof p.image === "string"
                   ? p.image
-                  : ""
+                  : "",
+
+                options:
+                  Array.isArray(p.options)
+                  ?
+                  p.options.map(option=>({
+
+                    name:
+                      option.name || "",
+
+                    values:
+                      Array.isArray(option.values)
+                      ?
+                      option.values
+                      :
+                      []
+
+                  }))
+                  :
+                  []
 
               })
             );
@@ -4424,11 +4866,6 @@ function saveAll(){
     );
 
 
-    /*
-      نحفظ رابط Cloudinary
-      داخل product.image
-    */
-
     localStorage.setItem(
       "nexo_products",
       JSON.stringify(
@@ -4452,6 +4889,25 @@ function saveAll(){
             digitalLink:p.digitalLink,
 
             description:p.description,
+
+            options:
+              Array.isArray(p.options)
+              ?
+              p.options.map(option=>({
+
+                name:
+                  option.name || "",
+
+                values:
+                  Array.isArray(option.values)
+                  ?
+                  option.values
+                  :
+                  []
+
+              }))
+              :
+              [],
 
             createdAt:p.createdAt,
 
@@ -4528,24 +4984,21 @@ async function refreshAll(){
 
   ensureBank();
 
-
   loadSettings();
-
 
   loadBankSettings();
 
+  productOptions = [];
+
+  renderProductOptions();
 
   await renderProducts();
 
-
   renderOrders();
-
 
   renderExpenses();
 
-
   calculateAccounting();
-
 
   updateDashboard();
 
@@ -4560,6 +5013,8 @@ async function refreshAll(){
 (function(){
 
   ensureBank();
+
+  renderProductOptions();
 
 
   if(
